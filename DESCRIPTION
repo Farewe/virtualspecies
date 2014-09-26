@@ -1,0 +1,20 @@
+Package: virtualspecies
+Type: Package
+Title: Generation of Virtual Species Distributions
+Version: 1.0
+Date: 2014-09-25
+Author: Boris Leroy with help from C. N. Meynard, C. Bellard & F. Courchamp
+Maintainer: Boris Leroy <leroy.boris@gmail.com>
+Description: Provides a framework for generating virtual species distributions, 
+  a procedure increasingly used in ecology to improve species distribution models.
+  This package integrates the existing methodological approaches with the 
+  objective of generating virtual species distributions with increased 
+  ecological realism.
+License: GPL (>=2.0)
+Depends:
+    raster
+Imports:
+    ade4,
+    dismo,
+    rworldmap
+URL: http://borisleroy.com/virtualspecies
