@@ -23,10 +23,9 @@
 #' \itemize{
 #' \item{\code{approach}: the approach used to generate the species, \emph{i.e.}, \code{"response"}}
 #' \item{\code{details}: the details and parameters used to generate the species}
-#' \item{\code{suitab.raster}: the virtual species distribution, as a Raster object containing the
-#' environmental suitability)}
+#' \item{\code{suitab.raster}: the raster containing the environmental suitability of the virtual species}
 #' }
-#' #' The structure of the virtualspecies object can be seen using str()
+#' The structure of the virtualspecies object can be seen using str()
 #' @seealso \code{\link{generateSpFromPCA}} to generate a virtual species with a PCA approach
 #' @details
 #' This functions proceeds into several steps:
