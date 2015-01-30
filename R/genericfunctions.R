@@ -10,15 +10,7 @@ print.virtualspecies <- function(x, ...)
   if(x$approach == "response")
   {
     cat(" Responses to each variable")
-    if(x$details$sp.type[1] == "mixed")
-    {
-      cat("\n- Species type: ", 
-          x$details$sp.type[1],
-          ", formula = ", x$details$sp.type[2], sep = "")
-    } else
-    {
-      cat(paste("\n- Species type:", x$details$sp.type[1]))
-    }
+
     cat("\n- Response functions:")
     sapply(x$details$variables, FUN = function(y)
     {
@@ -32,6 +24,7 @@ print.virtualspecies <- function(x, ...)
                 x$details$parameters[[y]]$args, sep = '=', collapse = "; "),
           ")", sep = "")
     })
+    
     if (x$details$rescale.each.response)
     {
       cat("\n- Each response function was rescaled between 0 and 1")
@@ -39,6 +32,9 @@ print.virtualspecies <- function(x, ...)
     {
       cat("\n- Response functions were not rescaled between 0 and 1")
     }
+    
+    cat("\n- Environmental suitability formula = ", x$details$formula, sep = "")
+    
     if (x$details$rescale)
     {
       cat("\n- Environmental suitability was rescaled between 0 and 1")

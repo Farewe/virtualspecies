@@ -24,10 +24,9 @@
 #' \code{TRUE}, the function will try to define responses that can form a viable
 #' species. If \code{FALSE}, the responses will be randomly generated
 #' (may result in environmental conditions that do not co-exist).
-#' @param species.type [response approach] \code{"additive"}, \code{"multiplicative"} or \code{"mixed"}. Defines 
+#' @param species.type [response approach] \code{"additive"} or \code{"multiplicative"}. Defines 
 #' how the final probability of presence is calculated: if \code{"additive"}, responses to each
-#' variable are summed; if \code{"multiplicative"}, responses are multiplicated; if \code{"mixed"}
-#' the final probability will be a random combination of products and sums of individual responses.
+#' variable are summed; if \code{"multiplicative"}, responses are multiplicated.
 #' See \code{\link{generateSpFromFun}}
 #' @param niche.breadth [pca approach] \code{"any"}, \code{"narrow"} or \code{"wide"}. This parameter
 #' defines how tolerant is the species regarding environmental conditions by adjusting

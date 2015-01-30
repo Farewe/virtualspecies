@@ -8,14 +8,13 @@
 #' @param parameters a list containing the functions of response of the species to 
 #' environmental variables with their parameters. See details.
 #' @param rescale \code{TRUE} or \code{FALSE}. If \code{TRUE}, the final probability of presence is rescaled between 0 and 1.
-#' @param species.type \code{"additive"}, \code{"multiplicative"} or \code{"mixed"}. Defines 
-#' how the final probability of presence is calculated: if \code{"additive"}, responses to each
-#' variable are summed; if \code{"multiplicative"}, responses are multiplicated; if \code{"mixed"}
-#' responses are both summed and multiplicated depending on argument \code{formula}
-#' @param formula \code{NULL} to create a random formula to calculate the final probability 
-#' of presence, or a character string of the form: \code{"layername1 + layername2 *
-#' layername3 * etc."} to manually define it. Only used if \code{species.type} is set to
-#' \code{"mixed"}
+#' @param formula a character string or \code{NULL}. The formula used to combine partial responses into the final
+#' environmental suitability value (e.g., \code{"layername1 + 2 * layername2 +
+#' layername3 * layername4 etc."}). If \code{NULL} then partial responses will be added or multiplied according to
+#' \code{species.type}
+#' @param species.type \code{"additive"} or \code{"multiplicative"}. Only used if \code{formula = NULL}. 
+#' Defines how the final environmental suitability is calculated: if \code{"additive"}, responses to each
+#' variable are summed; if \code{"multiplicative"}, responses are multiplicated.
 #' @param rescale.each.response \code{TRUE} or \code{FALSE}. If \code{TRUE}, the individual responses to
 #' each environmental variable are rescaled between 0 and 1 (see details).
 #' @param plot \code{TRUE} or \code{FALSE}. If \code{TRUE}, the generated virtual species will be plotted.
@@ -118,9 +117,9 @@
 
 
 generateSpFromFun <- function(raster.stack, parameters, 
-                           rescale = TRUE, 
-                           species.type = "multiplicative", formula = NULL, rescale.each.response = TRUE,
-                           plot = FALSE)
+                              rescale = TRUE, formula = NULL, 
+                              species.type = "multiplicative", rescale.each.response = TRUE,
+                              plot = FALSE)
 {
   approach <- "response"
   if(!(is(raster.stack, "Raster")))
@@ -183,80 +182,55 @@ generateSpFromFun <- function(raster.stack, parameters,
       }))
   }
 
-  if(species.type == "multiplicative")
+  
+  if(is.null(formula))
   {
-    suitab.raster <- raster::overlay(suitab.raster, fun = prod)
-  } else if (species.type == "additive")
-  {
-    suitab.raster <- raster::overlay(suitab.raster, fun = sum)
-  } else if (species.type == "mixed")
-  {
-    layer.names <- sample(names(suitab.raster))
-    if(!is.null(formula))
+    if(species.type == "multiplicative")
     {
-      if (length(strsplit(formula, " ")[[1]]) != (nlayers(suitab.raster) * 2 - 1))
-      {stop("The entered formula isn't correct. Check that the layer names are correct, and that operators are correctly spaced:\n
-             formula = 'layername1 + layername2 * layername3 * etc.'")}
-      else if (any(!(strsplit(formula, " ")[[1]][!(strsplit(formula, " ")[[1]] %in% c("+", "*", "/", "-"))] %in% names(raster.stack))))
-      {
-        stop("The entered formula isn't correct. The layer names in the formula do not seem to correspond to layer names in raster.stack:\n
-             formula = 'layername1 + layername2 * layername3 * etc.'")
-      }
-    } else
+      formula <- paste(names(suitab.raster), collapse = " * ")
+      suitab.raster <- raster::overlay(suitab.raster, fun = prod)
+    } else if (species.type == "additive")
     {
-      formula <- layer.names[1]
-      for (i in layer.names[2:nlayers(suitab.raster)])
-      {
-        formula <- paste(formula, sample(c("*", "+"), 1), i)
-      }
-    }
-
-    operators <- strsplit(formula, " ")[[1]]
-    operators <- operators[(1:length(operators)) %% 2 == 0]
-    id <- c(1:nlayers(suitab.raster), 1:(nlayers(suitab.raster) - 1) + 0.5)
-    
-    mixed.fun <- NULL
-    eval(parse(text = paste("mixed.fun <- function(",
-                            paste("x", 1:nlayers(suitab.raster), sep = "", collapse = ", "),
-                            ") {",
-                            paste(c(paste("x", 1:nlayers(suitab.raster), sep = ""), operators)[order(id)], collapse = " "),
-                            "}"
-                            )))
-    
-    suitab.raster <- overlay(suitab.raster, fun = mixed.fun)
-    print(formula)
+      formula <- paste(names(suitab.raster), collapse = " + ")
+      suitab.raster <- raster::overlay(suitab.raster, fun = sum)
+    } else stop("If you do not provide a formula, please choose either species.type = 'additive' or 'multiplicative'")
   } else
   {
-    stop("species.type must be either 'multiplicative', 'additive' or 'mixed'")
+    if(any(!(all.vars(reformulate(formula)) %in% names(suitab.raster))))
+    {
+      stop("Please verify that the variable names in your formula are correctly spelled") 
+    } else if(any(!(names(suitab.raster) %in% all.vars(reformulate(formula)))))
+    {
+      stop("Please verify that your formula contains all the variables of your input raster stack")
+    } else
+    {
+      eval(parse(text = paste("custom.fun <- function(",
+                              paste(names(suitab.raster), collapse = ", "),
+                              ") {",
+                              form,
+                              "}"
+      )))
+      suitab.raster <- raster::overlay(suitab.raster, fun = custom.fun)
+      print(formula)
+    }
   }
+
   if(rescale)
   {
     suitab.raster <- (suitab.raster - suitab.raster@data@min) / (suitab.raster@data@max - suitab.raster@data@min)
   }
     
-  if(species.type == "mixed")
-  {
-    results <- list(approach = approach,
-                    
-                    details = list(variables = names(parameters),
-                                   sp.type = c(sp.type = species.type,
-                                               formula = formula),
-                                   rescale.each.response = rescale.each.response,
-                                   rescale = rescale,
-                                   parameters = parameters),
-                    suitab.raster = suitab.raster
-    )
-  } else
-  {
-    results <- list(approach = approach,
-                    details = list(variables = names(parameters),
-                                   sp.type = species.type,
-                                   rescale.each.response = rescale.each.response,
-                                   rescale = rescale,
-                                   parameters = parameters),
-                    suitab.raster = suitab.raster
-    )
-  }
+
+  results <- list(approach = approach,
+                  
+                  details = list(variables = names(parameters),
+                                 formula = formula,
+                                 rescale.each.response = rescale.each.response,
+                                 rescale = rescale,
+                                 parameters = parameters),
+                  suitab.raster = suitab.raster
+  )
+
   if(plot)
   {
     plot(results$suitab.raster, main = "Environmental suitability of the virtual species")
