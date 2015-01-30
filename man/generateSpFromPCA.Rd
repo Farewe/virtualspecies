@@ -5,8 +5,7 @@
 \title{Generate a virtual species distribution with a PCA of environmental variables}
 \usage{
 generateSpFromPCA(raster.stack, rescale = TRUE, niche.breadth = "any",
-  means = NULL, sds = NULL, pca = NULL, remove.collinearity = FALSE,
-  multicollinearity.cutoff = 0.7, sample.points = FALSE,
+  means = NULL, sds = NULL, pca = NULL, sample.points = FALSE,
   nb.points = 10000, plot = TRUE)
 }
 \arguments{
@@ -29,15 +28,6 @@ the PCA.}
 
 \item{pca}{a \code{dudi.pca} object. You can provide a pca object that you
 computed yourself with \code{\link[ade4]{dudi.pca}}}
-
-\item{remove.collinearity}{\code{TRUE} of \code{FALSE}. Can be set to \code{TRUE}
-to remove groups of collinear variables (at the cutoff \code{multicollinearity.cutoff})
-in your dataset: only one variable per group will be kept. See \code{\link{removeCollinearity}}
-for details.}
-
-\item{multicollinearity.cutoff}{a numeric value between 0 and 1. Only useful if
-\code{remove.collinearity = TRUE}. The cutoff of collinearity above which
-variables will be grouped together.}
 
 \item{sample.points}{\code{TRUE} of \code{FALSE}. If you have a large
 raster file then use this parameter to sample a number of points equal to

@@ -18,13 +18,6 @@
 #' the PCA.
 #' @param pca a \code{dudi.pca} object. You can provide a pca object that you 
 #' computed yourself with \code{\link[ade4]{dudi.pca}}
-#' @param remove.collinearity \code{TRUE} of \code{FALSE}. Can be set to \code{TRUE}
-#' to remove groups of collinear variables (at the cutoff \code{multicollinearity.cutoff})
-#' in your dataset: only one variable per group will be kept. See \code{\link{removeCollinearity}}
-#' for details.
-#' @param multicollinearity.cutoff a numeric value between 0 and 1. Only useful if
-#' \code{remove.collinearity = TRUE}. The cutoff of collinearity above which 
-#' variables will be grouped together.
 #' @param sample.points \code{TRUE} of \code{FALSE}. If you have a large
 #' raster file then use this parameter to sample a number of points equal to
 #' \code{nb.points}.
@@ -117,10 +110,9 @@
 
 
 generateSpFromPCA <- function(raster.stack, rescale = TRUE, niche.breadth = "any",
-                       means = NULL, sds = NULL, pca = NULL, 
-                       remove.collinearity = FALSE, multicollinearity.cutoff = 0.7,
-                       sample.points = FALSE, nb.points = 10000,
-                       plot = TRUE)
+                              means = NULL, sds = NULL, pca = NULL,
+                              sample.points = FALSE, nb.points = 10000,
+                              plot = TRUE)
 {
   if(!(is(raster.stack, "Raster")))
   {
@@ -153,24 +145,15 @@ generateSpFromPCA <- function(raster.stack, rescale = TRUE, niche.breadth = "any
     {stop("Please provide an appropriate pca.object (output of dudi.pca()) to make the pca plot.")}
     if(any(!(names(pca$tab) %in% names(raster.stack))))
     {stop("The variables used to make the pca must be the same as variables names in raster.stack")}
-    if(remove.collinearity)
-    {message("    - Collinearity will not be removed because you have already provided a PCA object.\n")}
-    
+        
     pca.object <- pca
     rm(pca)
     sel.vars <- names(raster.stack)
   } else
   {
-    if(remove.collinearity)
-    {
-      sel.vars <- removeCollinearity(raster.stack, select.variables = TRUE,
-                                     multicollinearity.cutoff = multicollinearity.cutoff,
-                                     sample.points = sample.points,
-                                     nb.points = nb.points)
-    } else
-    {
-      sel.vars <- names(raster.stack)
-    }
+    
+    sel.vars <- names(raster.stack)
+    
     raster.stack <- raster.stack[[sel.vars]]
     
     if(sample.points)
