@@ -78,13 +78,6 @@
 #' Raster of presence-absence}
 #' }
 #' The structure of the virtualspecies object can be seen using str()
-#' a \code{list} containing:
-#' \itemize{
-#' \item{\code{geographical.limit}: a list with two elements, the method used to
-#' limit the distribution and the area in which the distribution is restricted}
-#' \item{\code{occupied.area}: the area occupied by the virtual species as a
-#' Raster of presence-absence}
-#' }
 #' @export
 #' @import raster
 #' @author
