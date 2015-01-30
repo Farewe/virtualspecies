@@ -45,6 +45,9 @@
 #' \item{Gaussian responses to the first two axes are computed}
 #' \item{These responses are multiplied to obtain the final environmental suitability}}
 #' 
+#' If \code{rescale = TRUE}, the final environmental suitability is rescaled between 0 and 1,
+#' with the formula (val - min) / (max - min).
+#' 
 #' The shape of gaussian responses can be determined manually, by defining both
 #' \code{means} and \code{sds}, or randomly. The random generation is constrained
 #' by the argument \code{niche.breadth}, which controls the range of possible 

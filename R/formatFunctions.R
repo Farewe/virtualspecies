@@ -18,12 +18,15 @@
 #' \code{formatFunctions(
 #' bio1 = c(fun = "dnorm", mean = 1, sd = 0.5),
 #' bio2 = c(fun = "linearFun", a = 2, b = 5))}
+#' 
+#' 
+#' 
 #' @section Warning:
 #' Do not use 'x' as a name for your environmental variables.
 #' @param x NULL or a \code{RasterStack}. If you want to visualise the functions,
 #' provide your \code{RasterStack} here.
 #' @param rescale \code{TRUE} or \code{FALSE}. If \code{TRUE}, individual response
-#' plots are rescaled between 0 and 1.
+#' plots are rescaled between 0 and 1 with the formula (val - min) / (max - min).
 #' @param ... the parameters to be formatted. See details.
 #' @export
 #' @import raster

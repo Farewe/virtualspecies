@@ -35,7 +35,8 @@
 #' in \code{parameters}. This results in a probability of presence for each variable.}
 #' \item{If \code{rescale.each.response} is \code{TRUE}, each probability of presence is rescaled between 0 and 1.}
 #' \item{The final probability of presence is calculated according to the chosen \code{species.type}.}
-#' \item{If \code{rescale} is \code{TRUE}, the final probability of presence is rescaled between 0 and 1.}
+#' \item{If \code{rescale} is \code{TRUE}, the final probability of presence is rescaled between 0 and 1,
+#' with the formula (val - min) / (max - min).}
 #' }
 #' The RasterStack containing environmental variables must have consistent names, 
 #' because they will be checked with the \code{parameters}. For example, they can be named
