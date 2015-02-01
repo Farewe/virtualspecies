@@ -12,12 +12,13 @@
 #' \item{Generate a virtual species distributions from environmental variables.
 #' This can be done by 
 #' \itemize{
-#' \item{defining the response functions to each environmental 
-#' variables with \code{\link{generateSpFromFun}}}
+#' \item{defining partial response functions to each environmental 
+#' variable, and then combining them to compute the overall environmental suitability,
+#' with \code{\link{generateSpFromFun}}}
 #' \item{computing a PCA among
 #' environmental variables, and simulating the response of the species along 
 #' the two first axes of the PCA with \code{\link{generateSpFromPCA}}}}
-#' This step can be entirely randomised with \code{\link{generateRandomSp}}
+#' This step can be randomised with \code{\link{generateRandomSp}}
 #' }
 #' \item{Convert the virtual species distribution into presence-absence, with
 #' \code{\link{convertToPA}}}
