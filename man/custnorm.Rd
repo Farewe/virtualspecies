@@ -13,7 +13,7 @@ custnorm(x, mean, diff, prob)
 
 \item{diff}{a numeric value or vector. The absolute difference between the mean and extremes.}
 
-\item{proba}{a numeric value or vector. The percentage of the area under the curve between the
+\item{prob}{a numeric value or vector. The percentage of the area under the curve between the
 chosen extreme values}
 }
 \value{

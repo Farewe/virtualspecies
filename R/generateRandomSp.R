@@ -62,8 +62,8 @@
 #' 
 #' Note that in case of numerouse predictor variables, the "response" approach will
 #' not work well because it will often generate contradicting response functions 
-#' (e.g., mean annual temperature optimum at 0°C and temperature of the coldest month at
-#' 10°C). In these case, it is advised to use the PCA approach (by default, a PCA approach
+#' (e.g., mean annual temperature optimum at degrees C and temperature of the coldest month at
+#' 10 degrees C). In these case, it is advised to use the PCA approach (by default, a PCA approach
 #' will be used if there are more than 6 predictor variables).
 #' 
 #' If \code{rescale.each.response = TRUE}, then the probability response to each

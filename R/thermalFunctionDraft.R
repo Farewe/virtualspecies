@@ -1,28 +1,8 @@
-# qnorm(p = 0.44)
+########## WORK IN PROGRESS ##########
 # 
-# 
-# -7 / qnorm(p = 0.01)
-# 
-# 
-# x <- 0:30
-# 
-# plot(dnorm(x, mean = 20, sd = 3.01) ~ x, type = "l")
-# 
-# 
-# abline (v = c(13, 27))
-# 
-# mean = 20
-# diff = 7
-# proba = 0.99
-# 
-# norm2 <- function(x, mean, diff, proba)
-# {
-#   proba <- proba + (1 - proba)/2
-#   sd <- - diff / qnorm(p = 1 - proba)
-#   dnorm(x, mean = mean, sd = sd)
-# }
-# 
-# plot(norm2(x = x, mean = 20, diff = 7, proba = 0.99) ~ x, type = "l")
+# The function "thermalResponse" is currently being improved so that its  
+# two parameters (rho and sigma) can be automatically adjusted according to
+# user-defined critical temperature thresholds (CTmin and CTmax).
 # 
 # 
 # x <- seq(0, 30, length = 1000)

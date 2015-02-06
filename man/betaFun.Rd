@@ -7,6 +7,8 @@
 betaFun(x, p1, p2, alpha, gamma)
 }
 \arguments{
+\item{x}{a numeric value or vector. The input environmental variable.}
+
 \item{p1}{a numeric value or vector. Lower tolerance bound for the species}
 
 \item{p2}{a a numeric value or vector. Upper tolerance bound for the species}

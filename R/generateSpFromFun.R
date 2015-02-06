@@ -204,10 +204,11 @@ generateSpFromFun <- function(raster.stack, parameters,
       stop("Please verify that your formula contains all the variables of your input raster stack")
     } else
     {
+      custom.fun <- NULL # To remove the note in rcheck
       eval(parse(text = paste("custom.fun <- function(",
                               paste(names(suitab.raster), collapse = ", "),
                               ") {",
-                              form,
+                              formula,
                               "}"
       )))
       suitab.raster <- raster::overlay(suitab.raster, fun = custom.fun)

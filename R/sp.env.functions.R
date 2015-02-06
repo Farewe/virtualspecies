@@ -96,7 +96,7 @@ quadraticFun <- function(x, a, b, c) {a * x^2 + b * x + c}
 #' @param x a numeric value or vector. The input environmental variable.
 #' @param mean a numeric value or vector. The optimum (mean) of the normal curve
 #' @param diff a numeric value or vector. The absolute difference between the mean and extremes.
-#' @param proba a numeric value or vector. The percentage of the area under the curve between the 
+#' @param prob a numeric value or vector. The percentage of the area under the curve between the 
 #' chosen extreme values
 #' @return a numeric value or vector resulting from the function
 #' @export
@@ -122,7 +122,7 @@ quadraticFun <- function(x, a, b, c) {a * x^2 + b * x + c}
 custnorm <- function(x, mean, diff, prob)
 {
   prob <- prob + (1 - prob)/2
-  sd <- - diff / qnorm(p = 1 - proba)
+  sd <- - diff / qnorm(p = 1 - prob)
   dnorm(x, mean = mean, sd = sd)
 }
 
@@ -132,6 +132,7 @@ custnorm <- function(x, mean, diff, prob)
 #' \deqn{\frac{1}{{1 + e^{\frac{x - \beta}{\alpha}}}}}{
 #' P = k (x - p1)^\alpha (p2 - x)^\gamma}
 #' k is automatically estimated to have a maximum value of P equal to 1.
+#' @param x a numeric value or vector. The input environmental variable.
 #' @param p1 a numeric value or vector. Lower tolerance bound for the species
 #' @param p2 a a numeric value or vector. Upper tolerance bound for the species
 #' @param alpha a numeric value or vector. Parameter controlling the shape of the curve (see details)
@@ -169,7 +170,7 @@ betaFun <- function(x, p1, p2, alpha, gamma)
 
 #' Huisman-Olff-Fresco response function
 #' 
-#' @description A Huisman-Olff-Fresco response function:
+##' @description A Huisman-Olff-Fresco response function:
 #' \deqn{P = \frac{1}{{1 + e^{a + b x}}} \frac{1}{1 + e^{c - dx}}}{
 #' P = (1 / (1 + exp(a + bx))) * (1 / (1 + exp(c -dx)))}
 #' @param x a numeric value or vector
@@ -189,18 +190,18 @@ betaFun <- function(x, p1, p2, alpha, gamma)
 #' plot(P ~ temp, type = "l")
 #' 
 #' 
-.HOFFun <- function(x, a, b, c, d)
-{
-  if (a == 0 & b == 0)
-  {
-    stop("a and b can't both be set to zero")
-  } else if (c == 0 & d == 0)
-  {
-    stop("c and d can't both be set to zero")
-  }
-  M/(1 + exp(a + b * x)) * 1/(1 + exp(c - d * x))
-  (1 / (1 + exp(a + b * x))) * (1 / (1 + exp(c - d * x)))
-}
+# .HOFFun <- function(x, a, b, c, d)
+# {
+#   if (a == 0 & b == 0)
+#   {
+#     stop("a and b can't both be set to zero")
+#   } else if (c == 0 & d == 0)
+#   {
+#     stop("c and d can't both be set to zero")
+#   }
+#   M/(1 + exp(a + b * x)) * 1/(1 + exp(c - d * x))
+#   (1 / (1 + exp(a + b * x))) * (1 / (1 + exp(c - d * x)))
+# }
 
 
 # Functions useful for the PCA approach
