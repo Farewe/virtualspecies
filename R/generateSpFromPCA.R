@@ -47,12 +47,12 @@
 #' standard deviation values. This range of values is based on
 #' a fraction of the axis:
 #' \itemize{
-#' \item{\code{"any"}: the standard deviations can have values from 1/100 to 1/2
-#' of the axes' span}
-#' \item{\code{"narrow"}: the standard deviations can have values from 1/100 to 1/10
-#' of the axes' span}
-#' \item{\code{"wide"}: the standard deviations can have values from 1/10 to 1/2
-#' of the axes' span}
+#' \item{\code{"any"}: the standard deviations can have values from 1% to 50% of axes' ranges
+#' }
+#' \item{\code{"narrow"}: the standard deviations are limited between 1% and 10% of axes' ranges
+#' }
+#' \item{\code{"wide"}: the standard deviations are limited between 1% and 50% of axes' ranges
+#' }
 #' }
 #' @import raster
 #' @export
