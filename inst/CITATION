@@ -1,0 +1,9 @@
+bibentry(bibtype = "Article",
+         title = "virtualspecies, an R package to generate virtual species distributions",
+         author = c(person("Boris", "Leroy"),
+                    person(given = c("Christine", "N"), "Meynard"),
+                    person("Celine", "Bellard"),
+                    person("Franck", "Courchamp")),
+         year = "2015",
+		 doi = "10.1111/ecog.01388",
+         journal = "Ecography")
