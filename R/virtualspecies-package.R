@@ -54,6 +54,8 @@
 #' \item{\code{\link{rworldmap}} is used to obtain free world shapefiles, in order to create
 #' dispersal limitations and sampling biases.}
 #' }
+#' @references
+#' Leroy, B. et al. 2015. virtualspecies, an R package to generate virtual species distributions. Ecography. In press.
 #' @author
 #' Boris Leroy \email{leroy.boris@@gmail.com}
 #' 
