@@ -65,7 +65,7 @@
 #' with help from C. N. Meynard, C. Bellard & F. Courchamp
 #' @seealso \code{\link{generateSpFromFun}} to generate a virtual species with
 #' the responses to each environmental variables.
-#' #' @return a \code{list} with 3 elements:
+#' @return a \code{list} with 3 elements:
 #' \itemize{
 #' \item{\code{approach}: the approach used to generate the species, \emph{i.e.}, \code{"pca"}}
 #' \item{\code{details}: the details and parameters used to generate the species}
@@ -254,8 +254,7 @@ generateSpFromPCA <- function(raster.stack, rescale = TRUE, niche.breadth = "any
   
   if(plot)
   {
-    if(!("null device" %in% names(dev.cur()))) dev.off()
-    par(mar = c(5.1, 4.1, 4.1, 2.1))
+    op <- par(mar = c(5.1, 4.1, 4.1, 2.1))
     layout(matrix(nrow = 2, ncol = 1, c(1, 2)))
 
     plotResponse(x = raster.stack, approach = "pca",
@@ -272,6 +271,7 @@ generateSpFromPCA <- function(raster.stack, rescale = TRUE, niche.breadth = "any
            legend = c(1, 0.8, 0.6, 0.4, 0.2, 0),
            fill = terrain.colors(6), bty = "n")
     title("Environmental suitability of the virtual species")
+    par(op)
   }
   
   results <- list(approach = "pca",
