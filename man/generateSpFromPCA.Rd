@@ -134,6 +134,5 @@ with help from C. N. Meynard, C. Bellard & F. Courchamp
 \seealso{
 \code{\link{generateSpFromFun}} to generate a virtual species with
 the responses to each environmental variables.
-#'
 }
 

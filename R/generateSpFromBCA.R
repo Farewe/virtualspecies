@@ -1,14 +1,10 @@
 #' Generate a virtual species distribution from a BCA of environmental variables
 #' 
 #' 
+#' The purpose of this function is to discriminate between two sets of
+#' environmental conditions, for example to genarate a species in non-analogous 
+#' environmental conditions between two time horizons.
 #' 
-#' This function generates a virtual species distribution by computing a Between
-#' Component Analysis based on two different stacks of environmental variables.
-#' The purpose of this function is to discriminate between the two clouds of
-#' environmental conditions, for example to identify non-analogous environmental 
-#' conditions between two time horizons. The response of the species is then 
-#' simulated along the two first axes of the BCA with gaussian functions in the
-#' same way as in \code{\link{generateSpFromPCA}}.
 #' 
 #' 
 #' @param raster.stack.current a RasterStack object, in which each layer represent an environmental 
@@ -40,14 +36,19 @@
 #' In this case, you should run the function with \code{sample.points = TRUE} 
 #' and set the number of points to sample with \code{nb.points}.
 #' @details
-#' A Between Component Analysis is used to separate two sets of environmental conditions
-#' by performing a PCA of their respective barycenter coordinates in a preliminary PCA.
-#' Thus, this function proceeds in 4 steps:
+#' This function generates a virtual species distribution by computing a Between
+#' Component Analysis based on two different stacks of environmental variables.
+#' The response of the species is then simulated along the two first axes of the BCA with gaussian functions in the
+#' same way as in \code{\link{generateSpFromPCA}}.
+#' 
+#' A Between Component Analysis is used to separate two sets of environmental conditions.
+#' This function proceeds in 4 steps:
 #' \enumerate{
-#' \item{A Principal Component Analysis of both environmental conditions is generated}
+#' \item{A Principal Component Analysis of both sets of environmental conditions is generated}
 #' \item{A BCA of this PCA is generated using the function \code{\link[ade4:bca]{bca}}
-#' from package \code{ade4}. Note that at this step we choose from \code{raster.stack.future}
-#' one randomly point, and we use this single point as if it was a third set of environmental
+#' from package \code{ade4}. Note that at this step we choose  one random point
+#' from \code{raster.stack.future},
+#' and we use this single point as if it was a third set of environmental
 #' conditions for the BCA. This trick allows us to subtly change the shape of the bca in order to
 #' generate different types of conditions.}
 #' \item{Gaussian responses to the first two axes are computed}
@@ -98,7 +99,7 @@
 #' @export
 #' 
 #' 
-#' @authors
+#' @author
 #' Robin Delsol, Boris Leroy
 #'
 #' Maintainer: Boris Leroy \email{leroy.boris@@gmail.com}
