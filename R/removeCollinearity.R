@@ -118,6 +118,7 @@ removeCollinearity <- function(raster.stack, multicollinearity.cutoff = .7,
   
   if(plot)
   {
+    op <- par(no.readonly = TRUE)
     par(mar = c(5.1, 5.1, 4.1, 3.1))
     plot(ahc, hang = -1, xlab = "", ylab = "Distance (1 - Pearson's r)", 
          main = "", las = 1,
@@ -134,7 +135,7 @@ removeCollinearity <- function(raster.stack, multicollinearity.cutoff = .7,
       title(paste('No intercorrelation among variables at cutoff', 
                   multicollinearity.cutoff))
     }
-
+    par(op)
   }
   
   # Random selection of variables

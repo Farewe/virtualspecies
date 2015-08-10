@@ -1,8 +1,8 @@
 Package: virtualspecies
 Type: Package
 Title: Generation of Virtual Species Distributions
-Version: 1.1
-Date: 2015-04-29
+Version: 1.2
+Date: 2015-08-10
 Author: Boris Leroy, Christine N. Meynard, Celine Bellard and Franck Courchamp
 Maintainer: Boris Leroy <leroy.boris@gmail.com>
 Description: Provides a framework for generating virtual species distributions, 

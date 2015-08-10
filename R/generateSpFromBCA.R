@@ -327,8 +327,8 @@ generateSpFromBCA <- function(raster.stack.current, raster.stack.future, rescale
     message(" - Ploting response and suitability\n")
     
     stack.lengths <- c(nrow(env.df.current), nrow(env.df.future))
-    
-    op <- par(mar = c(5.1, 4.1, 4.1, 2.1))
+    op <- par(no.readonly = TRUE)
+    par(mar = c(5.1, 4.1, 4.1, 2.1))
     layout(matrix(nrow = 2, ncol = 2, c(1, 1, 2, 3 )))
     
     plotResponse(x = raster.stack.current, approach = "bca",

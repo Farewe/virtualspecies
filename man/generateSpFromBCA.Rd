@@ -70,8 +70,9 @@ This function proceeds in 4 steps:
 \enumerate{
 \item{A Principal Component Analysis of both sets of environmental conditions is generated}
 \item{A BCA of this PCA is generated using the function \code{\link[ade4:bca]{bca}}
-from package \code{ade4}. Note that at this step we choose from \code{raster.stack.future}
-one randomly point, and we use this single point as if it was a third set of environmental
+from package \code{ade4}. Note that at this step we choose  one random point
+from \code{raster.stack.future},
+and we use this single point as if it was a third set of environmental
 conditions for the BCA. This trick allows us to subtly change the shape of the bca in order to
 generate different types of conditions.}
 \item{Gaussian responses to the first two axes are computed}
