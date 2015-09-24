@@ -12,7 +12,7 @@ generateSpFromPCA(raster.stack, rescale = TRUE, niche.breadth = "any",
 \item{raster.stack}{a RasterStack object, in which each layer represent an environmental
 variable.}
 
-\item{rescale}{\code{TRUE} of \code{FALSE}. Should the output suitability raster be
+\item{rescale}{\code{TRUE} or \code{FALSE}. Should the output suitability raster be
 rescaled between 0 and 1?}
 
 \item{niche.breadth}{\code{"any"}, \code{"narrow"} or \code{"wide"}. This parameter
@@ -134,6 +134,5 @@ with help from C. N. Meynard, C. Bellard & F. Courchamp
 \seealso{
 \code{\link{generateSpFromFun}} to generate a virtual species with
 the responses to each environmental variables.
-#'
 }
 

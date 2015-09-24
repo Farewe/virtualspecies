@@ -6,7 +6,7 @@
 #' determined with gaussian functions.
 #' @param raster.stack a RasterStack object, in which each layer represent an environmental 
 #' variable.
-#' @param rescale \code{TRUE} of \code{FALSE}. Should the output suitability raster be
+#' @param rescale \code{TRUE} or \code{FALSE}. Should the output suitability raster be
 #' rescaled between 0 and 1?
 #' @param niche.breadth \code{"any"}, \code{"narrow"} or \code{"wide"}. This parameter
 #' defines how tolerant is the species regarding environmental conditions by adjusting
@@ -65,7 +65,7 @@
 #' with help from C. N. Meynard, C. Bellard & F. Courchamp
 #' @seealso \code{\link{generateSpFromFun}} to generate a virtual species with
 #' the responses to each environmental variables.
-#' #' @return a \code{list} with 3 elements:
+#' @return a \code{list} with 3 elements:
 #' \itemize{
 #' \item{\code{approach}: the approach used to generate the species, \emph{i.e.}, \code{"pca"}}
 #' \item{\code{details}: the details and parameters used to generate the species}
@@ -187,7 +187,7 @@ generateSpFromPCA <- function(raster.stack, rescale = TRUE, niche.breadth = "any
     {stop("Please provide a vector with 2 means for the gaussian function (one for each of the two pca axes)")}
   } else
   {
-    means <- pca.object$li[sample(1:nrow(pca.object$li), 1), ][1, ]
+    means <- pca.object$li[sample(1:nrow(pca.object$li), 1), ] # [1, ]
     means <- c(mean1 = means[1, 1],
                mean2 = means[1, 2])
   }
@@ -254,7 +254,7 @@ generateSpFromPCA <- function(raster.stack, rescale = TRUE, niche.breadth = "any
   
   if(plot)
   {
-    if(!("null device" %in% names(dev.cur()))) dev.off()
+    op <- par(no.readonly = TRUE)
     par(mar = c(5.1, 4.1, 4.1, 2.1))
     layout(matrix(nrow = 2, ncol = 1, c(1, 2)))
 
@@ -272,6 +272,7 @@ generateSpFromPCA <- function(raster.stack, rescale = TRUE, niche.breadth = "any
            legend = c(1, 0.8, 0.6, 0.4, 0.2, 0),
            fill = terrain.colors(6), bty = "n")
     title("Environmental suitability of the virtual species")
+    par(op)
   }
   
   results <- list(approach = "pca",

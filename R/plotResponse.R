@@ -151,6 +151,7 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = TRUE, 
     mfrow <- c(floor(sqrt(length(parameters))),
                ceiling(sqrt(length(parameters))))
     if (prod(mfrow) < length(parameters)) {mfrow[1] <- mfrow[1] + 1}
+    op <- par(no.readonly = TRUE)
     par(mfrow = mfrow,
         mar = c(4.1, 4.1, 0.1, 0.1))
     for(i in names(parameters))
@@ -183,6 +184,7 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = TRUE, 
         mtext(side = 1, text = i, line = 2, cex = args$cex.lab)
       }
     }
+    par(op)
   } else if (approach == "pca")
   {
     pca.object <- details$pca
@@ -196,6 +198,7 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = TRUE, 
     ymin <- min(pca.object$li[, 2]) - 0.3 * diff(range(pca.object$li[, 2]))
     ymax <- max(pca.object$li[, 2])
     
+    op <- par(no.readonly = TRUE)
     par(mar = c(4.1, 4.1, 4.1, 4.6))
     defaults <- list(x = pca.object$li,
                      col = c(grey(.8), rev(heat.colors(150))[51:200])[match(round(probabilities * 100, 0), 0:100)],
@@ -311,10 +314,11 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = TRUE, 
          lty = 1,
          xlab = "", ylab = "", xaxt = "n", yaxt = "n")
     
+    par(op)
     } else 
-  {
-    stop("The argument approach was not valid, please provide either 'response' or 'pca'")
-  }
+    {
+      stop("The argument approach was not valid, please provide either 'response' or 'pca'")
+    }
 }
 
 

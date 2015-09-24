@@ -86,7 +86,6 @@ formatFunctions <- function(x = NULL, rescale = TRUE, ...)
   }
   if (is(x, "Raster"))
   {
-    
     plotResponse(x = x, parameters = details, rescale = rescale, approach = "response")
   } else if (!is.null(x))
   {
