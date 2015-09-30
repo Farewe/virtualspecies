@@ -129,7 +129,7 @@ custnorm <- function(x, mean, diff, prob)
 #' Beta response function
 #' 
 #' @description Generation of a beta response curve (see references) according to the equation:
-#' \deqn{\frac{1}{{1 + e^{\frac{x - \beta}{\alpha}}}}}{
+#' \deqn{k * (x - p1)^{\alpha} * (p2 - x)^{\gamma}}{
 #' P = k (x - p1)^\alpha (p2 - x)^\gamma}
 #' k is automatically estimated to have a maximum value of P equal to 1.
 #' @param x a numeric value or vector. The input environmental variable.

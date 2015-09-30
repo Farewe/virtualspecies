@@ -178,9 +178,14 @@ convertToPA <- function(x,
         warning("Both beta and species.prevalence were provided. beta will be
                 ignored.")
         beta <- NULL
-      } else if(beta < sp.raster@data@min | beta > sp.raster@data@max)
+      } else if(beta < sp.raster@data@min) 
       {
-        stop("beta must be in the range of your suitability raster")
+        warning("beta is lower than all values in your suitability raster. The
+                species will most likely be present everywhere")
+      } else if(beta > sp.raster@data@max)
+      {
+        warning("beta is higher than all values in your suitability raster. 
+                The species will most likely be absent everywhere")
       }
     } else if(beta == "random")
     {
@@ -201,7 +206,7 @@ convertToPA <- function(x,
       }
       } else
       {
-        stop("beta must either be 'random', a numeric value within the range of
+        stop("beta must either be 'random', a numeric value (preferably within the range of
              your data or NULL")
       }
       } else if(PA.method == "probability")
@@ -239,9 +244,14 @@ convertToPA <- function(x,
         {
           if(is.numeric(beta))
           {
-            if(beta < sp.raster@data@min | beta > sp.raster@data@max)
+            if(beta < sp.raster@data@min) 
             {
-              stop("beta must be in the range of your suitability raster")
+              warning("beta is lower than all values in your suitability raster. The
+                      species will most likely be present everywhere")
+            } else if(beta > sp.raster@data@max)
+            {
+              warning("beta is higher than all values in your suitability raster. 
+                      The species will most likely be absent everywhere")
             }
           } else if(beta == "random")
           {
@@ -249,8 +259,8 @@ convertToPA <- function(x,
                                sp.raster@data@max, length = 1000), 1)
           } else
           {
-            stop("beta must either be 'random', a numeric value within the range of
-                 your data or NULL")
+            stop("beta must either be 'random', a numeric value (preferably within the range of
+                 your data) or NULL")
           }
           }
         

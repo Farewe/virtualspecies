@@ -129,21 +129,21 @@
 #' 
 
 generateRandomSp <- function(raster.stack, 
-                                  approach = "automatic",
-                                  rescale = TRUE,
-                                  convert.to.PA = TRUE,
-                                  relations = c("gaussian", "linear", "logistic", "quadratic"),
-                                  rescale.each.response = TRUE,
-                                  realistic.sp = TRUE,
-                                  species.type = "multiplicative",
-                                  niche.breadth = "any",
-                                  sample.points = FALSE, 
-                                  nb.points = 10000,
-                                  PA.method = "probability",
-                                  alpha = -.1,
-                                  beta = "random",
-                                  species.prevalence = NULL,
-                                  plot = TRUE)
+                             approach = "automatic",
+                             rescale = TRUE,
+                             convert.to.PA = TRUE,
+                             relations = c("gaussian", "linear", "logistic", "quadratic"),
+                             rescale.each.response = TRUE,
+                             realistic.sp = TRUE,
+                             species.type = "multiplicative",
+                             niche.breadth = "any",
+                             sample.points = FALSE, 
+                             nb.points = 10000,
+                             PA.method = "probability",
+                             alpha = -.1,
+                             beta = "random",
+                             species.prevalence = NULL,
+                             plot = TRUE)
 {
   if(!(is(raster.stack, "Raster")))
   {
@@ -170,16 +170,16 @@ generateRandomSp <- function(raster.stack,
   {
     stop("Argument approach was misspecified. Either choose 'automatic', 'random', 'response' or 'pca'.")
   }
-
+  
   var.names <- names(raster.stack)
   
   if(approach == "pca")
   {
     results <- generateSpFromPCA(raster.stack,
-                          niche.breadth = niche.breadth,
-                          sample.points = sample.points, 
-                          nb.points = nb.points,
-                          plot = FALSE)
+                                 niche.breadth = niche.breadth,
+                                 sample.points = sample.points, 
+                                 nb.points = nb.points,
+                                 plot = FALSE)
   } else if (approach == "response")
   {
     parameters <- list()
@@ -200,7 +200,7 @@ generateRandomSp <- function(raster.stack,
       if(realistic.sp) cur.rast <- cur.rast * valid.cells # Cur.rast is here restricted to current suitable conds
       
       type <- sample(relations, 1)
-
+      
       if (type == "gaussian")
       {
         parameters[[cur.var]] <- list(fun = 'dnorm',
@@ -278,9 +278,9 @@ generateRandomSp <- function(raster.stack,
   }
   
   
-
-
-
+  
+  
+  
   if(convert.to.PA == TRUE)
   {
     message(" - Converting into Presence - Absence\n")
