@@ -115,7 +115,7 @@ limitDistribution <- function(x,
   
   if("virtualspecies" %in% class(x))
   {
-    if(class(x$pa.raster) == "RasterLayer")
+    if("RasterLayer" %in% class(x$pa.raster))
     {
       sp.raster <- x$pa.raster
       results <- x

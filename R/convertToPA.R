@@ -153,12 +153,12 @@ convertToPA <- function(x,
 {
   if("virtualspecies" %in% class(x))
   {
-    if(class(x$suitab.raster) == "RasterLayer")
+    if("RasterLayer" %in% class(x$suitab.raster))
     {
       sp.raster <- x$suitab.raster
     } else stop("x must be:\n- a raster layer object\nor\n- the output list from functions
                generateSpFromFun(), generateSpFromPCA() or generateRandomSp()")
-  } else if (class(x) == "RasterLayer")
+  } else if ("RasterLayer" %in% class(x))
   {
     sp.raster <- x
   } else stop("x must be:\n- a raster layer object\nor\n- the output list from functions
@@ -539,7 +539,7 @@ convertToPA <- function(x,
     x$pa.raster = PA.raster
     results <- x
     if(plot) plot(stack(results$suitab.raster, results$pa.raster), main = c("Suitability", "Presence-absence"))
-  } else if (class(x) == "RasterLayer")
+  } else if ("RasterLayer" %in% class(x))
   {
     if(PA.method == "threshold")
     {
