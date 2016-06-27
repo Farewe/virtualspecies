@@ -449,7 +449,7 @@ convertToPA <- function(x,
           beta <- beta.test[2, 1]
         } else 
         {
-          while (all(abs(epsilon) > 0.01))
+          while (all(abs(epsilon) > 0.001))
           {
             beta <- (beta.test[which(epsilon == max(epsilon[epsilon < 0])), 1] + 
                        beta.test[which(epsilon == min(epsilon[epsilon > 0])), 1]) / 2
