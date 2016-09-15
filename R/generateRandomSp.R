@@ -204,21 +204,21 @@ generateRandomSp <- function(raster.stack,
       if (type == "gaussian")
       {
         parameters[[cur.var]] <- list(fun = 'dnorm',
-                                      args = list(mean = sample(seq(cur.rast@data@min,
-                                                                    cur.rast@data@max, 
-                                                                    length = 100000), 1),
-                                                  sd = sample(seq(0, 
-                                                                  (raster.stack[[cur.var]]@data@max - raster.stack[[cur.var]]@data@min), 
-                                                                  length = 100000), 1))
+                                      args = c(mean = sample(seq(cur.rast@data@min,
+                                                                 cur.rast@data@max, 
+                                                                 length = 100000), 1),
+                                               sd = sample(seq(0, 
+                                                               (raster.stack[[cur.var]]@data@max - raster.stack[[cur.var]]@data@min), 
+                                                               length = 100000), 1))
         )
       } else if (type == "linear")
       { # At the moment this is not really useful because the rescale will transforme the results in either 0:1 or 1:0, regardless of the slope
         # To be improved later
         parameters[[cur.var]] <- list(fun = 'linearFun',
-                                      args = list(a = sample(seq(-1, 1, length = 100), 1),
-                                                  b = sample(seq(raster.stack[[cur.var]]@data@min, 
-                                                                 raster.stack[[cur.var]]@data@max, 
-                                                                 length = 100000), 1))
+                                      args = c(a = sample(seq(-1, 1, length = 100), 1),
+                                               b = sample(seq(raster.stack[[cur.var]]@data@min, 
+                                                              raster.stack[[cur.var]]@data@max, 
+                                                              length = 100000), 1))
         )
       } else if (type == "logistic")
       {
@@ -246,8 +246,8 @@ generateRandomSp <- function(raster.stack,
         }
         
         parameters[[cur.var]] <- list(fun = 'logisticFun',
-                                      args = list(alpha = alpha.t,
-                                                  beta = beta.t)
+                                      args = c(alpha = alpha.t,
+                                               beta = beta.t)
         )
       } else if (type == "quadratic")
       {
@@ -257,9 +257,9 @@ generateRandomSp <- function(raster.stack,
         a <- sample(seq(-.01, -20, length = 10000), 1)
         b <- - max.point * 2 * a
         parameters[[cur.var]] <- list(fun = 'quadraticFun',
-                                      args = list(a = a,
-                                                  b = b,
-                                                  c = 0)
+                                      args = c(a = a,
+                                               b = b,
+                                               c = 0)
         )
         
       }
