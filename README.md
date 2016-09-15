@@ -1,3 +1,10 @@
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/virtualspecies)](http://cran.r-project.org/package=virtualspecies)
+[![rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/virtualspecies)](http://r-pkg.org/pkg/virtualspecies)
+[![rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/grand-total/virtualspecies)](http://r-pkg.org/pkg/virtualspecies)
+[![Research software impact](http://depsy.org/api/package/cran/virtualspecies/badge.svg)](http://depsy.org/package/r/virtualspecies)
+
+==============
+
 virtualspecies
 ==============
 
