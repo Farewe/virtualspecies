@@ -197,7 +197,7 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = TRUE,
     if(is.null(axes.to.plot))
     {
       axes.to.plot <- axes[1:2]
-    } else if (length(axes.to.plot !=2))
+    } else if (length(axes.to.plot) != 2)
     {
       stop("Please provide 2 values in axes.to.plot (plot 3 or more axes at a time is currently unsupported)")
     } else if (any(!(axes.to.plot %in% axes)))
