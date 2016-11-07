@@ -103,10 +103,10 @@ removeCollinearity <- function(raster.stack, multicollinearity.cutoff = .7,
                        dimnames = list(names(raster.stack), names(raster.stack)))
   
   # Correlation based on Pearson
-  cor.matrix <- 1 - abs(cor(env.df, method = "pearson"))
+  cor.matrix <- 1 - abs(stats::cor(env.df, method = "pearson"))
   
   # Transforming the correlation matrix into an ascendent hierarchical classification
-  dist.matrix <- as.dist(cor.matrix)
+  dist.matrix <- stats::as.dist(cor.matrix)
   ahc <- stats::hclust(dist.matrix, method = "complete")
   groups <- stats::cutree(ahc, h = 1 - multicollinearity.cutoff)
   if(length(groups) == max(groups))
@@ -119,20 +119,20 @@ removeCollinearity <- function(raster.stack, multicollinearity.cutoff = .7,
   if(plot)
   {
     op <- par(no.readonly = TRUE)
-    par(mar = c(5.1, 5.1, 4.1, 3.1))
+    graphics::par(mar = c(5.1, 5.1, 4.1, 3.1))
     plot(ahc, hang = -1, xlab = "", ylab = "Distance (1 - Pearson's r)", 
          main = "", las = 1,
          sub = "", axes = F)
-    axis(2, at = seq(0, 1, length = 6), las = 1)
+    graphics::axis(2, at = seq(0, 1, length = 6), las = 1)
     if(mc)
     {
-      title(paste('Groups of intercorrelated variables at cutoff', 
+      graphics::title(paste('Groups of intercorrelated variables at cutoff', 
                   multicollinearity.cutoff))
       par(xpd = T)
       rect.hclust(ahc, h = 1 - multicollinearity.cutoff)
     } else
     {
-      title(paste('No intercorrelation among variables at cutoff', 
+      graphics::title(paste('No intercorrelation among variables at cutoff', 
                   multicollinearity.cutoff))
     }
     par(op)

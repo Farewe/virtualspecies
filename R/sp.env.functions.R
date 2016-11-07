@@ -204,25 +204,6 @@ betaFun <- function(x, p1, p2, alpha, gamma)
 # }
 
 
-# Functions useful for the PCA approach
-
-.f <- function(x, co) x %*% co
-
-.pca.coordinates <- function(x, pca, na.rm)
-{
-  x <- sweep(x, 2L, pca$cent, check.margin=FALSE)
-  x <- sweep(x, 2L, pca$norm, "/", check.margin=FALSE)
-  x1 <- apply(x, 1, .f, co = pca$c1[, 1])
-  x2 <- apply(x, 1, .f, co = pca$c1[, 2])
-  return(cbind(x1, x2))
-}
-
-.prob.gaussian <- function(x, means, sds)
-{
-  dnorm(x[1], mean = means[1], sd = sds[1]) * dnorm(x[2], mean = means[2], sd = sds[2])
-}
-
-
 .thermalFun <- function(Pmax, Tb, To, rho, sigma)
 {
   Pmax * exp(-exp(rho * (Tb - To) - 6) - sigma * (Tb - To)^2)

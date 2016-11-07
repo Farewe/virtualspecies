@@ -1,8 +1,8 @@
 Package: virtualspecies
 Type: Package
 Title: Generation of Virtual Species Distributions
-Version: 1.3-4
-Date: 2016-06-27
+Version: 1.4
+Date: 2016-11-07
 Author: Boris Leroy, Christine N. Meynard, Celine Bellard and Franck Courchamp
 Maintainer: Boris Leroy <leroy.boris@gmail.com>
 Description: Provides a framework for generating virtual species distributions,
@@ -16,6 +16,11 @@ Depends:
 Imports:
     ade4,
     dismo,
-    rworldmap
+    graphics,
+    grDevices,
+    methods,
+    rworldmap,
+    stats,
+    utils
 URL: http://borisleroy.com/virtualspecies
 RoxygenNote: 5.0.1

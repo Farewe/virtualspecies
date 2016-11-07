@@ -4,7 +4,8 @@
 \alias{plotResponse}
 \title{Visualise the response of the virtual species to environmental variables}
 \usage{
-plotResponse(x, parameters = NULL, approach = NULL, rescale = TRUE, ...)
+plotResponse(x, parameters = NULL, approach = NULL, rescale = TRUE,
+  axes.to.plot = NULL, no.plot.reset = FALSE, ...)
 }
 \arguments{
 \item{x}{the output from \code{\link{generateSpFromFun}}, \code{\link{generateSpFromPCA}}, 
@@ -20,6 +21,12 @@ approach: either \code{"response"} for a per-variable response approach, or
 
 \item{rescale}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, individual response
 plots are rescaled between 0 and 1.}
+
+\item{axes.to.plot}{a vector of 2 values listing the two axes of the PCA to plot.
+Only useful for a PCA species.}
+
+\item{no.plot.reset}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, the plot parameters
+will be reset to their initial state after the response has been plotted.}
 
 \item{...}{further arguments to be passed to \code{plot}. See 
 \code{\link[graphics]{plot}} and \code{\link[graphics]{par}}.}

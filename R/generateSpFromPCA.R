@@ -11,9 +11,11 @@
 #' @param niche.breadth \code{"any"}, \code{"narrow"} or \code{"wide"}. This parameter
 #' defines how tolerant is the species regarding environmental conditions by adjusting
 #' the standard deviations of the gaussian functions. See details.
-#' @param means a vector containing two numeric values. Will be used to define
+#' @param axes a vector of values. Which axes would you like to keep in your PCA? 
+#' At least 2 axes should be included (Only 1 axis currently not supported)
+#' @param means a vector containing as many numeric values as axes. Will be used to define
 #' the means of the gaussian response functions to the axes of the PCA.
-#' @param sds a vector containing two numeric values. Will be used to define
+#' @param sds a vector containing as many numeric values as axes. Will be used to define
 #' the standard deviations of the gaussian response functions to the axes of 
 #' the PCA.
 #' @param pca a \code{dudi.pca} object. You can provide a pca object that you 
@@ -110,10 +112,21 @@
 #' # This species can be seen as occupying intermediate altitude ranges of a
 #' # conic mountain.
 #' 
+#' 
+#' # Beyond the first two axes
+#' generateSpFromPCA(raster.stack = env,
+#'                   axes = c(1, 3))
+#'                   
+#' sp <- generateSpFromPCA(raster.stack = env,
+#'                   axes = 1:3)
+#' plotResponse(sp, axes = c(1, 2))
+#' plotResponse(sp, axes = c(1, 3))
+#' plotResponse(sp, axes = c(2, 3))
+#'            
 
 
 generateSpFromPCA <- function(raster.stack, rescale = TRUE, niche.breadth = "any",
-                              means = NULL, sds = NULL, pca = NULL,
+                              axes = c(1, 2), means = NULL, sds = NULL, pca = NULL,
                               sample.points = FALSE, nb.points = 10000,
                               plot = TRUE)
 {
@@ -175,7 +188,7 @@ generateSpFromPCA <- function(raster.stack, rescale = TRUE, niche.breadth = "any
     
     
     message(" - Perfoming the pca\n")
-    pca.object <- ade4::dudi.pca(env.df, scannf = F, nf = 2)
+    pca.object <- ade4::dudi.pca(env.df, scannf = F, nf = max(axes))
   }
   message(" - Defining the response of the species along PCA axes\n")
   
@@ -183,13 +196,13 @@ generateSpFromPCA <- function(raster.stack, rescale = TRUE, niche.breadth = "any
   {
     if(!is.numeric(means))
     {stop("Please provide numeric means for the gaussian function to compute probabilities of presence")}
-    if(!is.vector(means) | length(means) != 2)
-    {stop("Please provide a vector with 2 means for the gaussian function (one for each of the two pca axes)")}
+    if(!is.vector(means) | length(means) != length(axes))
+    {stop("Please provide a vector with as many means as chosen axes for the gaussian function (argument 'means')")}
   } else
   {
-    means <- pca.object$li[sample(1:nrow(pca.object$li), 1), ] # [1, ]
-    means <- c(mean1 = means[1, 1],
-               mean2 = means[1, 2])
+    means <- pca.object$li[sample(1:nrow(pca.object$li), 1), ]
+    means <- unlist(means[1, axes])
+    names(means) <- paste0("mean", axes)
   }
   
   
@@ -197,54 +210,46 @@ generateSpFromPCA <- function(raster.stack, rescale = TRUE, niche.breadth = "any
   {
     if(!is.numeric(sds))
     {stop("Please provide numeric standard deviations for the gaussian function to compute probabilities of presence")}
-    if(!is.vector(sds) | length(sds) != 2)
-    {stop("Please provide a vector with 2 standard deviations for the gaussian function (one for each of the two pca axes)")}
+    if(!is.vector(sds) | length(sds) != length(axes))
+    {stop("Please provide a vector with  as many standard deviations as chosen axes for the gaussian function (argument 'sds')")}
     if(any(sds < 0))
     {stop("The standard deviations must have a positive value!")}
     message("    - You have provided standard deviations, so argument niche.breadth will be ignored.\n")
   } else
   {
     # Defining a range of values to determine sds for the gaussian functions
-    axis1 <- c(min = max(min(pca.object$li[, 1]),
-                         quantile(pca.object$li[, 1], probs = .25) - 
-                           5 * (quantile(pca.object$li[, 1], probs = .75) - 
-                                  quantile(pca.object$li[, 1], probs = .25))),
-               max = min(max(pca.object$li[, 1]),
-                         quantile(pca.object$li[, 1], probs = .75) + 
-                           5 * (quantile(pca.object$li[, 1], probs = .75) - 
-                                  quantile(pca.object$li[, 1], probs = .25))))
-    axis2 <- c(min = max(min(pca.object$li[, 2]),
-                         quantile(pca.object$li[, 2], probs = .25) - 
-                           5 * (quantile(pca.object$li[, 2], probs = .75) - 
-                                  quantile(pca.object$li[, 2], probs = .25))),
-               max = min(max(pca.object$li[, 2]),
-                         quantile(pca.object$li[, 2], probs = .75) + 
-                           5 * (quantile(pca.object$li[, 2], probs = .75) - 
-                                  quantile(pca.object$li[, 2], probs = .25))))
+    axes.sdrange <- sapply(axes, .range.function, pca.object)
+    colnames(axes.sdrange) <- paste0("axis.", axes)
     
-    # Random sampling of parameters
+    
+    # The range of values for sds are defined here
     if(niche.breadth == "any")
     {
-      sds <- c(sd1 = sample(seq((axis1[2] - axis1[1])/100, (axis1[2] - axis1[1])/2, length = 1000), 1),
-               sd2 = sample(seq((axis2[2] - axis2[1])/100, (axis2[2] - axis2[1])/2, length = 1000), 1))
+      floor.sd <- 100
+      ceiling.sd <- 2
     } else if (niche.breadth == "narrow")
     {
-      sds <- c(sd1 = sample(seq((axis1[2] - axis1[1])/100, (axis1[2] - axis1[1])/10, length = 1000), 1),
-               sd2 = sample(seq((axis2[2] - axis2[1])/100, (axis2[2] - axis2[1])/10, length = 1000), 1))
+      floor.sd <- 100
+      ceiling.sd <- 10
     } else if (niche.breadth == "wide")
     {
-      sds <- c(sd1 = sample(seq((axis1[2] - axis1[1])/10, (axis1[2] - axis1[1])/2, length = 1000), 1),
-               sd2 = sample(seq((axis2[2] - axis2[1])/10, (axis2[2] - axis2[1])/2, length = 1000), 1))
+      floor.sd <- 10
+      ceiling.sd <- 2
     } else
     {
       stop("niche.breadth must be one of these: 'any', 'narrow', 'wide")
     }
+    
+    sds <- sapply(axes, .sd.sample, sdrange = axes.sdrange, sdfloor = floor.sd, sdceiling = ceiling.sd)
+    names(sds) <- paste0("sd", axes)
+    
   }
   
  
   message(" - Calculating suitability values\n")
   pca.env <- calc(raster.stack[[sel.vars]], fun = function(x, ...)
-    {.pca.coordinates(x, pca = pca.object, na.rm = TRUE)})
+    {.pca.coordinates(x, pca = pca.object, na.rm = TRUE, axes = axes)})
+  
   suitab.raster <- calc(pca.env, fun = function(x, ...){.prob.gaussian(x, means = means, sds = sds)})
   if(rescale)
   {
@@ -257,21 +262,24 @@ generateSpFromPCA <- function(raster.stack, rescale = TRUE, niche.breadth = "any
     op <- par(no.readonly = TRUE)
     par(mar = c(5.1, 4.1, 4.1, 2.1))
     layout(matrix(nrow = 2, ncol = 1, c(1, 2)))
-
+    
     plotResponse(x = raster.stack, approach = "pca",
                  parameters = list(pca = pca.object,
+                                   axes = axes,
                                    means = means,
-                                   sds = sds))
+                                   sds = sds), no.plot.reset = T)
     
-    image(suitab.raster, axes = T, ann = F, asp = 1, 
+    image(suitab.raster, axes = T, ann = F, asp = 1,
           main = "Environmental suitability of the virtual species",
-          las = 1, col = rev(terrain.colors(12)))
-    
+          las = 1, col = rev(terrain.colors(12)), bty = "n")
     
     legend(title = "Pixel\nsuitability", "right", inset = c(-0.1, 0),
            legend = c(1, 0.8, 0.6, 0.4, 0.2, 0),
-           fill = terrain.colors(6), bty = "n")
+           fill = terrain.colors(6), bty = "n")   
+        
     title("Environmental suitability of the virtual species")
+
+
     par(op)
   }
   
@@ -279,7 +287,7 @@ generateSpFromPCA <- function(raster.stack, rescale = TRUE, niche.breadth = "any
                   details = list(variables = sel.vars,
                                  pca = pca.object,
                                  rescale = rescale,
-                                 axes = c(1,2), # Will be changed later if the choice of axes is implemented
+                                 axes = axes, 
                                  means = means,
                                  sds = sds),
                   suitab.raster = suitab.raster)
@@ -287,3 +295,43 @@ generateSpFromPCA <- function(raster.stack, rescale = TRUE, niche.breadth = "any
   return(results)
 }
 
+# Functions useful for the PCA approach
+
+.f <- function(x, co) x %*% co
+
+
+.pca.coordinates <- function(x, pca, na.rm, axes)
+{
+  x <- sweep(x, 2L, pca$cent, check.margin=FALSE)
+  x <- sweep(x, 2L, pca$norm, "/", check.margin=FALSE)
+  res <- matrix(sapply(axes, function(ax, x., pca.) 
+  {
+    apply(x., 1, .f, co = pca.$c1[, ax])
+  }, x. = x, pca. = pca), ncol = length(axes))
+  colnames(res) <- paste0("x", axes)
+  return(res)
+}
+
+.prob.gaussian <- function(x, means, sds)
+{
+  prod(dnorm(x, mean = means, sd = sds))
+}
+
+.range.function <- function(axis, pca)
+{
+  return(c(min = max(min(pca$li[, axis]),
+                     quantile(pca$li[, axis], probs = .25) - 
+                       5 * (quantile(pca$li[, axis], probs = .75) - 
+                              quantile(pca$li[, axis], probs = .25))),
+           max = min(max(pca$li[, axis]),
+                     quantile(pca$li[, axis], probs = .75) + 
+                       5 * (quantile(pca$li[, axis], probs = .75) - 
+                              quantile(pca$li[, axis], probs = .25)))))
+}
+
+.sd.sample <- function(axis, sdrange, sdfloor, sdceiling)
+{
+  sample(seq(diff(sdrange[, paste0("axis.", axis)]) / sdfloor,
+             diff(sdrange[, paste0("axis.", axis)]) / sdceiling,
+             length = 1000), 1)
+}

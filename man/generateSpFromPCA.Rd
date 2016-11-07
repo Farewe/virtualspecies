@@ -5,8 +5,8 @@
 \title{Generate a virtual species distribution with a PCA of environmental variables}
 \usage{
 generateSpFromPCA(raster.stack, rescale = TRUE, niche.breadth = "any",
-  means = NULL, sds = NULL, pca = NULL, sample.points = FALSE,
-  nb.points = 10000, plot = TRUE)
+  axes = c(1, 2), means = NULL, sds = NULL, pca = NULL,
+  sample.points = FALSE, nb.points = 10000, plot = TRUE)
 }
 \arguments{
 \item{raster.stack}{a RasterStack object, in which each layer represent an environmental 
@@ -19,10 +19,13 @@ rescaled between 0 and 1?}
 defines how tolerant is the species regarding environmental conditions by adjusting
 the standard deviations of the gaussian functions. See details.}
 
-\item{means}{a vector containing two numeric values. Will be used to define
+\item{axes}{a vector of values. Which axes would you like to keep in your PCA? 
+At least 2 axes should be included (Only 1 axis currently not supported)}
+
+\item{means}{a vector containing as many numeric values as axes. Will be used to define
 the means of the gaussian response functions to the axes of the PCA.}
 
-\item{sds}{a vector containing two numeric values. Will be used to define
+\item{sds}{a vector containing as many numeric values as axes. Will be used to define
 the standard deviations of the gaussian response functions to the axes of 
 the PCA.}
 
@@ -126,6 +129,17 @@ generateSpFromPCA(raster.stack = env,
 # This species can be seen as occupying intermediate altitude ranges of a
 # conic mountain.
 
+
+# Beyond the first two axes
+generateSpFromPCA(raster.stack = env,
+                  axes = c(1, 3))
+                  
+sp <- generateSpFromPCA(raster.stack = env,
+                  axes = 1:3)
+plotResponse(sp, axes = c(1, 2))
+plotResponse(sp, axes = c(1, 3))
+plotResponse(sp, axes = c(2, 3))
+           
 }
 \author{
 Boris Leroy \email{leroy.boris@gmail.com}

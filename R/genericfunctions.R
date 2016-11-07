@@ -37,21 +37,21 @@ print.virtualspecies <- function(x, ...)
     
     if (x$details$rescale)
     {
-      cat("\n- Environmental suitability was rescaled between 0 and 1")
+      cat("\n- Environmental suitability was rescaled between 0 and 1\n")
     } else
     {
-      cat("\n- Environmental suitability was not rescaled between 0 and 1")
+      cat("\n- Environmental suitability was not rescaled between 0 and 1\n")
     }
     
   } else if(x$approach == "pca")
   {
     cat(" Response to axes of a PCA")
     cat("\n- Axes: ", 
-        paste(x$details$axes, collapse = " & "),
+        paste(x$details$axes, collapse = ", "),
         "; ", round(sum(x$details$pca$eig[x$details$axes])/sum(x$details$pca$eig) * 100, 2),
         "% explained by these axes")
     cat("\n- Responses to axes:")
-    sapply(c(1, 2), function(y)
+    sapply(1:length(x$details$axes), function(y)
     {
       cat("\n   .Axis ", x$details$axes[y],
           "  [min=", round(min(x$details$pca$li[, x$details$axes[y]]), 2),
@@ -61,10 +61,10 @@ print.virtualspecies <- function(x, ...)
     })
     if (x$details$rescale)
     {
-      cat("\n- Environmental suitability was rescaled between 0 and 1")
+      cat("\n- Environmental suitability was rescaled between 0 and 1\n")
     } else
     {
-      cat("\n- Environmental suitability was not rescaled between 0 and 1")
+      cat("\n- Environmental suitability was not rescaled between 0 and 1\n")
     }
   }
   if(!is.null(x$PA.conversion))
@@ -79,7 +79,7 @@ print.virtualspecies <- function(x, ...)
     } else if(x$PA.conversion["conversion.method"] == "threshold")
     {
       cat("\n   .threshold           =", x$PA.conversion["cutoff"])
-      cat("\n   .species prevalence  =", x$PA.conversion["species.prevalence"])
+      cat("\n   .species prevalence  =", x$PA.conversion["species.prevalence"], "\n")
     }
   }
   if(!is.null(x$occupied.area))
@@ -90,17 +90,17 @@ print.virtualspecies <- function(x, ...)
       cat("\n   .method used :", x$geographical.limit$method)
       if(x$geographical.limit$method %in% c("country", "region", "continent"))
       {
-        cat("\n   .area(s)     :", x$geographical.limit$area)
+        cat("\n   .area(s)     :", x$geographical.limit$area, "\n")
       } else if(x$geographical.limit$method == "extent")
       {
         cat("\n   .extent      : [Xmin; Xmax] = [", 
             x$geographical.limit$extent@xmin, "; ",
             x$geographical.limit$extent@xmax, "] - [Ymin; Ymax] = [",
             x$geographical.limit$extent@ymin, "; ",
-            x$geographical.limit$extent@ymax, "]", sep = "")
+            x$geographical.limit$extent@ymax, "]", "\n", sep = "")
       } else if(x$geographical.limit$method == "polygon")
       {
-        cat("\n   .polygon    : Object of class ", class(x$geographical.limit$area), sep = "")
+        cat("\n   .polygon    : Object of class ", class(x$geographical.limit$area), "\n", sep = "")
       }
     }
   }
