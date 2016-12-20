@@ -70,6 +70,7 @@
 #' 
 #' 
 #' @export
+#' @importFrom stats reformulate
 #' @import raster
 #' @author
 #' Boris Leroy \email{leroy.boris@@gmail.com}

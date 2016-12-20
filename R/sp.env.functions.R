@@ -99,6 +99,7 @@ quadraticFun <- function(x, a, b, c) {a * x^2 + b * x + c}
 #' @param prob a numeric value or vector. The percentage of the area under the curve between the 
 #' chosen extreme values
 #' @return a numeric value or vector resulting from the function
+#' @importFrom stats qnorm
 #' @export
 #' @author
 #' Boris Leroy \email{leroy.boris@@gmail.com}, Florian David

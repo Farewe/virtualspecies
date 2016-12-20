@@ -66,6 +66,28 @@ print.virtualspecies <- function(x, ...)
     {
       cat("\n- Environmental suitability was not rescaled between 0 and 1\n")
     }
+  } else if(x$approach == "bca"){
+    cat(" Response to axes of a BCA")
+    cat("\n- Axes: ", 
+        paste(x$details$axes, collapse = " & "),
+        "; ", round(sum(x$details$bca$eig[x$details$axes])/sum(x$details$bca$eig) * 100, 2),
+        "% explained by these axes")
+    cat("\n- Responses to axes:")
+    sapply(1:length(x$details$axes), function(y)
+    {
+      cat("\n   .Axis ", x$details$axes[y],
+          "  [min=", round(min(x$details$bca$ls[, x$details$axes[y]]), 2),
+          "; max=", round(max(x$details$bca$ls[, x$details$axes[y]]), 2),
+          "] : dnorm (mean=", x$details$means[y], "; sd=", x$details$sds[y],
+          ")", sep = "")
+    })
+    if (x$details$rescale)
+    {
+      cat("\n- Environmental suitability was rescaled between 0 and 1")
+    } else
+    {
+      cat("\n- Environmental suitability was not rescaled between 0 and 1")
+    }
   }
   if(!is.null(x$PA.conversion))
   {

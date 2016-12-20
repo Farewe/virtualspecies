@@ -60,6 +60,8 @@
 #' }
 #' }
 #' @import raster
+#' @importFrom grDevices terrain.colors
+#' @importFrom graphics layout title
 #' @export
 #' @author
 #' Boris Leroy \email{leroy.boris@@gmail.com}

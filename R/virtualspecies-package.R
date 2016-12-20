@@ -64,4 +64,5 @@
 #' Maintainer: Boris Leroy \email{leroy.boris@@gmail.com}
 #' @name virtualspecies-package
 #' @docType package
+#' @import raster
 NULL

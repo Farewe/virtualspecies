@@ -96,6 +96,8 @@
 #' 
 #' 
 #' @import raster
+#' @importFrom graphics layout title
+#' @importFrom grDevices terrain.colors
 #' @export
 #' 
 #' 
@@ -168,7 +170,7 @@ generateSpFromBCA <- function(raster.stack.current, raster.stack.future, rescale
   if(!all((names(raster.stack.future) %in% names(raster.stack.current)))){
     stop("The variables names in raster.stack.future must be the same as variables names in raster.stack.current")
   }
-  if((calc(env1, sum) == calc(env2,sum))@data@min==1){
+  if((calc(raster.stack.current, sum) == calc(raster.stack.future, sum))@data@min==1){
     stop("Please provide two different rasters")
   }
   if(sample.points){
@@ -304,12 +306,12 @@ generateSpFromBCA <- function(raster.stack.current, raster.stack.future, rescale
   
   message(" - Calculating current suitability values\n")
   rasters.env.current <- calc(raster.stack.current[[sel.vars]], fun = function(x, ...)
-    {.pca.coordinates(x, pca = between.object,  na.rm = TRUE)})
+    {.pca.coordinates(x, pca = between.object,  na.rm = TRUE, axes = c(1, 2))})
   suitab.raster.current <- calc(rasters.env.current, fun = function(x, ...){.prob.gaussian(x, means = means, sds = sds)})
   
   message(" - Calculating future suitability values\n")
   rasters.env.future  <- calc(raster.stack.future [[sel.vars]], fun = function(x, ...)
-    {.pca.coordinates(x, pca = between.object,  na.rm = TRUE)})
+    {.pca.coordinates(x, pca = between.object,  na.rm = TRUE, axes = c(1, 2))})
   suitab.raster.future  <- calc(rasters.env.future , fun = function(x, ...){.prob.gaussian(x, means = means, sds = sds)})
   
   if(!is.null(bca)){
@@ -322,45 +324,44 @@ generateSpFromBCA <- function(raster.stack.current, raster.stack.future, rescale
     suitab.raster.current <- (suitab.raster.current - suitab.raster.current@data@min) / (suitab.raster.current@data@max - suitab.raster.current@data@min)
     suitab.raster.future  <- (suitab.raster.future  - suitab.raster.future@data@min)  / (suitab.raster.future@data@max  - suitab.raster.future@data@min)
   }
+  stack.lengths <- c(nrow(env.df.current), nrow(env.df.future))
   
   if(plot){
     message(" - Ploting response and suitability\n")
-    
-    stack.lengths <- c(nrow(env.df.current), nrow(env.df.future))
+
     op <- par(no.readonly = TRUE)
     par(mar = c(5.1, 4.1, 4.1, 2.1))
     layout(matrix(nrow = 2, ncol = 2, c(1, 1, 2, 3 )))
-    
+
     plotResponse(x = raster.stack.current, approach = "bca",
                  parameters = list(bca = between.object,
                                    means = means,
                                    sds = sds,
-                                   stack.lengths = stack.lengths ))
-    
-    image(suitab.raster.current, axes = T, ann = F, asp = 1, 
+                                   stack.lengths = stack.lengths), no.plot.reset = T)
+
+    image(suitab.raster.current, axes = T, ann = F, asp = 1,
           las = 1, col = rev(terrain.colors(12)))
-    
+
     legend(title = "Pixel\nsuitability", "right", inset = c(-0.14, 0),
            legend = c(1, 0.8, 0.6, 0.4, 0.2, 0),
            fill = terrain.colors(6), bty = "n")
     title("Current environmental suitability of the virtual species")
-    
-    image(suitab.raster.future, axes = T, ann = F, asp = 1, 
+
+    image(suitab.raster.future, axes = T, ann = F, asp = 1,
           las = 1, col = rev(terrain.colors(12)))
     legend(title = "Pixel\nsuitability", "right", inset = c(-0.14, 0),
            legend = c(1, 0.8, 0.6, 0.4, 0.2, 0),
            fill = terrain.colors(6), bty = "n")
     title("Future environmental suitability of the virtual species")
-    
+
     par(op)
-    
   }
   
   results <- list(approach = "bca",
                   details = list(variables = sel.vars,
                                  bca = between.object,
                                  rescale = rescale,
-                                 axes = c(1,2), # Will be changed later if the choice of axes is implemented
+                                 axes = c(1, 2), # Will be changed later if the choice of axes is implemented
                                  means = means,
                                  sds = sds,
                                  stack.lengths = stack.lengths),

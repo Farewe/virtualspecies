@@ -135,6 +135,8 @@
 #' }
 #' @export
 #' @import raster
+#' @importFrom utils installed.packages
+#' @importFrom graphics points
 #' @author
 #' Boris Leroy \email{leroy.boris@@gmail.com}
 #' 

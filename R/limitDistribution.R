@@ -80,6 +80,7 @@
 #' The structure of the virtualspecies object can be seen using str()
 #' @export
 #' @import raster
+#' @importFrom utils installed.packages
 #' @author
 #' Boris Leroy \email{leroy.boris@@gmail.com}
 #' 

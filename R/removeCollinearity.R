@@ -42,6 +42,7 @@
 #' 
 #' @export
 #' @import raster
+#' @importFrom stats rect.hclust
 #' @author
 #' Boris Leroy \email{leroy.boris@@gmail.com}
 #' 
