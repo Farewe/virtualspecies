@@ -2,7 +2,7 @@
 % Please edit documentation in R/generateSpFromBCA.R
 \name{generateSpFromBCA}
 \alias{generateSpFromBCA}
-\title{Generate a virtual species distribution from a BCA of environmental variables}
+\title{Generate a virtual species distribution from a Between Component Analysis of environmental variables}
 \usage{
 generateSpFromBCA(raster.stack.current, raster.stack.future, rescale = TRUE,
   niche.breadth = "any", means = NULL, sds = NULL, bca = NULL,
@@ -55,9 +55,9 @@ future environmental suitability}
 The structure of the virtualspecies object can be seen using str()
 }
 \description{
-The purpose of this function is to discriminate between two sets of
-environmental conditions, for example to genarate a species in non-analogous 
-environmental conditions between two time horizons.
+A Between Component Analysis is similar to a PCA, except that two sets of environmental conditions 
+(e.g. current and future) will be used. This function is useful to generate species in 
+no-analogue climates.
 }
 \details{
 This function generates a virtual species distribution by computing a Between
