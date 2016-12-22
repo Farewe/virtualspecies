@@ -96,7 +96,7 @@
 #   if ("all"  %in% metrics)             {
 #     metrics=c("RMSE", "AUC", "TSS", "KAPPA", "JACCARD", "SORENSEN" )
 #   }
-#   # Condition min max Ã tester
+#   # Condition min max a tester
 #   type.obs  <- (obs*obs==obs)   @data@min
 #   type.pred <- (pred*pred==pred)@data@min
 #   

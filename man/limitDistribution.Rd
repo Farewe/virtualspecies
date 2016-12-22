@@ -128,7 +128,8 @@ plot(habitat.raster) # 1 = suitable habitat; 0 = unsuitable habitat
 sp <- limitDistribution(sp, geographical.limit = "raster", area = habitat.raster)
 par(mfrow = c(2, 1))
 plot(sp$pa.raster)
-plot(sp$occupied.area) # Species could not occur in many cells because habitat patches were unsuitable
+plot(sp$occupied.area) # Species could not occur in many cells because
+# habitat patches were unsuitable
 }
 \author{
 Boris Leroy \email{leroy.boris@gmail.com}

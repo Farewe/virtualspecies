@@ -68,7 +68,7 @@ same way as in \code{\link{generateSpFromPCA}}.
 A Between Component Analysis is used to separate two sets of environmental conditions.
 This function proceeds in 4 steps:
 \enumerate{
-\item{A Principal Component Analysis of both sets of environmental conditions is generated}
+\item{A Principal Component Analysis is generated based on both set of environmental conditions}
 \item{A BCA of this PCA is generated using the function \code{\link[ade4:bca]{bca}}
 from package \code{ade4}. Note that at this step we choose  one random point
 from \code{raster.stack.future},
@@ -134,9 +134,9 @@ generateSpFromBCA(raster.stack.current = env1, raster.stack.future = env2)
 
 # The left part of the plot shows the BCA and the response functions along
 # the two axes.
-# The top-right part shows the probabilities of occurrence of the virtual
+# The top-right part shows environmental suitability of the virtual
 # species in the current environment.
-# The bottom-right part shows the probabilities of occurrence of the virtual
+# The bottom-right part shows environmental suitability of the virtual
 # species in the future environment. 
 
 
