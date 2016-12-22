@@ -13,10 +13,10 @@ limitDistribution(x, geographical.limit = "extent", area = NULL,
 or \code{\link{generateRandomSp}}}
 
 \item{geographical.limit}{\code{"country"}, \code{"region"}, 
-\code{"continent"}, \code{"polygon"} or \code{"extent"}. The method used
+\code{"continent"}, \code{"polygon"}, \code{"raster"} or \code{"extent"}. The method used
 to limit the distribution range: see details.}
 
-\item{area}{\code{NULL}, a character string, a \code{polygon} or an \code{extent} object.
+\item{area}{\code{NULL}, a character string, a \code{polygon}, a \code{raster} or an \code{extent} object.
 The area in which the distribution range will be limited: see details. If \code{NULL}
 and \code{geographical.limit = "extent"}, then you will be asked to draw an
 extent on the map.}
@@ -86,6 +86,12 @@ List of possible \code{area} names:
 Set \code{geographical.limit} to \code{"polygon"}, and provide your
 polygon to \code{area}.
 }
+\item{a raster:
+
+Set \code{geographical.limit} to \code{"raster"}, and provide your
+raster to \code{area}. Your raster values should be 1 (suitable area),
+0 (unsuitable area) or NA (outside your mask).
+}
 \item{an extent object:
 
 Set \code{geographical.limit} to \code{"extent"}, and either provide your
@@ -112,6 +118,17 @@ sp <- generateRandomSp(env)
 limit <- extent(0.5, 0.7, 0.6, 0.8)
 
 limitDistribution(sp, area = limit)
+
+
+# Example of a raster of habitat patches
+habitat.raster <- setValues(sp$pa.raster, 
+                          sample(c(0, 1), size = ncell(sp$pa.raster), replace = TRUE))
+
+plot(habitat.raster) # 1 = suitable habitat; 0 = unsuitable habitat
+sp <- limitDistribution(sp, geographical.limit = "raster", area = habitat.raster)
+par(mfrow = c(2, 1))
+plot(sp$pa.raster)
+plot(sp$occupied.area) # Species could not occur in many cells because habitat patches were unsuitable
 }
 \author{
 Boris Leroy \email{leroy.boris@gmail.com}

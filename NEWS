@@ -1,0 +1,51 @@
+virtualspecies v1.4-1 (Release date: 2016-12-22)
+==============
+
+Changes:
+
+* Added the possibility to use a raster of habitat patches in limitDistributions()
+* Added the long overdue compatibility with new CRAN policies of imports/dependencies
+* Updated and fixed generateSpFromBCA()
+* Added NEWS file
+
+virtualspecies v1.4 (Release date: 2016-11-07)
+==============
+
+Changes:
+
+* Included the ability to choose any axis for the generateSpFromPCA approach
+* Updated all the other functions accordingly
+* Minor fixes
+
+virtualspecies v1.3-4 (Release date: 2016-06-27)
+==============
+
+Changes:
+
+* Fixed an issue with generateRandomSp() that caused compatibility problems with other functions
+* Minor fix to convertToPA() to better adjust the results to desired prevalence
+
+
+virtualspecies v1.3-3 (Release date: 2016-02-19)
+==============
+
+Changes:
+
+* Fixed a bug in convertToPA & limitDistribution with raster detection
+
+
+virtualspecies v1.3-2 (Release date: 2016-09-30)
+==============
+
+Changes:
+
+* correction to the description of the beta function
+* changed stops to warning in the convertToPA function
+
+virtualspecies v1.2 (Release date: 2015-08-10)
+==============
+
+Changes:
+
+* added function generateSpFromBCA (thanks Robin Delsol), which allows to generate a species between two different sets of environmental conditions, e.g. to compare current vs. future conditions. Useful for testing the effects of no-analog climates
+

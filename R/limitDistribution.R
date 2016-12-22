@@ -12,9 +12,9 @@
 #' \code{\link{generateSpFromFun}}, \code{\link{generateSpFromPCA}} 
 #' or \code{\link{generateRandomSp}}
 #' @param geographical.limit \code{"country"}, \code{"region"}, 
-#' \code{"continent"}, \code{"polygon"} or \code{"extent"}. The method used
+#' \code{"continent"}, \code{"polygon"}, \code{"raster"} or \code{"extent"}. The method used
 #' to limit the distribution range: see details.
-#' @param area \code{NULL}, a character string, a \code{polygon} or an \code{extent} object.
+#' @param area \code{NULL}, a character string, a \code{polygon}, a \code{raster} or an \code{extent} object.
 #' The area in which the distribution range will be limited: see details. If \code{NULL}
 #' and \code{geographical.limit = "extent"}, then you will be asked to draw an
 #' extent on the map.
@@ -56,6 +56,12 @@
 #' 
 #' Set \code{geographical.limit} to \code{"polygon"}, and provide your
 #' polygon to \code{area}.
+#' }
+#' \item{a raster:
+#' 
+#' Set \code{geographical.limit} to \code{"raster"}, and provide your
+#' raster to \code{area}. Your raster values should be 1 (suitable area),
+#' 0 (unsuitable area) or NA (outside your mask).
 #' }
 #' \item{an extent object:
 #' 
@@ -104,6 +110,17 @@
 #' limit <- extent(0.5, 0.7, 0.6, 0.8)
 #' 
 #' limitDistribution(sp, area = limit)
+#' 
+#' 
+#' # Example of a raster of habitat patches
+#' habitat.raster <- setValues(sp$pa.raster, 
+#'                           sample(c(0, 1), size = ncell(sp$pa.raster), replace = TRUE))
+#' 
+#' plot(habitat.raster) # 1 = suitable habitat; 0 = unsuitable habitat
+#' sp <- limitDistribution(sp, geographical.limit = "raster", area = habitat.raster)
+#' par(mfrow = c(2, 1))
+#' plot(sp$pa.raster)
+#' plot(sp$occupied.area) # Species could not occur in many cells because habitat patches were unsuitable
 
 
 
@@ -133,9 +150,9 @@ limitDistribution <- function(x,
     stop('Only one dispersal limit method can be applied at a time')
   }
   
-  if (!(geographical.limit %in% c("country", "region", "extent", "polygon", "continent")))
+  if (!(geographical.limit %in% c("country", "region", "extent", "polygon", "continent", "raster")))
   {
-    stop('Argument geographical.limit must be one of : country, region, continent, polygon, extent')
+    stop('Argument geographical.limit must be one of : country, region, continent, polygon, extent, raster')
   }
 
   
@@ -193,6 +210,26 @@ limitDistribution <- function(x,
       plot(sp.raster)
       area <- drawExtent(show = TRUE)      
     }
+  } else if(geographical.limit == "raster")
+  {
+    if (!("RasterLayer" %in% class(area)))
+    {
+      stop("If you choose to limit the distribution with a raster, please provide the raster to argument 'area'")    
+    }
+    if (!area@data@haveminmax)
+    {
+      area <- setMinMax(area)
+    }
+    if(area@data@max > 1)
+    {
+      warning("The raster used to limit species distribution has values greater than 1. This will likely result in something very different to a distribution raster.")
+    }
+    if(area@data@min < 0)
+    {
+      warning("The raster used to limit species distribution has values lower than 0. This will likely result in something very different to a distribution raster.")
+    }
+    results$geographical.limit <- list(method = geographical.limit,
+                                       area = area)
   }
 
   geographical.limit.raster <- sp.raster   
@@ -237,6 +274,9 @@ limitDistribution <- function(x,
                                             background = 0,
                                             silent = TRUE)
     geographical.limit.raster <- geographical.limit.raster * geographical.limit.raster1
+  } else if(geographical.limit == "raster")
+  {
+    geographical.limit.raster <- geographical.limit.raster * area
   }
   
   if(plot)
