@@ -262,14 +262,14 @@ convertToPA <- function(x,
             stop("beta must either be 'random', a numeric value (preferably within the range of
                  your data) or NULL")
           }
-          }
+        }
         
         if(!is.null(species.prevalence))
         {
           if(is.numeric(species.prevalence))
           {
             if(!(species.prevalence >= 0 & 
-                   species.prevalence <= 1))
+                 species.prevalence <= 1))
             {
               stop("species.prevalence must be a numeric value between 0 and 1.")
             }
@@ -278,7 +278,7 @@ convertToPA <- function(x,
             stop("species.prevalence must either be a numeric value between 0 and 1
                  or NULL")
           }
-          }
+        }
         
         if(!is.null(alpha))
         {
@@ -307,7 +307,7 @@ convertToPA <- function(x,
         {
           message("   --- Determing species.prevalence automatically according to alpha and beta\n\n")
         }
-          }
+      }
   
   if (PA.method == "probability")
   {
@@ -422,11 +422,11 @@ convertToPA <- function(x,
             )
           }
           )
-          
+          # plot(PA.raster)
           freqs <- freq(PA.raster)
           if(any(is.na(freqs[, 1])))
           {
-            freqs <- freqs[-which(is.na(freqs[, 1])), ]
+            freqs <- freqs[-which(is.na(freqs[, 1])), , drop = FALSE]
           }
           beta.test <- rbind(beta.test, c(beta, 
                                           ifelse(nrow(freqs) == 2,
@@ -434,25 +434,29 @@ convertToPA <- function(x,
                                                  ifelse(freqs[, "value"] == 0,
                                                         0, 1))))
         }
-        epsilon <- species.prevalence - beta.test[, 2]
-        if(all(epsilon > 0))
+        epsilon <- data.frame(epsi = species.prevalence - beta.test[, 2], 
+                              prevalence = beta.test[, 2])
+        if(all(epsilon$epsi > 0))
         {
-          warning(paste("Warning, the desired species prevalence cannot be obtained, because of the chosen alpha and available environmental conditions (see details).
-                        The closest possible estimate of prevalence was", round(beta.test[1, 2], 2),
+          warning(paste("Warning, the desired species prevalence may not be obtained, because of the chosen alpha and available environmental conditions (see details).
+                        The closest possible estimate of prevalence was", round(beta.test[1, 2], 3),
                         "\nPerhaps you can try an alpha value closer to 0."))
           beta <- beta.test[1, 1]
-        } else if (all(epsilon < 0))
+        } else if (all(epsilon$epsi < 0))
         {
-          warning(paste("Warning, the desired species prevalence cannot be obtained, because of the chosen beta and available environmental conditions (see details).
-                        The closest possible estimate of prevalence was", round(beta.test[1, 2], 2),
+          warning(paste("Warning, the desired species prevalence may be obtained, because of the chosen beta and available environmental conditions (see details).
+                        The closest possible estimate of prevalence was", round(beta.test[2, 2], 3),
                         "\nPerhaps you can try an alpha value closer to 0."))
           beta <- beta.test[2, 1]
         } else 
         {
-          while (all(abs(epsilon) > 0.001))
+          while (all(apply(epsilon, 1, 
+                           function(x) ifelse(abs(x[1]) > 0.001,
+                                              TRUE,
+                                              ifelse(x[2] == 0, TRUE, FALSE)))))
           {
-            beta <- (beta.test[which(epsilon == max(epsilon[epsilon < 0])), 1] + 
-                       beta.test[which(epsilon == min(epsilon[epsilon > 0])), 1]) / 2
+            beta <- (beta.test[which(epsilon$epsi == max(epsilon$epsi[epsilon$epsi < 0])), 1][1] + 
+                       beta.test[which(epsilon$epsi == min(epsilon$epsi[epsilon$epsi > 0])), 1][1]) / 2
             PA.raster <- calc(sp.raster, fun = function(x)
             {
               logisticFun(x, beta = beta, alpha = alpha)
@@ -474,14 +478,15 @@ convertToPA <- function(x,
             freqs <- freq(PA.raster)
             if(any(is.na(freqs[, 1])))
             {
-              freqs <- freqs[-which(is.na(freqs[, 1])), ]
+              freqs <- freqs[-which(is.na(freqs[, 1])), , drop = FALSE]
             }
             beta.test <- rbind(beta.test, c(beta, 
                                             ifelse(nrow(freqs) == 2,
                                                    freqs[freqs[, "value"] == 1, "count"] / sum(freqs[, "count"]),
                                                    ifelse(freqs[, "value"] == 0,
                                                           0, 1))))
-            epsilon <- species.prevalence - beta.test[, 2]
+            epsilon <- data.frame(epsi = species.prevalence - beta.test[, 2], 
+                                  prevalence = beta.test[, 2])
           }
         }
       }
@@ -504,6 +509,29 @@ convertToPA <- function(x,
       )
     }
     )
+    if(PA.raster@data@max == 0) # Necessary to generate species with very low prevalence
+    {                           # Without this step, rasters with only zeros can be generated
+      while(PA.raster@data@max == 0)
+      {
+        PA.raster <- calc(sp.raster, fun = function(x)
+        {
+          logisticFun(x, beta = beta, alpha = alpha)
+        })
+        PA.raster <- calc(PA.raster, fun = function(x)
+        {
+          sapply(x, FUN = function(y)
+          {
+            if(is.na(y))
+            { NA } else
+            {
+              sample(x = c(0, 1),  size = 1, prob = c(1 - y, y))
+            }
+          }
+          )
+        }
+        )
+      }
+    }
     
       } else if (PA.method == "threshold")
       {
