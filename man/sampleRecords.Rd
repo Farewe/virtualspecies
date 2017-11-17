@@ -12,7 +12,8 @@ sampleRecords(x, n, type = "presence only", sampling.area = NULL,
 }
 \arguments{
 \item{x}{a \code{rasterLayer} object or the output list from 
-\code{generateSpFromFun}, \code{generateSpFromPCA}, \code{generateRandomSp}, \code{convertToPA}
+\code{generateSpFromFun}, \code{generateSpFromPCA}, \code{generateRandomSp}, 
+\code{convertToPA}
 or  \code{limitDistribution}
 The raster must contain values of 0 or 1 (or NA).}
 
@@ -21,52 +22,58 @@ The raster must contain values of 0 or 1 (or NA).}
 \item{type}{\code{"presence only"} or \code{"presence-absence"}. The type of 
 occurrence points to sample.}
 
-\item{sampling.area}{a character string, a \code{polygon} or an \code{extent} object.
+\item{sampling.area}{a character string, a \code{polygon} or an \code{extent} 
+object.
 The area in which the sampling will take place. See details.}
 
-\item{detection.probability}{a numeric value between 0 and 1, corresponding to the
+\item{detection.probability}{a numeric value between 0 and 1, corresponding 
+to the
 probability of detection of the species. See details.}
 
-\item{correct.by.suitability}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, then
-the probability of detection will be weighted by the suitability, such that 
-cells with lower suitabilities will further decrease the chance that the species
-is detected when sampled.}
+\item{correct.by.suitability}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, 
+then the probability of detection will be weighted by the suitability, such 
+that cells with lower suitabilities will further decrease the chance that the 
+species is detected when sampled.}
 
 \item{error.probability}{\code{TRUE} or \code{FALSE}. Only useful if 
-\code{type = "presence-absence"}. Probability to attribute an erroneous presence
-in cells where the species is absent.}
+\code{type = "presence-absence"}. Probability to attribute an erroneous 
+presence in cells where the species is absent.}
 
 \item{bias}{\code{"no.bias"},  \code{"country"},  \code{"region"},
 \code{"extent"},  \code{"polygon"} or \code{"manual"}. The method used to 
 generate a sampling bias: see details.}
 
-\item{bias.strength}{a positive numeric value. The strength of the bias to be applied
-in \code{area} (as a multiplier). Above 1, \code{area} will be oversampled. Below 1, \code{area}
-will be undersampled.}
+\item{bias.strength}{a positive numeric value. The strength of the bias to 
+be applied in \code{area} (as a multiplier). Above 1, \code{area} will be 
+oversampled. Below 1, \code{area} will be undersampled.}
 
-\item{bias.area}{\code{NULL}, a character string, a \code{polygon} or an \code{extent} object.
+\item{bias.area}{\code{NULL}, a character string, a \code{polygon} or an 
+\code{extent} object.
 The area in which the sampling will be biased: see details. If \code{NULL}
 and \code{bias = "extent"}, then you will be asked to draw an
 extent on the map.}
 
-\item{weights}{\code{NULL} or a raster layer. Only used if \code{bias = "manual"}.
-The raster of bias weights to be applied to the sampling of occurrences.
-Higher weights mean a higher probability of sampling.}
+\item{weights}{\code{NULL} or a raster layer. Only used if 
+\code{bias = "manual"}. The raster of bias weights to be applied to the 
+sampling of occurrences. Higher weights mean a higher probability of 
+sampling.}
 
-\item{sample.prevalence}{\code{NULL} or a numeric value between 0 and 1. Only useful if 
-\code{type = "presence-absence"}. Defines the sample prevalence, i.e. the proportion of presences
-sampled. Note that the probabilities of detection and error are applied AFTER this parameter,
-so the final sample prevalence may not different if you apply probabilities of detection and/or error}
+\item{sample.prevalence}{\code{NULL} or a numeric value between 0 and 1. 
+Only useful if \code{type = "presence-absence"}. Defines the sample 
+prevalence, i.e. the proportion of presences sampled. Note that the 
+probabilities of detection and error are applied AFTER this parameter,
+so the final sample prevalence may not different if you apply probabilities 
+of detection and/or error.}
 
-\item{plot}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, the sampled occurrence
-points will be plotted.}
+\item{plot}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, the sampled 
+occurrence points will be plotted.}
 }
 \value{
 a \code{list} with 3 (unbiased sampling) to 4 (biased sampling) elements:
 \itemize{
 \item{\code{sample.points}: the data.frame containing the coordinates of 
-samples, the real presence-absences (or presence-only) and the sampled presence-
-absences}
+samples, the real presence-absences (or presence-only) and the sampled 
+presence-absences}
 \item{\code{detection.probability}: the chosen probability of detection of
 the virtual species}
 \item{\code{error.probability}: the chosen probability to assign presence
@@ -84,6 +91,9 @@ times. The sampling bias can be defined manually or with a set of pre-defined
 biases.
 }
 \details{
+TODO: - projection check between raster & polygon around line 350
+
+
 \bold{How the function works:}
 
 The function randomly selects \code{n} cells with replacement from all non-NA 
@@ -101,23 +111,25 @@ time the cell was chosen (potentially resulting in a mix of detections and
 non-detections for a cell in which the species was present).
 
 In cells where the species is absent (in case of a \code{"presence-absence"}
-sampling), the function will always assign absence unless \code{error.probability} 
-is greater than 1. In that case, the species can be found present with the 
-associated probability of error. Note that this step happens AFTER the detection
-step. Hence, in cells where the species is present but not detected, it can
-still be sampled due to a sampling error.
+sampling), the function will always assign absence unless 
+\code{error.probability} is greater than 1. In that case, the species can be 
+found present with the associated probability of error. Note that this step 
+happens AFTER the detection step. Hence, in cells where the species is 
+present but not detected, it can still be sampled due to a sampling error.
 
 \bold{How to restrict the sampling area:}
 
 Use the argument \code{sampling.area}:
 \itemize{
-\item{Provide the name (s) (or a combination of names) of country(ies), region(s) or continent(s).
+\item{Provide the name (s) (or a combination of names) of country(ies), 
+region(s) or continent(s).
 Examples:
 \itemize{
 \item{\code{sampling.area = "Africa"}}
 \item{\code{sampling.area = c("Africa", "North America", "France")}}
 }}
-\item{Provide a polygon (\code{SpatialPolygons} or \code{SpatialPolygonsDataFrame} 
+\item{Provide a polygon (\code{SpatialPolygons} or 
+\code{SpatialPolygonsDataFrame} 
 of package \code{sp})}
 \item{Provide an \code{extent} object}
 }
@@ -144,7 +156,8 @@ regions or continents to \code{bias.area} (see examples).
 
 List of possible \code{bias.area} names:
 \itemize{
-\item{Countries: type \code{levels(getMap()@data$SOVEREIGNT)} in the console}
+\item{Countries: type \code{levels(getMap()@data$SOVEREIGNT)} in the 
+ console}
 \item{Regions: "Africa", "Antarctica", "Asia", "Australia", "Europe", 
 "North America", "South America"}
 \item{Continents: "Africa", "Antarctica", "Australia", "Eurasia", 
@@ -158,12 +171,13 @@ polygon to \code{area}.
 \item{an extent object:
 
 Set \code{bias} to \code{"extent"}, and either provide your
-extent object to \code{bias.area}, or leave it \code{NULL} to draw an extent on
-the map.}
+extent object to \code{bias.area}, or leave it \code{NULL} to draw an extent 
+on the map.}
 } 
 
 Otherwise you can define manually your sampling bias, \emph{e.g.} to create
-biases along roads. In that case you have to provide to \code{weights} a raster layer in which
+biases along roads. In that case you have to provide to \code{weights} a 
+raster layer in which
 each cell contains the probability to be sampled.
 }
 \examples{
