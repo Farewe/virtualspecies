@@ -2,7 +2,11 @@
 % Please edit documentation in R/sampleRecords.R
 \name{sampleRecords}
 \alias{sampleRecords}
+<<<<<<< be73651d25a98088efa651b69d93f16cc77e9585
 \title{Sample occurrences with replacement from a virtual species distribution}
+=======
+\title{Sample occurrences with replacement in a virtual species distribution}
+>>>>>>> Created new function to sample n records rather than n cells.  This allows simulating replicate samples from cells.
 \usage{
 sampleRecords(x, n, type = "presence only", sampling.area = NULL,
   detection.probability = 1, correct.by.suitability = FALSE,
@@ -12,8 +16,12 @@ sampleRecords(x, n, type = "presence only", sampling.area = NULL,
 }
 \arguments{
 \item{x}{a \code{rasterLayer} object or the output list from 
+<<<<<<< be73651d25a98088efa651b69d93f16cc77e9585
 \code{generateSpFromFun}, \code{generateSpFromPCA}, \code{generateRandomSp}, 
 \code{convertToPA}
+=======
+\code{generateSpFromFun}, \code{generateSpFromPCA}, \code{generateRandomSp}, \code{convertToPA}
+>>>>>>> Created new function to sample n records rather than n cells.  This allows simulating replicate samples from cells.
 or  \code{limitDistribution}
 The raster must contain values of 0 or 1 (or NA).}
 
@@ -22,6 +30,7 @@ The raster must contain values of 0 or 1 (or NA).}
 \item{type}{\code{"presence only"} or \code{"presence-absence"}. The type of 
 occurrence points to sample.}
 
+<<<<<<< be73651d25a98088efa651b69d93f16cc77e9585
 \item{sampling.area}{a character string, a \code{polygon} or an \code{extent} 
 object.
 The area in which the sampling will take place. See details.}
@@ -39,21 +48,46 @@ species is detected when sampled.}
 \code{type = "presence-absence"}. Probability to attribute an erroneous 
 presence in cells where the species is absent.  Addition of erroneous 
 presences in presence-only data is planned but not implemented.}
+=======
+\item{sampling.area}{a character string, a \code{polygon} or an \code{extent} object.
+The area in which the sampling will take place. See details.}
+
+\item{detection.probability}{a numeric value between 0 and 1, corresponding to the
+probability of detection of the species. See details.}
+
+\item{correct.by.suitability}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, then
+the probability of detection will be weighted by the suitability, such that 
+cells with lower suitabilities will further decrease the chance that the species
+is detected when sampled.}
+
+\item{error.probability}{\code{TRUE} or \code{FALSE}. Only useful if 
+\code{type = "presence-absence"}. Probability to attribute an erroneous presence
+in cells where the species is absent.}
+>>>>>>> Created new function to sample n records rather than n cells.  This allows simulating replicate samples from cells.
 
 \item{bias}{\code{"no.bias"},  \code{"country"},  \code{"region"},
 \code{"extent"},  \code{"polygon"} or \code{"manual"}. The method used to 
 generate a sampling bias: see details.}
 
+<<<<<<< be73651d25a98088efa651b69d93f16cc77e9585
 \item{bias.strength}{a positive numeric value. The strength of the bias to 
 be applied in \code{area} (as a multiplier). Above 1, \code{area} will be 
 oversampled. Below 1, \code{area} will be undersampled.}
 
 \item{bias.area}{\code{NULL}, a character string, a \code{polygon} or an 
 \code{extent} object.
+=======
+\item{bias.strength}{a positive numeric value. The strength of the bias to be applied
+in \code{area} (as a multiplier). Above 1, \code{area} will be oversampled. Below 1, \code{area}
+will be undersampled.}
+
+\item{bias.area}{\code{NULL}, a character string, a \code{polygon} or an \code{extent} object.
+>>>>>>> Created new function to sample n records rather than n cells.  This allows simulating replicate samples from cells.
 The area in which the sampling will be biased: see details. If \code{NULL}
 and \code{bias = "extent"}, then you will be asked to draw an
 extent on the map.}
 
+<<<<<<< be73651d25a98088efa651b69d93f16cc77e9585
 \item{weights}{\code{NULL} or a raster layer. Only used if 
 \code{bias = "manual"}. The raster of bias weights to be applied to the 
 sampling of occurrences. Higher weights mean a higher probability of 
@@ -78,23 +112,53 @@ presence-absences (which may be different from the real value for the cell
 if \code{detecton.probability} or \code{error.probability} were used).}
 \item{\code{sample.plot}: a recorded plot showing the sampled points 
 ovelaying the original distribution.}
+=======
+\item{weights}{\code{NULL} or a raster layer. Only used if \code{bias = "manual"}.
+The raster of bias weights to be applied to the sampling of occurrences.
+Higher weights mean a higher probability of sampling.}
+
+\item{sample.prevalence}{\code{NULL} or a numeric value between 0 and 1. Only useful if 
+\code{type = "presence-absence"}. Defines the sample prevalence, i.e. the proportion of presences
+sampled. Note that the probabilities of detection and error are applied AFTER this parameter,
+so the final sample prevalence may not different if you apply probabilities of detection and/or error}
+
+\item{plot}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, the sampled occurrence
+points will be plotted.}
+}
+\value{
+a \code{list} with 3 (unbiased sampling) to 4 (biased sampling) elements:
+\itemize{
+\item{\code{sample.points}: the data.frame containing the coordinates of 
+samples, the real presence-absences (or presence-only) and the sampled presence-
+absences}
+>>>>>>> Created new function to sample n records rather than n cells.  This allows simulating replicate samples from cells.
 \item{\code{detection.probability}: the chosen probability of detection of
 the virtual species}
 \item{\code{error.probability}: the chosen probability to assign presence
 in cells where the species is absent}
 \item{\code{bias}: if a bias was chosen, then the type of bias and the
 associated \code{area} will be included.}
+<<<<<<< be73651d25a98088efa651b69d93f16cc77e9585
 \item{\code{original.distribution.raster}: the raster of the original species 
 distribution.}
+=======
+>>>>>>> Created new function to sample n records rather than n cells.  This allows simulating replicate samples from cells.
 }
 }
 \description{
 This function samples with replacement from presences (or presences and 
 absences) within a species distribution, either randomly or with a sampling 
+<<<<<<< be73651d25a98088efa651b69d93f16cc77e9585
 bias. This produces a "sampled" dataset that may contain replicates.  This 
 is similar to many biological  datasets, in which some spatial locations are 
 sampled multiple times. The sampling bias can be defined manually or with a 
 set of pre-defined biases.
+=======
+bias. This produces a "sampled" dataset with replicates similar to many 
+biological  datasets, in which some spatial locations are sampled multiple 
+times. The sampling bias can be defined manually or with a set of pre-defined 
+biases.
+>>>>>>> Created new function to sample n records rather than n cells.  This allows simulating replicate samples from cells.
 }
 \details{
 \bold{How the function works:}
@@ -114,25 +178,41 @@ time the cell was chosen (potentially resulting in a mix of detections and
 non-detections for a cell in which the species was present).
 
 In cells where the species is absent (in case of a \code{"presence-absence"}
+<<<<<<< be73651d25a98088efa651b69d93f16cc77e9585
 sampling), the function will always sample absence unless 
 \code{error.probability} is greater than 1. In that case, the species can be 
 found present with the associated probability of error. Note that this step 
 happens AFTER the detection step. Hence, in cells where the species is 
 present but not detected, it can still be sampled due to a sampling error.
+=======
+sampling), the function will always assign absence unless \code{error.probability} 
+is greater than 1. In that case, the species can be found present with the 
+associated probability of error. Note that this step happens AFTER the detection
+step. Hence, in cells where the species is present but not detected, it can
+still be sampled due to a sampling error.
+>>>>>>> Created new function to sample n records rather than n cells.  This allows simulating replicate samples from cells.
 
 \bold{How to restrict the sampling area:}
 
 Use the argument \code{sampling.area}:
 \itemize{
+<<<<<<< be73651d25a98088efa651b69d93f16cc77e9585
 \item{Provide the name (s) (or a combination of names) of country(ies), 
 region(s) or continent(s).
+=======
+\item{Provide the name (s) (or a combination of names) of country(ies), region(s) or continent(s).
+>>>>>>> Created new function to sample n records rather than n cells.  This allows simulating replicate samples from cells.
 Examples:
 \itemize{
 \item{\code{sampling.area = "Africa"}}
 \item{\code{sampling.area = c("Africa", "North America", "France")}}
 }}
+<<<<<<< be73651d25a98088efa651b69d93f16cc77e9585
 \item{Provide a polygon (\code{SpatialPolygons} or 
 \code{SpatialPolygonsDataFrame} 
+=======
+\item{Provide a polygon (\code{SpatialPolygons} or \code{SpatialPolygonsDataFrame} 
+>>>>>>> Created new function to sample n records rather than n cells.  This allows simulating replicate samples from cells.
 of package \code{sp})}
 \item{Provide an \code{extent} object}
 }
@@ -142,8 +222,13 @@ of package \code{sp})}
 The argument \code{bias.strength} indicates the strength of the bias.
 For example, a value of 50 will result in 50 times more samples within the
  \code{bias.area} than outside.
+<<<<<<< be73651d25a98088efa651b69d93f16cc77e9585
 Conversely, a value of 0.5 will result in half as many samples within the
 \code{bias.area} as outside.
+=======
+Conversely, a value of 0.5 will result in half less samples within the
+\code{bias.area} than outside.
+>>>>>>> Created new function to sample n records rather than n cells.  This allows simulating replicate samples from cells.
 
 \bold{How to choose where the sampling is biased:}
 
@@ -159,8 +244,12 @@ regions or continents to \code{bias.area} (see examples).
 
 List of possible \code{bias.area} names:
 \itemize{
+<<<<<<< be73651d25a98088efa651b69d93f16cc77e9585
 \item{Countries: type \code{levels(getMap()@data$SOVEREIGNT)} in the 
  console}
+=======
+\item{Countries: type \code{levels(getMap()@data$SOVEREIGNT)} in the console}
+>>>>>>> Created new function to sample n records rather than n cells.  This allows simulating replicate samples from cells.
 \item{Regions: "Africa", "Antarctica", "Asia", "Australia", "Europe", 
 "North America", "South America"}
 \item{Continents: "Africa", "Antarctica", "Australia", "Eurasia", 
@@ -174,6 +263,7 @@ polygon to \code{area}.
 \item{an extent object:
 
 Set \code{bias} to \code{"extent"}, and either provide your
+<<<<<<< be73651d25a98088efa651b69d93f16cc77e9585
 extent object to \code{bias.area}, or leave it \code{NULL} to draw an extent 
 on the map.}
 } 
@@ -199,6 +289,15 @@ it is preferable to set the seed with \code{\link{set.seed}} before calling
 \code{\link{set.seed}} to reproduce results later. Note that 
 reproducing the sampling will only work if the same original distribution map 
 is used.
+=======
+extent object to \code{bias.area}, or leave it \code{NULL} to draw an extent on
+the map.}
+} 
+
+Otherwise you can define manually your sampling bias, \emph{e.g.} to create
+biases along roads. In that case you have to provide to \code{weights} a raster layer in which
+each cell contains the probability to be sampled.
+>>>>>>> Created new function to sample n records rather than n cells.  This allows simulating replicate samples from cells.
 }
 \examples{
 # Create an example stack with six environmental variables
@@ -216,6 +315,7 @@ names(env) <- paste("Var", 1:6, sep = "")
 sp <- generateRandomSp(env, niche.breadth = "wide")
 
 # Sampling of 25 presences
+<<<<<<< be73651d25a98088efa651b69d93f16cc77e9585
 samps <- sampleRecords(sp, n = 25)
 head(samps$sample.records)
 
@@ -239,11 +339,37 @@ samps <- sampleRecords(sp, n = 30, type = "presence-absence",
 biased.area <- extent(0.5, 0.7, 0.6, 0.8)
 samps <- sampleRecords(sp, n = 50, type = "presence-absence", 
                        bias = "extent", bias.area = biased.area)
+=======
+sampleOccurrences(sp, n = 25)
+
+# Sampling of 30 presences and absebces
+sampleOccurrences(sp, n = 30, type = "presence-absence")
+
+# Reducing of the probability of detection
+sampleOccurrences(sp, n = 30, type = "presence-absence", 
+                  detection.probability = 0.5)
+                  
+# Further reducing in relation to environmental suitability
+sampleOccurrences(sp, n = 30, type = "presence-absence", 
+                  detection.probability = 0.5,
+                  correct.by.suitability = TRUE)
+                  
+# Creating sampling errors (far too much)
+sampleOccurrences(sp, n = 30, type = "presence-absence", 
+                  error.probability = 0.5)
+                  
+# Introducing a sampling bias (oversampling)
+biased.area <- extent(0.5, 0.7, 0.6, 0.8)
+sampleOccurrences(sp, n = 50, type = "presence-absence", 
+                  bias = "extent",
+                  bias.area = biased.area)
+>>>>>>> Created new function to sample n records rather than n cells.  This allows simulating replicate samples from cells.
 # Showing the area in which the sampling is biased
 plot(biased.area, add = TRUE)     
 
 # Introducing a sampling bias (no sampling at all in the chosen area)
 biased.area <- extent(0.5, 0.7, 0.6, 0.8)
+<<<<<<< be73651d25a98088efa651b69d93f16cc77e9585
 samps <- sampleRecords(sp, n = 50, type = "presence-absence", 
                        bias = "extent", bias.strength = 0,
                        bias.area = biased.area)
@@ -273,6 +399,17 @@ identical(samps, reproduced_samps)
 \author{
 Boris Leroy \email{leroy.boris@gmail.com},
 Willson Gaul \email{wgaul@hotmail.com}
+=======
+sampleOccurrences(sp, n = 50, type = "presence-absence", 
+                  bias = "extent",
+                  bias.strength = 0,
+                  bias.area = biased.area)
+# Showing the area in which the sampling is biased
+plot(biased.area, add = TRUE)             
+}
+\author{
+Boris Leroy \email{leroy.boris@gmail.com}
+>>>>>>> Created new function to sample n records rather than n cells.  This allows simulating replicate samples from cells.
 
 with help from C. N. Meynard, C. Bellard & F. Courchamp
 }
