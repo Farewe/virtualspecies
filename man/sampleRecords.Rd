@@ -2,7 +2,7 @@
 % Please edit documentation in R/sampleRecords.R
 \name{sampleRecords}
 \alias{sampleRecords}
-\title{Sample occurrences with replacement in a virtual species distribution}
+\title{Sample occurrences with replacement from a virtual species distribution}
 \usage{
 sampleRecords(x, n, type = "presence only", sampling.area = NULL,
   detection.probability = 1, correct.by.suitability = FALSE,
@@ -83,7 +83,7 @@ associated \code{area} will be included.}
 }
 }
 \description{
-This function samples with replacement from presences (or presences and 
+Gotes. This function samples with replacement from presences (or presences and 
 absences) within a species distribution, either randomly or with a sampling 
 bias. This produces a "sampled" dataset with replicates similar to many 
 biological  datasets, in which some spatial locations are sampled multiple 

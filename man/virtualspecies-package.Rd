@@ -59,6 +59,9 @@ environmental variables, and produce spatialised virtual species distributions.}
 dispersal limitations and sampling biases.}
 }
 }
+\references{
+Leroy, B. et al. 2015. virtualspecies, an R package to generate virtual species distributions. Ecography. In press.
+}
 \author{
 Boris Leroy \email{leroy.boris@gmail.com}
 
@@ -66,7 +69,3 @@ with help from C. N. Meynard, C. Bellard & F. Courchamp
 
 Maintainer: Boris Leroy \email{leroy.boris@gmail.com}
 }
-\references{
-Leroy, B. et al. 2015. virtualspecies, an R package to generate virtual species distributions. Ecography. In press.
-}
-

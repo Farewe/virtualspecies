@@ -1,6 +1,7 @@
-#' Sample occurrences with replacement in a virtual species distribution
+#' Sample occurrences with replacement from a virtual species distribution
 #' 
 #' TODO: - projection check between raster & polygon around line 350
+#'       - add a slot to results giving the random seed at start?
 #' 
 #' @description
 #' This function samples with replacement from presences (or presences and 
@@ -229,6 +230,9 @@ sampleRecords <- function(x, n,
   results <- list()
   
   browser()
+  
+  if(is.null(.Random.seed)) {runif(1)} # initialize random seed if there is none
+  attr(results, "seed") <- .Random.seed
   
   if("virtualspecies" %in% class(x))
   {
@@ -490,9 +494,11 @@ sampleRecords <- function(x, n,
     } else
     {
       if(is.null(sample.prevalence)) #### !!!! This is my usual case !!!! #####
-      {
-        sample.points <- dismo::randomPoints(sample.raster * bias.raster, n = n, 
-                                             prob = TRUE, tryf = 1)
+      { # get points to draw observations from
+        # TODO: do this step with replacement
+        # sample.points <- dismo::randomPoints(sample.raster * bias.raster, n = n, 
+        #                                      prob = TRUE, tryf = 1)
+        
       } else
       {
         tmp1 <- sample.points
@@ -561,7 +567,7 @@ sampleRecords <- function(x, n,
                                            detection.probability),
                                   replace = TRUE))
   } else if(type == "presence-absence")
-  {
+  { # get p/a values for sampled cells
     sample.points <- data.frame(sample.points,
                                 Real = extract(sp.raster, sample.points))
     
@@ -584,12 +590,15 @@ sampleRecords <- function(x, n,
     } else
     {
       # TODO: I think this is generating the observation
-      # samples.  But wouldn't it be more straightforward
-      # to do this with rbinom?
-      sample.points$Observed[which(sample.points$Real == 1)] <-
-        sample(c(0, 1), size = length(which(sample.points$Real == 1)),
-               prob = c(1 - detection.probability, detection.probability),
-               replace = TRUE)
+      # samples.  I switched this to use rbinom.  Old way preserved in 
+      # comment for now.
+      # sample.points$Observed[which(sample.points$Real == 1)] <-
+      #   sample(c(0, 1), size = length(which(sample.points$Real == 1)),
+      #          prob = c(1 - detection.probability, detection.probability),
+      #          replace = TRUE)
+      sample.points$Observed[which(sample.points$Real == 1)] <- 
+        rbinom(n = length(which(sample.points$Real == 1)), 
+               size = 1, prob = detection.probability)
     }
     sample.points$Observed[which(sample.points$Real == 0 | 
                                    sample.points$Observed == 0)] <-

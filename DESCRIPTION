@@ -23,4 +23,4 @@ Imports:
     stats,
     utils
 URL: http://borisleroy.com/virtualspecies
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

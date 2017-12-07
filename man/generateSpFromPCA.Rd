@@ -141,13 +141,12 @@ plotResponse(sp, axes = c(1, 3))
 plotResponse(sp, axes = c(2, 3))
            
 }
+\seealso{
+\code{\link{generateSpFromFun}} to generate a virtual species with
+the responses to each environmental variables.
+}
 \author{
 Boris Leroy \email{leroy.boris@gmail.com}
 
 with help from C. N. Meynard, C. Bellard & F. Courchamp
 }
-\seealso{
-\code{\link{generateSpFromFun}} to generate a virtual species with
-the responses to each environmental variables.
-}
-
