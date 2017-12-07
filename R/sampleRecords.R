@@ -1,7 +1,9 @@
 #' Sample occurrences with replacement from a virtual species distribution
 #' 
-#' TODO: - projection check between raster & polygon around line 350
-#'       - add a slot to results giving the random seed at start?
+#' TODO: - change to resample locations for presence-only case
+#'       - check whether I need to modify code for other options
+#'       - projection check between raster & polygon around line 350
+#'       - test using random seed as given in results to reproduce something
 #' 
 #' @description
 #' This function samples with replacement from presences (or presences and 
@@ -492,7 +494,6 @@ sampleRecords <- function(x, n,
     {
       if(is.null(sample.prevalence)) #### !!!! This is my usual case !!!! #####
       { # get points to draw observations from
-        # TODO: do this step with replacement
         # sample.points <- dismo::randomPoints(sample.raster * bias.raster, n = n,
         #                                      prob = TRUE, tryf = 1)
         # To work with: - sample.raster (a 1 in all cells right now)
@@ -635,11 +636,12 @@ sampleRecords <- function(x, n,
            pch = 16, cex = 0.8, add = T)
       plot(sample.points[which(sample.points$Observed == 0), ], 
            pch = 1, cex = 0.8, add = T)
+      results$plots <- recordPlot()
     }
   }
 
 
-  results$sample.points <- data.frame(sample.points)[, c("x", "y", 
+  results$sample.records <- data.frame(sample.points)[, c("x", "y", 
                                                          "Real", "Observed")]
   results$detection.probability <- detection.probability
   results$error.probability <- error.probability
