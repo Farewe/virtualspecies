@@ -229,8 +229,6 @@ sampleRecords <- function(x, n,
 {
   results <- list()
   
-  browser()
-  
   if(is.null(.Random.seed)) {runif(1)} # initialize random seed if there is none
   attr(results, "seed") <- .Random.seed
   
@@ -483,7 +481,6 @@ sampleRecords <- function(x, n,
                               silent = TRUE)
     bias.raster <- bias.raster * bias.raster1
   }
-
   
   if(bias != "no.bias")
   {
@@ -496,8 +493,21 @@ sampleRecords <- function(x, n,
       if(is.null(sample.prevalence)) #### !!!! This is my usual case !!!! #####
       { # get points to draw observations from
         # TODO: do this step with replacement
-        sample.points <- dismo::randomPoints(sample.raster * bias.raster, n = n,
-                                             prob = TRUE, tryf = 1)
+        # sample.points <- dismo::randomPoints(sample.raster * bias.raster, n = n,
+        #                                      prob = TRUE, tryf = 1)
+        # To work with: - sample.raster (a 1 in all cells right now)
+        #               - bias.raster (the moth raster right now with sampling weights)
+        
+        
+        sample.points <- sample(which(sample.raster@data@values == 1), 
+                                size = n, replace = TRUE, 
+                                prob = bias.raster[which(
+                                  sample.raster@data@values == 1)])
+        sample.points <- SpatialPointsDataFrame(
+          coords = coordinates(sample.raster)[sample.points, ], 
+          data = data.frame(Real = rep(NA, length(sample.points))), 
+          proj4string = CRS(proj4string(sample.raster)))
+        
         
       } else
       {
@@ -567,9 +577,10 @@ sampleRecords <- function(x, n,
                                            detection.probability),
                                   replace = TRUE))
   } else if(type == "presence-absence")
-  { # get p/a values for sampled cells
-    sample.points <- data.frame(sample.points,
-                                Real = extract(sp.raster, sample.points))
+  { # get true p/a values for sampled cells
+    sample.points$Real <- extract(sp.raster, sample.points)
+    # TODO: might now need to make this a non-spatial data frame for later 
+    #       bracket subsetting by named columns "x" and "y" 
     
     if(correct.by.suitability)
     {
@@ -592,20 +603,20 @@ sampleRecords <- function(x, n,
       # TODO: I think this is generating the observation
       # samples.  I switched this to use rbinom.  Old way preserved in 
       # comment for now.
-      # sample.points$Observed[which(sample.points$Real == 1)] <-
-      #   sample(c(0, 1), size = length(which(sample.points$Real == 1)),
-      #          prob = c(1 - detection.probability, detection.probability),
-      #          replace = TRUE)
       sample.points$Observed[which(sample.points$Real == 1)] <- 
         rbinom(n = length(which(sample.points$Real == 1)), 
                size = 1, prob = detection.probability)
     }
     sample.points$Observed[which(sample.points$Real == 0 | 
                                    sample.points$Observed == 0)] <-
-      sample(c(0, 1), size = length(which(sample.points$Real == 0 | 
-                                            sample.points$Observed == 0)),
-             prob = c(1 - error.probability, error.probability),
-             replace = TRUE)
+      rbinom(n = length(which(sample.points$Real == 0 | 
+                                sample.points$Observed == 0)), 
+             size = 1, prob = error.probability)
+      
+      # sample(c(0, 1), size = length(which(sample.points$Real == 0 | 
+      #                                       sample.points$Observed == 0)),
+      #        prob = c(1 - error.probability, error.probability),
+      #        replace = TRUE)
   }
   
   if(plot)
@@ -616,15 +627,20 @@ sampleRecords <- function(x, n,
       points(sample.points[, c("x", "y")], pch = 16, cex = .5)
     } else
     {
-      points(sample.points[sample.points$Observed == 1, c("x", "y")], 
-             pch = 16, cex = .8)
-      points(sample.points[sample.points$Observed == 0, c("x", "y")], 
-             pch = 1, cex = .8)
+      # points(sample.points[sample.points$Observed == 1, c("x", "y")], 
+      #        pch = 16, cex = .8)
+      # points(sample.points[sample.points$Observed == 0, c("x", "y")], 
+      #        pch = 1, cex = .8)
+      plot(sample.points[which(sample.points$Observed == 1), ], 
+           pch = 16, cex = 0.8, add = T)
+      plot(sample.points[which(sample.points$Observed == 0), ], 
+           pch = 1, cex = 0.8, add = T)
     }
   }
 
 
-  results$sample.points <- sample.points
+  results$sample.points <- data.frame(sample.points)[, c("x", "y", 
+                                                         "Real", "Observed")]
   results$detection.probability <- detection.probability
   results$error.probability <- error.probability
   if(type == "presence-absence")

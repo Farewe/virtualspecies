@@ -83,7 +83,7 @@ associated \code{area} will be included.}
 }
 }
 \description{
-Gotes. This function samples with replacement from presences (or presences and 
+This function samples with replacement from presences (or presences and 
 absences) within a species distribution, either randomly or with a sampling 
 bias. This produces a "sampled" dataset with replicates similar to many 
 biological  datasets, in which some spatial locations are sampled multiple 
@@ -92,6 +92,7 @@ biases.
 }
 \details{
 TODO: - projection check between raster & polygon around line 350
+      - add a slot to results giving the random seed at start?
 
 
 \bold{How the function works:}
