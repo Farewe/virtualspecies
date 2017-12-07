@@ -496,8 +496,8 @@ sampleRecords <- function(x, n,
       if(is.null(sample.prevalence)) #### !!!! This is my usual case !!!! #####
       { # get points to draw observations from
         # TODO: do this step with replacement
-        # sample.points <- dismo::randomPoints(sample.raster * bias.raster, n = n, 
-        #                                      prob = TRUE, tryf = 1)
+        sample.points <- dismo::randomPoints(sample.raster * bias.raster, n = n,
+                                             prob = TRUE, tryf = 1)
         
       } else
       {
