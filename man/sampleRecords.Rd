@@ -96,9 +96,8 @@ biases.
 TODO: - change examples to sampleRecords()
       - check whether I need to modify code for other options
       - projection check between raster & polygon around line 350
-      - test using random seed as given in results to reproduce something
       - make error.probabiliy introduce false detections into presence-only
-        data (currently it does not and generates a warning)
+        data? (currently it does not and generates a warning)
 
 
 \bold{How the function works:}
@@ -212,7 +211,7 @@ names(env) <- paste("Var", 1:6, sep = "")
 sp <- generateRandomSp(env, niche.breadth = "wide")
 
 # Sampling of 25 presences
-sampleOccurrences(sp, n = 25)
+sampleRecords(sp, n = 25)
 
 # Sampling of 30 presences and absebces
 sampleOccurrences(sp, n = 30, type = "presence-absence")
@@ -254,7 +253,6 @@ samp <- sampleRecords(sp, n = 100,
                       bias = "extent", 
                       bias.strength = 50, 
                       bias.area = biased.area)
-                        
 # reset the random seed using the value saved in the attributes               
 .Random.seed <- attr(samp, "seed") 
 reproduced_samp <- sampleRecords(sp, n = 100, 
