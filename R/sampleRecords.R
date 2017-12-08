@@ -4,6 +4,8 @@
 #'       - check whether I need to modify code for other options
 #'       - projection check between raster & polygon around line 350
 #'       - test using random seed as given in results to reproduce something
+#'       - make error.probabiliy introduce false detections into presence-only
+#'         data (currently it does not and generates a warning)
 #' 
 #' @description
 #' This function samples with replacement from presences (or presences and 
@@ -230,6 +232,8 @@ sampleRecords <- function(x, n,
                           plot = TRUE)
 {
   results <- list()
+  
+  browser()
   
   if(is.null(.Random.seed)) {runif(1)} # initialize random seed if there is none
   attr(results, "seed") <- .Random.seed
@@ -484,12 +488,23 @@ sampleRecords <- function(x, n,
     bias.raster <- bias.raster * bias.raster1
   }
   
+  browser()
   if(bias != "no.bias")
   {
     if(type == "presence only")
     {
-      sample.points <- dismo::randomPoints(sample.raster * bias.raster, n = n, 
-                                           prob = TRUE, tryf = 1)
+      # sample.points <- dismo::randomPoints(sample.raster * bias.raster, n = n, 
+      #                                      prob = TRUE, tryf = 1)
+      # To work with: - sample.raster (a 1 in all presence cells right now)
+      #               - bias.raster (the bird raster right now with sampling weights)
+      sample.points <- sample(which(sample.raster@data@values == 1), 
+                              size = n, replace = TRUE, 
+                              prob = bias.raster[which(
+                                sample.raster@data@values == 1)])
+      sample.points <- SpatialPointsDataFrame(
+        coords = coordinates(sample.raster)[sample.points, ], 
+        data = data.frame(Real = rep(NA, length(sample.points))), 
+        proj4string = CRS(proj4string(sample.raster)))
     } else
     {
       if(is.null(sample.prevalence)) #### !!!! This is my usual case !!!! #####
@@ -498,8 +513,6 @@ sampleRecords <- function(x, n,
         #                                      prob = TRUE, tryf = 1)
         # To work with: - sample.raster (a 1 in all cells right now)
         #               - bias.raster (the moth raster right now with sampling weights)
-        
-        
         sample.points <- sample(which(sample.raster@data@values == 1), 
                                 size = n, replace = TRUE, 
                                 prob = bias.raster[which(
@@ -563,20 +576,29 @@ sampleRecords <- function(x, n,
   {
     if(error.probability != 0)
     {
+      #wgTODO: to be more realistic, this should probably be changed so that
+      # false detections can occur in presence-only sampling (so that cells with
+      # a true absence can still get an incorrect positive decection, which 
+      # would in fact cause them to appear in most presence-only datasets).
       warning("The error probability has no impact when sampling 'presence only' 
                points, because these samplings occur only within the boundaries of the species range")
     }
-    sample.points <- data.frame(sample.points,
-                                Real = 1,
-                                # TODO: I think this is generating the observation
-                                # samples.  But wouldn't it be more straightforward
-                                # to do this with rbinom?
-                                Observed = sample(
-                                  c(NA, 1),
-                                  size = nrow(sample.points),
-                                  prob = c(1 - detection.probability,
-                                           detection.probability),
-                                  replace = TRUE))
+    # once false occurrences are implemented, this next line of code will be 
+    # more relevant because it will get the real p/a value, so will show false
+    # detections
+    sample.points$Real <- extract(sp.raster, sample.points) 
+    sample.points$Observed[which(sample.points$Real == 1)] <- 
+      rbinom(n = length(which(sample.points$Real == 1)), 
+             size = 1, prob = detection.probability)
+    # wg switched this to use rbinom.  Old way preserved in comments for now.
+    # sample.points <- data.frame(sample.points,
+    #                             Real = 1,
+    #                             Observed = sample(
+    #                               c(NA, 1),
+    #                               size = nrow(sample.points),
+    #                               prob = c(1 - detection.probability,
+    #                                        detection.probability),
+    #                               replace = TRUE))
   } else if(type == "presence-absence")
   { # get true p/a values for sampled cells
     sample.points$Real <- extract(sp.raster, sample.points)
@@ -601,8 +623,7 @@ sampleRecords <- function(x, n,
                })
     } else
     {
-      # TODO: I think this is generating the observation
-      # samples.  I switched this to use rbinom.  Old way preserved in 
+      # TODO: I switched this to use rbinom.  Old way preserved in 
       # comment for now.
       sample.points$Observed[which(sample.points$Real == 1)] <- 
         rbinom(n = length(which(sample.points$Real == 1)), 
@@ -625,19 +646,16 @@ sampleRecords <- function(x, n,
     plot(original.raster)
     if(type == "presence only")
     {
-      points(sample.points[, c("x", "y")], pch = 16, cex = .5)
+      plot(sample.points[which(sample.points$Observed == 1), ], 
+           pch = 16, cex = 0.8, add = T)
     } else
     {
-      # points(sample.points[sample.points$Observed == 1, c("x", "y")], 
-      #        pch = 16, cex = .8)
-      # points(sample.points[sample.points$Observed == 0, c("x", "y")], 
-      #        pch = 1, cex = .8)
       plot(sample.points[which(sample.points$Observed == 1), ], 
            pch = 16, cex = 0.8, add = T)
       plot(sample.points[which(sample.points$Observed == 0), ], 
            pch = 1, cex = 0.8, add = T)
-      results$plots <- recordPlot()
     }
+    results$plots <- recordPlot()
   }
 
 
