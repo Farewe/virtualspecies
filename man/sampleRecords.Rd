@@ -69,9 +69,11 @@ of detection and/or error.}
 occurrence points will be plotted.}
 }
 \value{
-a \code{list} with 3 (unbiased sampling) to 4 (biased sampling) elements:
+a \code{list} with 4 (unbiased sampling) to 5 (biased sampling) 
+elements:
 \itemize{
-\item{\code{sample.points}: the data.frame containing the coordinates of 
+\item{\code{plots}: a list of 2 elements containing the original distribution as a raster and a plot showing the sampled points ovelaying the original distribution.}
+\item{\code{sample.records}: the data.frame containing the coordinates of 
 samples, the real presence-absences (or presence-only) and the sampled 
 presence-absences}
 \item{\code{detection.probability}: the chosen probability of detection of
@@ -91,8 +93,12 @@ times. The sampling bias can be defined manually or with a set of pre-defined
 biases.
 }
 \details{
-TODO: - projection check between raster & polygon around line 350
-      - add a slot to results giving the random seed at start?
+TODO: - change examples to sampleRecords()
+      - check whether I need to modify code for other options
+      - projection check between raster & polygon around line 350
+      - test using random seed as given in results to reproduce something
+      - make error.probabiliy introduce false detections into presence-only
+        data (currently it does not and generates a warning)
 
 
 \bold{How the function works:}
@@ -180,6 +186,15 @@ Otherwise you can define manually your sampling bias, \emph{e.g.} to create
 biases along roads. In that case you have to provide to \code{weights} a 
 raster layer in which
 each cell contains the probability to be sampled.
+
+The \code{\link{.Random.seed}} and \code{\link{RNGkind}} are stored as 
+\code{\link{attributes}} when the function is called, and can be used to 
+reproduce the results as shown in the examples (though
+it is preferable to set the seed with \code{\link{set.seed}} before calling
+\code{sampleRecords()} and to then use the same value in 
+\code{\link{set.seed}} to reproduce results later. Note that 
+reproducing the sampling will only work if the same original distribution map 
+is used.
 }
 \examples{
 # Create an example stack with six environmental variables
@@ -230,7 +245,25 @@ sampleOccurrences(sp, n = 50, type = "presence-absence",
                   bias.strength = 0,
                   bias.area = biased.area)
 # Showing the area in which the sampling is biased
-plot(biased.area, add = TRUE)             
+plot(biased.area, add = TRUE)       
+
+# reproduce sampling based on the saved .Random.seed from a previous result
+samp <- sampleRecords(sp, n = 100, 
+                      type = "presence-absence", 
+                      detection.probability = 0.7, 
+                      bias = "extent", 
+                      bias.strength = 50, 
+                      bias.area = biased.area)
+                        
+# reset the random seed using the value saved in the attributes               
+.Random.seed <- attr(samp, "seed") 
+reproduced_samp <- sampleRecords(sp, n = 100, 
+                                 type = "presence-absence",
+                                 detection.probability = 0.7,
+                                 bias = "extent",
+                                 bias.strength = 50,
+                                 bias.area = biased.area)
+identical(samp, reproduced_samp)                     
 }
 \author{
 Boris Leroy \email{leroy.boris@gmail.com}
