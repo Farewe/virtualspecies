@@ -1,6 +1,6 @@
 #' Sample occurrences with replacement from a virtual species distribution
 #' 
-#' TODO: - change to resample locations for presence-only case
+#' TODO: - change examples to sampleRecords()
 #'       - check whether I need to modify code for other options
 #'       - projection check between raster & polygon around line 350
 #'       - test using random seed as given in results to reproduce something
@@ -145,9 +145,21 @@
 #' biases along roads. In that case you have to provide to \code{weights} a 
 #' raster layer in which
 #' each cell contains the probability to be sampled.
-#' @return a \code{list} with 3 (unbiased sampling) to 4 (biased sampling) elements:
+#' 
+#' The \code{\link{.Random.seed}} and \code{\link{RNGkind}} are stored as 
+#' \code{\link{attributes}} when the function is called, and can be used to 
+#' reproduce the results as shown in the examples (though
+#' it is preferable to set the seed with \code{\link{set.seed}} before calling
+#' \code{sampleRecords()} and to then use the same value in 
+#' \code{\link{set.seed}} to reproduce results later. Note that 
+#' reproducing the sampling will only work if the same original distribution map 
+#' is used.
+#' 
+#' @return a \code{list} with 4 (unbiased sampling) to 5 (biased sampling) 
+#' elements:
 #' \itemize{
-#' \item{\code{sample.points}: the data.frame containing the coordinates of 
+#' \item{\code{plots}: a list of 2 elements containing the original distribution as a raster and a plot showing the sampled points ovelaying the original distribution.}
+#' \item{\code{sample.records}: the data.frame containing the coordinates of 
 #' samples, the real presence-absences (or presence-only) and the sampled 
 #' presence-absences}
 #' \item{\code{detection.probability}: the chosen probability of detection of
@@ -214,7 +226,25 @@
 #'                   bias.strength = 0,
 #'                   bias.area = biased.area)
 #' # Showing the area in which the sampling is biased
-#' plot(biased.area, add = TRUE)             
+#' plot(biased.area, add = TRUE)       
+#' 
+#' # reproduce sampling based on the saved .Random.seed from a previous result
+#' samp <- sampleRecords(sp, n = 100, 
+#'                       type = "presence-absence", 
+#'                       detection.probability = 0.7, 
+#'                       bias = "extent", 
+#'                       bias.strength = 50, 
+#'                       bias.area = biased.area)
+#'                         
+#' # reset the random seed using the value saved in the attributes               
+#' .Random.seed <- attr(samp, "seed") 
+#' reproduced_samp <- sampleRecords(sp, n = 100, 
+#'                                  type = "presence-absence",
+#'                                  detection.probability = 0.7,
+#'                                  bias = "extent",
+#'                                  bias.strength = 50,
+#'                                  bias.area = biased.area)
+#' identical(samp, reproduced_samp)                     
 
 
 
@@ -231,11 +261,12 @@ sampleRecords <- function(x, n,
                           sample.prevalence = NULL,
                           plot = TRUE)
 {
-  results <- list()
-  
-  browser()
+  results <- list(plots = NULL, sample.records = NULL, 
+                  detection.probability = NULL, error.probability = NULL, 
+                  bias = NULL)
   
   if(is.null(.Random.seed)) {runif(1)} # initialize random seed if there is none
+  attr(results, "RNGkind") <- RNGkind()
   attr(results, "seed") <- .Random.seed
   
   if("virtualspecies" %in% class(x))
@@ -262,6 +293,7 @@ sampleRecords <- function(x, n,
   }
   
   original.raster <- sp.raster
+  results$plots$original.distribution <- original.raster
   
   if(!is.null(sample.prevalence))
   {
@@ -488,7 +520,6 @@ sampleRecords <- function(x, n,
     bias.raster <- bias.raster * bias.raster1
   }
   
-  browser()
   if(bias != "no.bias")
   {
     if(type == "presence only")
@@ -655,7 +686,7 @@ sampleRecords <- function(x, n,
       plot(sample.points[which(sample.points$Observed == 0), ], 
            pch = 1, cex = 0.8, add = T)
     }
-    results$plots <- recordPlot()
+    results$plots$sample.map <- recordPlot()
   }
 
 
@@ -674,7 +705,6 @@ sampleRecords <- function(x, n,
     results$sample.prevalence <- c(true.sample.prevalence = true.prev,
                                    observed.sample.prevalence = obs.prev)
   }
-
   
   class(results) <- append(class(results), "VSSampledPoints")
   return(results)
