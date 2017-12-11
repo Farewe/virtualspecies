@@ -55,7 +55,7 @@
 #' prevalence, i.e. the proportion of presences sampled. Note that the 
 #' probabilities of detection and error are applied AFTER this parameter,
 #' so the final sample prevalence may be different if you apply probabilities 
-#' of detection and/or error.
+#' of detection and/or error. 
 #' @param plot \code{TRUE} or \code{FALSE}. If \code{TRUE}, the sampled 
 #' occurrence points will be plotted.
 #' @details
@@ -144,6 +144,14 @@
 #' biases along roads. In that case you have to provide to \code{weights} a 
 #' raster layer in which
 #' each cell contains the probability to be sampled.
+#' 
+#' Setting \code{sample.prevalence} may at least partly
+#' override \code{bias}, e.g. if \code{bias} is specified with \code{extent} to 
+#' an area that contains no presences, but sample prevalence is set to > 0, 
+#' then cells outside of the biased sampling extent will be sampled until 
+#' the number of presences required by \code{sample.prevalence} are obtained, 
+#' after which the sampling of absences will proceed according to the specified
+#' bias.  
 #' 
 #' The \code{\link{.Random.seed}} and \code{\link{RNGkind}} are stored as 
 #' \code{\link{attributes}} when the function is called, and can be used to 
@@ -563,19 +571,35 @@ sampleRecords <- function(x, n,
           proj4string = CRS(proj4string(sample.raster)))
       } else
       { # TODO: yes sample.prevalence, presence-absence, with bias
+        browser()
         tmp1 <- sample.raster
         tmp1[sp.raster != 1] <- NA
-        sample.points <- dismo::randomPoints(tmp1 * bias.raster, 
-                                             n = sample.prevalence * n, 
-                                             prob = TRUE, tryf = 1)
+        # sample.points <- dismo::randomPoints(tmp1 * bias.raster, 
+        #                                      n = sample.prevalence * n, 
+        #                                      prob = TRUE, tryf = 1)
+        sample.points <- sample(which(tmp1@data@values == 1), 
+                                size = sample.prevalence * n, 
+                                replace = TRUE, 
+                                prob = bias.raster[which(
+                                  tmp1@data@values == 1)])
         tmp1 <- sample.raster
         tmp1[sp.raster != 0] <- NA
-        sample.points <- rbind(sample.points,
-                               dismo::randomPoints(
-                                 tmp1 * bias.raster, 
-                                 n = (1 - sample.prevalence) * n, 
-                                 prob = TRUE, 
-                                 tryf = 1))
+        # sample.points <- rbind(sample.points,
+        #                        dismo::randomPoints(
+        #                          tmp1 * bias.raster, 
+        #                          n = (1 - sample.prevalence) * n, 
+        #                          prob = TRUE, 
+        #                          tryf = 1))
+        sample.points <- c(sample.points, 
+                           sample(which(tmp1@data@values == 1), 
+                                  size = (1 - sample.prevalence) * n, 
+                                  replace = TRUE, 
+                                  prob = bias.raster[which(
+                                    tmp1@data@values == 1)]))
+        sample.points <- SpatialPointsDataFrame(
+          coords = coordinates(sample.raster)[sample.points, ], 
+          data = data.frame(Real = rep(NA, length(sample.points))), 
+          proj4string = CRS(proj4string(sample.raster)))
         rm(tmp1)
       }
     }
@@ -615,6 +639,10 @@ sampleRecords <- function(x, n,
                                  n = (1 - sample.prevalence) * n, 
                                  prob = TRUE, 
                                  tryf = 1))
+        sample.points <- SpatialPointsDataFrame(
+          coords = coordinates(sample.raster)[sample.points, ], 
+          data = data.frame(Real = rep(NA, length(sample.points))), 
+          proj4string = CRS(proj4string(sample.raster)))
         rm(tmp1)
       }
     }

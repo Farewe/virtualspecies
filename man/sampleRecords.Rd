@@ -189,6 +189,14 @@ biases along roads. In that case you have to provide to \code{weights} a
 raster layer in which
 each cell contains the probability to be sampled.
 
+Setting \code{sample.prevalence} may at least partly
+override \code{bias}, e.g. if \code{bias} is specified with \code{extent} to 
+an area that contains no presences, but sample prevalence is set to > 0, 
+then cells outside of the biased sampling extent will be sampled until 
+the number of presences required by \code{sample.prevalence} are obtained, 
+after which the sampling of absences will proceed according to the specified
+bias.  
+
 The \code{\link{.Random.seed}} and \code{\link{RNGkind}} are stored as 
 \code{\link{attributes}} when the function is called, and can be used to 
 reproduce the results as shown in the examples (though
