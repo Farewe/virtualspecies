@@ -62,7 +62,7 @@ sampling.}
 Only useful if \code{type = "presence-absence"}. Defines the sample 
 prevalence, i.e. the proportion of presences sampled. Note that the 
 probabilities of detection and error are applied AFTER this parameter,
-so the final sample prevalence may not different if you apply probabilities 
+so the final sample prevalence may be different if you apply probabilities 
 of detection and/or error.}
 
 \item{plot}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, the sampled 
