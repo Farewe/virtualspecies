@@ -213,8 +213,8 @@ sp <- generateRandomSp(env, niche.breadth = "wide")
 # Sampling of 25 presences
 sampleRecords(sp, n = 25)
 
-# Sampling of 30 presences and absebces
-sampleOccurrences(sp, n = 30, type = "presence-absence")
+# Sampling of 30 presences and absences
+sampleRecords(sp, n = 30, type = "presence-absence")
 
 # Reducing of the probability of detection
 sampleOccurrences(sp, n = 30, type = "presence-absence", 

@@ -194,8 +194,8 @@
 #' # Sampling of 25 presences
 #' sampleRecords(sp, n = 25)
 #' 
-#' # Sampling of 30 presences and absebces
-#' sampleOccurrences(sp, n = 30, type = "presence-absence")
+#' # Sampling of 30 presences and absences
+#' sampleRecords(sp, n = 30, type = "presence-absence")
 #' 
 #' # Reducing of the probability of detection
 #' sampleOccurrences(sp, n = 30, type = "presence-absence", 
@@ -262,6 +262,7 @@ sampleRecords <- function(x, n,
   results <- list(plots = NULL, sample.records = NULL, 
                   detection.probability = NULL, error.probability = NULL, 
                   bias = NULL)
+
   
   if(is.null(.Random.seed)) {runif(1)} # initialize random seed if there is none
   attr(results, "RNGkind") <- RNGkind()
@@ -553,7 +554,7 @@ sampleRecords <- function(x, n,
         
         
       } else
-      {
+      { # TODO
         tmp1 <- sample.points
         tmp1[sp.raster != 1] <- NA
         sample.points <- dismo::randomPoints(tmp1 * bias.raster, 
@@ -586,8 +587,12 @@ sampleRecords <- function(x, n,
     {
       if(is.null(sample.prevalence))
       {
-        sample.points <- dismo::randomPoints(sample.raster, n = n, prob = TRUE, 
-                                             tryf = 1)
+        sample.points <- sample(which(sample.raster@data@values == 1), 
+                                size = n, replace = T)
+        sample.points <- SpatialPointsDataFrame(
+          coords = coordinates(sample.raster)[sample.points, ],
+          data = data.frame(Real = rep(NA, length(sample.points))), 
+          proj4string = CRS(proj4string(sample.raster)))
       } else
       {
         tmp1 <- sample.raster
