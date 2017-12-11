@@ -449,8 +449,8 @@ sampleOccurrences <- function(x, n,
         sample.points <- dismo::randomPoints(sample.raster * bias.raster, n = n, 
                                              prob = TRUE, tryf = 1)
       } else
-      {
-        tmp1 <- sample.points
+      { 
+        tmp1 <- sample.raster
         tmp1[sp.raster != 1] <- NA
         sample.points <- dismo::randomPoints(tmp1 * bias.raster, 
                                              n = sample.prevalence * n, 
