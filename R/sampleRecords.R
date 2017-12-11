@@ -552,9 +552,6 @@ sampleRecords <- function(x, n,
         proj4string = CRS(proj4string(sample.raster)))
     } else
     {
-      
-      browser()
-      
       if(is.null(sample.prevalence)) #### !!!! This is my usual case !!!! #####
       { # get points to draw observations from
         # sample.points <- dismo::randomPoints(sample.raster * bias.raster, n = n,
@@ -570,13 +567,9 @@ sampleRecords <- function(x, n,
           data = data.frame(Real = rep(NA, length(sample.points))), 
           proj4string = CRS(proj4string(sample.raster)))
       } else
-      { # TODO: yes sample.prevalence, presence-absence, with bias
-        browser()
+      { 
         tmp1 <- sample.raster
         tmp1[sp.raster != 1] <- NA
-        # sample.points <- dismo::randomPoints(tmp1 * bias.raster, 
-        #                                      n = sample.prevalence * n, 
-        #                                      prob = TRUE, tryf = 1)
         sample.points <- sample(which(tmp1@data@values == 1), 
                                 size = sample.prevalence * n, 
                                 replace = TRUE, 
@@ -584,12 +577,6 @@ sampleRecords <- function(x, n,
                                   tmp1@data@values == 1)])
         tmp1 <- sample.raster
         tmp1[sp.raster != 0] <- NA
-        # sample.points <- rbind(sample.points,
-        #                        dismo::randomPoints(
-        #                          tmp1 * bias.raster, 
-        #                          n = (1 - sample.prevalence) * n, 
-        #                          prob = TRUE, 
-        #                          tryf = 1))
         sample.points <- c(sample.points, 
                            sample(which(tmp1@data@values == 1), 
                                   size = (1 - sample.prevalence) * n, 
@@ -607,8 +594,6 @@ sampleRecords <- function(x, n,
   {
     if(type == "presence only")
     {
-      # sample.points <- dismo::randomPoints(sample.raster, n = n, prob = TRUE, 
-      #                                      tryf = 1)
       sample.points <- sample(which(sample.raster@data@values == 1), 
                               size = n, replace = TRUE)
       sample.points <- SpatialPointsDataFrame(
@@ -696,8 +681,6 @@ sampleRecords <- function(x, n,
                  })
     } else
     {
-      # TODO: I switched this to use rbinom.  Old way preserved in 
-      # comment for now.
       sample.points$Observed[which(sample.points$Real == 1)] <- 
         rbinom(n = length(which(sample.points$Real == 1)), 
                size = 1, prob = detection.probability)
@@ -707,11 +690,6 @@ sampleRecords <- function(x, n,
       rbinom(n = length(which(sample.points$Real == 0 | 
                                 sample.points$Observed == 0)), 
              size = 1, prob = error.probability)
-      
-      # sample(c(0, 1), size = length(which(sample.points$Real == 0 | 
-      #                                       sample.points$Observed == 0)),
-      #        prob = c(1 - error.probability, error.probability),
-      #        replace = TRUE)
   }
   
   if(plot)
