@@ -72,7 +72,7 @@ occurrence points will be plotted.}
 a \code{list} with 4 (unbiased sampling) to 5 (biased sampling) 
 elements:
 \itemize{
-\item{\code{plots}: a list of 2 elements containing the original distribution as a raster and a plot showing the sampled points ovelaying the original distribution.}
+\item{\code{sample.plot}: a recorded plot showing the sampled points ovelaying the original distribution.}
 \item{\code{sample.records}: the data.frame containing the coordinates of 
 samples, the real presence-absences (or presence-only) and the sampled 
 presence-absences}
@@ -80,6 +80,7 @@ presence-absences}
 the virtual species}
 \item{\code{error.probability}: the chosen probability to assign presence
 in cells where the species is absent}
+\item{\code{original.distribution.raster}: the raster of the original species distribution.}
 \item{\code{bias}: if a bias was chosen, then the type of bias and the
 associated \code{area} will be included.}
 }
@@ -217,8 +218,8 @@ sampleRecords(sp, n = 25)
 sampleRecords(sp, n = 30, type = "presence-absence")
 
 # Reducing of the probability of detection
-sampleOccurrences(sp, n = 30, type = "presence-absence", 
-                  detection.probability = 0.5)
+sampleRecords(sp, n = 30, type = "presence-absence", 
+              detection.probability = 0.5)
                   
 # Further reducing in relation to environmental suitability
 sampleOccurrences(sp, n = 30, type = "presence-absence", 
@@ -245,6 +246,11 @@ sampleOccurrences(sp, n = 50, type = "presence-absence",
                   bias.area = biased.area)
 # Showing the area in which the sampling is biased
 plot(biased.area, add = TRUE)       
+
+# view plot saved as an object in results list
+samp <- sampleRecords(sp, n = 30, type = "presence-absence", 
+                      detection.probability = 0.5)
+samp$sample.plot
 
 # reproduce sampling based on the saved .Random.seed from a previous result
 samp <- sampleRecords(sp, n = 100, 

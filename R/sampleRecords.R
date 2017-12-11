@@ -157,7 +157,7 @@
 #' @return a \code{list} with 4 (unbiased sampling) to 5 (biased sampling) 
 #' elements:
 #' \itemize{
-#' \item{\code{plots}: a list of 2 elements containing the original distribution as a raster and a plot showing the sampled points ovelaying the original distribution.}
+#' \item{\code{sample.plot}: a recorded plot showing the sampled points ovelaying the original distribution.}
 #' \item{\code{sample.records}: the data.frame containing the coordinates of 
 #' samples, the real presence-absences (or presence-only) and the sampled 
 #' presence-absences}
@@ -165,6 +165,7 @@
 #' the virtual species}
 #' \item{\code{error.probability}: the chosen probability to assign presence
 #' in cells where the species is absent}
+#' \item{\code{original.distribution.raster}: the raster of the original species distribution.}
 #' \item{\code{bias}: if a bias was chosen, then the type of bias and the
 #' associated \code{area} will be included.}
 #' }
@@ -198,8 +199,8 @@
 #' sampleRecords(sp, n = 30, type = "presence-absence")
 #' 
 #' # Reducing of the probability of detection
-#' sampleOccurrences(sp, n = 30, type = "presence-absence", 
-#'                   detection.probability = 0.5)
+#' sampleRecords(sp, n = 30, type = "presence-absence", 
+#'               detection.probability = 0.5)
 #'                   
 #' # Further reducing in relation to environmental suitability
 #' sampleOccurrences(sp, n = 30, type = "presence-absence", 
@@ -226,6 +227,11 @@
 #'                   bias.area = biased.area)
 #' # Showing the area in which the sampling is biased
 #' plot(biased.area, add = TRUE)       
+#' 
+#' # view plot saved as an object in results list
+#' samp <- sampleRecords(sp, n = 30, type = "presence-absence", 
+#'                       detection.probability = 0.5)
+#' samp$sample.plot
 #' 
 #' # reproduce sampling based on the saved .Random.seed from a previous result
 #' samp <- sampleRecords(sp, n = 100, 
@@ -259,10 +265,11 @@ sampleRecords <- function(x, n,
                           sample.prevalence = NULL,
                           plot = TRUE)
 {
-  results <- list(plots = NULL, sample.records = NULL, 
+  results <- list(sample.plot = NULL, sample.records = NULL, 
                   detection.probability = NULL, error.probability = NULL, 
-                  bias = NULL)
+                  bias = NULL, original.distribution.raster = NULL)
 
+  browser()
   
   if(is.null(.Random.seed)) {runif(1)} # initialize random seed if there is none
   attr(results, "RNGkind") <- RNGkind()
@@ -292,7 +299,7 @@ sampleRecords <- function(x, n,
   }
   
   original.raster <- sp.raster
-  results$plots$original.distribution <- original.raster
+  results$original.distribution.raster <- original.raster
   
   if(!is.null(sample.prevalence))
   {
@@ -645,9 +652,11 @@ sampleRecords <- function(x, n,
     # TODO: might now need to make this a non-spatial data frame for later 
     #       bracket subsetting by named columns "x" and "y" 
     
+    browser()
+    
     if(correct.by.suitability)
     {
-      suitabs <- extract(x$suitab.raster, sample.points[, c("x", "y")])
+      suitabs <- extract(x$suitab.raster, coordinates(sample.points))
     } else { suitabs <- rep(1, nrow(sample.points)) }
     
     sample.points$Observed <- NA
@@ -655,12 +664,15 @@ sampleRecords <- function(x, n,
     {
       sample.points$Observed[which(sample.points$Real == 1)] <-
         sapply(detection.probability * suitabs[which(sample.points$Real == 1)],
-               function(y)
-               {
-                 sample(c(0, 1),
-                        size = 1,
-                        prob = c(1 - y, y))
-               })
+               function(y) {
+                 rbinom(n = 1, size = 1, prob = y)
+               }
+               # {
+               #   sample(c(0, 1),
+               #          size = 1,
+               #          prob = c(1 - y, y))
+               # }
+               )
     } else
     {
       # TODO: I switched this to use rbinom.  Old way preserved in 
@@ -695,7 +707,7 @@ sampleRecords <- function(x, n,
       plot(sample.points[which(sample.points$Observed == 0), ], 
            pch = 1, cex = 0.8, add = T)
     }
-    results$plots$sample.map <- recordPlot()
+    results$sample.plot <- recordPlot()
   }
 
 
