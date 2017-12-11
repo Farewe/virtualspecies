@@ -69,18 +69,20 @@ of detection and/or error.}
 occurrence points will be plotted.}
 }
 \value{
-a \code{list} with 4 (unbiased sampling) to 5 (biased sampling) 
+a \code{list} with 5 (unbiased sampling) to 6 (biased sampling) 
 elements:
 \itemize{
-\item{\code{sample.plot}: a recorded plot showing the sampled points ovelaying the original distribution.}
 \item{\code{sample.records}: the data.frame containing the coordinates of 
 samples, the real presence-absences (or presence-only) and the sampled 
 presence-absences}
+\item{\code{sample.plot}: a recorded plot showing the sampled points 
+ovelaying the original distribution.}
 \item{\code{detection.probability}: the chosen probability of detection of
 the virtual species}
 \item{\code{error.probability}: the chosen probability to assign presence
 in cells where the species is absent}
-\item{\code{original.distribution.raster}: the raster of the original species distribution.}
+\item{\code{original.distribution.raster}: the raster of the original species 
+distribution.}
 \item{\code{bias}: if a bias was chosen, then the type of bias and the
 associated \code{area} will be included.}
 }
@@ -222,28 +224,28 @@ sampleRecords(sp, n = 30, type = "presence-absence",
               detection.probability = 0.5)
                   
 # Further reducing in relation to environmental suitability
-sampleOccurrences(sp, n = 30, type = "presence-absence", 
-                  detection.probability = 0.5,
-                  correct.by.suitability = TRUE)
+sampleRecords(sp, n = 30, type = "presence-absence", 
+              detection.probability = 0.5,
+              correct.by.suitability = TRUE)
                   
 # Creating sampling errors (far too much)
-sampleOccurrences(sp, n = 30, type = "presence-absence", 
-                  error.probability = 0.5)
+sampleRecords(sp, n = 30, type = "presence-absence", 
+              error.probability = 0.5)
                   
 # Introducing a sampling bias (oversampling)
 biased.area <- extent(0.5, 0.7, 0.6, 0.8)
-sampleOccurrences(sp, n = 50, type = "presence-absence", 
-                  bias = "extent",
-                  bias.area = biased.area)
+sampleRecords(sp, n = 50, type = "presence-absence", 
+              bias = "extent",
+              bias.area = biased.area)
 # Showing the area in which the sampling is biased
 plot(biased.area, add = TRUE)     
 
 # Introducing a sampling bias (no sampling at all in the chosen area)
 biased.area <- extent(0.5, 0.7, 0.6, 0.8)
-sampleOccurrences(sp, n = 50, type = "presence-absence", 
-                  bias = "extent",
-                  bias.strength = 0,
-                  bias.area = biased.area)
+sampleRecords(sp, n = 50, type = "presence-absence", 
+              bias = "extent",
+              bias.strength = 0,
+              bias.area = biased.area)
 # Showing the area in which the sampling is biased
 plot(biased.area, add = TRUE)       
 
