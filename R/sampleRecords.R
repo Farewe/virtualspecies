@@ -54,7 +54,7 @@
 #' Only useful if \code{type = "presence-absence"}. Defines the sample 
 #' prevalence, i.e. the proportion of presences sampled. Note that the 
 #' probabilities of detection and error are applied AFTER this parameter,
-#' so the final sample prevalence may not different if you apply probabilities 
+#' so the final sample prevalence may be different if you apply probabilities 
 #' of detection and/or error.
 #' @param plot \code{TRUE} or \code{FALSE}. If \code{TRUE}, the sampled 
 #' occurrence points will be plotted.
@@ -544,6 +544,9 @@ sampleRecords <- function(x, n,
         proj4string = CRS(proj4string(sample.raster)))
     } else
     {
+      
+      browser()
+      
       if(is.null(sample.prevalence)) #### !!!! This is my usual case !!!! #####
       { # get points to draw observations from
         # sample.points <- dismo::randomPoints(sample.raster * bias.raster, n = n,
@@ -558,10 +561,8 @@ sampleRecords <- function(x, n,
           coords = coordinates(sample.raster)[sample.points, ], 
           data = data.frame(Real = rep(NA, length(sample.points))), 
           proj4string = CRS(proj4string(sample.raster)))
-        
-        
       } else
-      { # TODO
+      { # TODO: yes sample.prevalence, presence-absence, with bias
         tmp1 <- sample.points
         tmp1[sp.raster != 1] <- NA
         sample.points <- dismo::randomPoints(tmp1 * bias.raster, 
@@ -601,7 +602,7 @@ sampleRecords <- function(x, n,
           data = data.frame(Real = rep(NA, length(sample.points))), 
           proj4string = CRS(proj4string(sample.raster)))
       } else
-      {
+      { # TODO
         tmp1 <- sample.raster
         tmp1[sp.raster != 1] <- NA
         sample.points <- dismo::randomPoints(tmp1, n = sample.prevalence * n, 
