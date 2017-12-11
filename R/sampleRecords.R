@@ -563,7 +563,7 @@ sampleRecords <- function(x, n,
           proj4string = CRS(proj4string(sample.raster)))
       } else
       { # TODO: yes sample.prevalence, presence-absence, with bias
-        tmp1 <- sample.points
+        tmp1 <- sample.raster
         tmp1[sp.raster != 1] <- NA
         sample.points <- dismo::randomPoints(tmp1 * bias.raster, 
                                              n = sample.prevalence * n, 
