@@ -92,11 +92,11 @@ This function samples with replacement from presences (or presences and
 absences) within a species distribution, either randomly or with a sampling 
 bias. This produces a "sampled" dataset with replicates similar to many 
 biological  datasets, in which some spatial locations are sampled multiple 
-times. The sampling bias can be defined manually or with a set of pre-defined 
+times. The sampling bias can be defined manually or with a set of pre-defined
 biases.
 }
 \details{
-TODO: - change examples to sampleRecords()
+TODO:
       - check whether I need to modify code for other options
       - projection check between raster & polygon around line 350
       - make error.probabiliy introduce false detections into presence-only
@@ -281,6 +281,7 @@ identical(samp, reproduced_samp)
 }
 \author{
 Boris Leroy \email{leroy.boris@gmail.com}
+Willson Gaul \email{wgaul@hotmail.com}
 
 with help from C. N. Meynard, C. Bellard & F. Courchamp
 }

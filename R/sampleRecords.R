@@ -1,6 +1,6 @@
 #' Sample occurrences with replacement from a virtual species distribution
 #' 
-#' TODO: - change examples to sampleRecords()
+#' TODO:
 #'       - check whether I need to modify code for other options
 #'       - projection check between raster & polygon around line 350
 #'       - make error.probabiliy introduce false detections into presence-only
@@ -11,7 +11,7 @@
 #' absences) within a species distribution, either randomly or with a sampling 
 #' bias. This produces a "sampled" dataset with replicates similar to many 
 #' biological  datasets, in which some spatial locations are sampled multiple 
-#' times. The sampling bias can be defined manually or with a set of pre-defined 
+#' times. The sampling bias can be defined manually or with a set of pre-defined
 #' biases.
 #' 
 #' @param x a \code{rasterLayer} object or the output list from 
@@ -185,6 +185,7 @@
 #' @importFrom graphics points
 #' @author
 #' Boris Leroy \email{leroy.boris@@gmail.com}
+#' Willson Gaul \email{wgaul@@hotmail.com}
 #' 
 #' with help from C. N. Meynard, C. Bellard & F. Courchamp
 #' @examples
@@ -429,9 +430,7 @@ sampleRecords <- function(x, n,
                            bias.area = bias.area)
     }
   }
-  if (bias == "polygon") # TODO: Projections are not checked here. Perhaps we should add projection check between raster & polygon in the future?
-                                # This is especially important given that randomPoints weights samplings by the cell area (because cells closer to
-                                # the equator are larger)
+  if (bias == "polygon") 
   {
     if(!(class(bias.area) %in% c("SpatialPolygons", "SpatialPolygonsDataFrame")))
     {
@@ -461,16 +460,6 @@ sampleRecords <- function(x, n,
   } else stop("type must either be 'presence only' or 'presence-absence'")
   
   if (bias == "manual")
-    # TODO: 
-    # sampling type should match the way in which weights were generated.  
-    # If weights were calculated from all records for a taxonomic group, then
-    # it would be inappropriate to use those weights to sample only cells
-    # in which the species is present.  Likewise, if weights are calculated 
-    # from density of presence records for a single species, it might not be
-    # appropriate to use them to weight p/a sampling, as there would be a 
-    # weight of 0 for any cell that didn't have a species detection, even if
-    # those cells should get sampling effort producing a non-detection because
-    # of species absence (rather than because lack of sampling). 
   {
     if(!("RasterLayer" %in% class(weights)))
     {
@@ -538,10 +527,6 @@ sampleRecords <- function(x, n,
   {
     if(type == "presence only")
     {
-      # sample.points <- dismo::randomPoints(sample.raster * bias.raster, n = n, 
-      #                                      prob = TRUE, tryf = 1)
-      # To work with: - sample.raster (a 1 in all presence cells right now)
-      #               - bias.raster (the bird raster right now with sampling weights)
       sample.points <- sample(which(sample.raster@data@values == 1), 
                               size = n, replace = TRUE, 
                               prob = bias.raster[which(
@@ -553,11 +538,7 @@ sampleRecords <- function(x, n,
     } else
     {
       if(is.null(sample.prevalence)) #### !!!! This is my usual case !!!! #####
-      { # get points to draw observations from
-        # sample.points <- dismo::randomPoints(sample.raster * bias.raster, n = n,
-        #                                      prob = TRUE, tryf = 1)
-        # To work with: - sample.raster (a 1 in all cells right now)
-        #               - bias.raster (the moth raster right now with sampling weights)
+      { 
         sample.points <- sample(which(sample.raster@data@values == 1), 
                                 size = n, replace = TRUE, 
                                 prob = bias.raster[which(
@@ -611,19 +592,18 @@ sampleRecords <- function(x, n,
           data = data.frame(Real = rep(NA, length(sample.points))), 
           proj4string = CRS(proj4string(sample.raster)))
       } else
-      { # TODO
-        tmp1 <- sample.raster
+      { 
+        tmp1 <- sample.raster # sample presences
         tmp1[sp.raster != 1] <- NA
-        sample.points <- dismo::randomPoints(tmp1, n = sample.prevalence * n, 
-                                             prob = TRUE, tryf = 1)
-        tmp1 <- sample.raster
+        sample.points <- sample(which(tmp1@data@values == 1), 
+                                size = sample.prevalence * n, 
+                                replace = TRUE)
+        tmp1 <- sample.raster # sample absences
         tmp1[sp.raster != 0] <- NA
-        sample.points <- rbind(sample.points,
-                               dismo::randomPoints(
-                                 tmp1, 
-                                 n = (1 - sample.prevalence) * n, 
-                                 prob = TRUE, 
-                                 tryf = 1))
+        sample.points <- c(sample.points,
+                               sample(which(tmp1@data@values == 1), 
+                                      size = (1 - sample.prevalence) * n, 
+                                      replace = TRUE))
         sample.points <- SpatialPointsDataFrame(
           coords = coordinates(sample.raster)[sample.points, ], 
           data = data.frame(Real = rep(NA, length(sample.points))), 
@@ -663,8 +643,6 @@ sampleRecords <- function(x, n,
   } else if(type == "presence-absence")
   { # get true p/a values for sampled cells
     sample.points$Real <- extract(sp.raster, sample.points)
-    # TODO: might now need to make this a non-spatial data frame for later 
-    #       bracket subsetting by named columns "x" and "y" 
 
     if(correct.by.suitability)
     {
