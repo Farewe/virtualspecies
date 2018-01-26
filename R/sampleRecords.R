@@ -527,14 +527,34 @@ sampleRecords <- function(x, n,
   {
     if(type == "presence only")
     {
-      sample.points <- sample(which(sample.raster@data@values == 1), 
-                              size = n, replace = TRUE, 
-                              prob = bias.raster[which(
-                                sample.raster@data@values == 1)])
-      sample.points <- SpatialPointsDataFrame(
-        coords = coordinates(sample.raster)[sample.points, ], 
-        data = data.frame(Real = rep(NA, length(sample.points))), 
-        proj4string = CRS(proj4string(sample.raster)))
+      if(length(which(sample.raster@data@values == 1)) > 1) {
+        sample.points <- sample(which(sample.raster@data@values == 1), 
+                                size = n, replace = TRUE, 
+                                prob = bias.raster[which(
+                                  sample.raster@data@values == 1)])
+        sample.points <- SpatialPointsDataFrame(
+          coords = coordinates(sample.raster)[sample.points, ], 
+          data = data.frame(Real = rep(NA, length(sample.points))), 
+          proj4string = CRS(proj4string(sample.raster)))
+      } else
+      {
+        # if there is only 1 cell with a species presence, this causes a bug
+        # in the call to sample, so this is necessary.
+        if(length(which(sample.raster@data@values == 1)) == 1) {
+          sample.points <- rep(which(sample.raster@data@values == 1), 
+                               times = n)
+          sample.points <- SpatialPointsDataFrame(
+            coords = coordinates(sample.raster)[sample.points, ], 
+            data = data.frame(Real = rep(NA, length(sample.points))), 
+            proj4string = CRS(proj4string(sample.raster)))
+        }
+        if(length(which(sample.raster@data@values == 1)) == 0) {
+          # TODO: haven't tested this case yet as of Jan 2018.
+          sample.points <- NULL
+          warning("There were no species occurrences.")
+        }
+      }
+
     } else
     {
       if(is.null(sample.prevalence)) #### !!!! This is my usual case !!!! #####
