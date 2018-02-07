@@ -545,7 +545,6 @@ sampleRecords <- function(x, n,
             proj4string = CRS(proj4string(sample.raster)))
         }
         if(length(which(sample.raster@data@values == 1)) == 0) {
-          # TODO: haven't tested this case yet as of Jan 2018.
           sample.points <- NULL
           warning("There were no species occurrences.")
         }
