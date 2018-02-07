@@ -1,10 +1,5 @@
 #' Sample occurrences with replacement from a virtual species distribution
 #' 
-#' TODO:
-#'       - check whether I need to modify code for other options
-#'       - projection check between raster & polygon around line 350
-#'       - make error.probabiliy introduce false detections into presence-only
-#'         data? (currently it does not and generates a warning)
 #' 
 #' @description
 #' This function samples with replacement from presences (or presences and 
@@ -34,7 +29,8 @@
 #' species is detected when sampled.
 #' @param error.probability \code{TRUE} or \code{FALSE}. Only useful if 
 #' \code{type = "presence-absence"}. Probability to attribute an erroneous 
-#' presence in cells where the species is absent.
+#' presence in cells where the species is absent.  Addition of erroneous 
+#' presences in presence-only data is planned but not implemented.
 #' @param bias  \code{"no.bias"},  \code{"country"},  \code{"region"},  
 #' \code{"extent"},  \code{"polygon"} or \code{"manual"}. The method used to 
 #' generate a sampling bias: see details.
@@ -538,8 +534,8 @@ sampleRecords <- function(x, n,
           proj4string = CRS(proj4string(sample.raster)))
       } else
       {
-        # if there is only 1 cell with a species presence, this causes a bug
-        # in the call to sample, so this is necessary.
+        # if there is only 1 cell with a species presence, it causes a bug
+        # in the call to sample, so this conditional statement is necessary.
         if(length(which(sample.raster@data@values == 1)) == 1) {
           sample.points <- rep(which(sample.raster@data@values == 1), 
                                times = n)
@@ -557,7 +553,7 @@ sampleRecords <- function(x, n,
 
     } else
     {
-      if(is.null(sample.prevalence)) #### !!!! This is my usual case !!!! #####
+      if(is.null(sample.prevalence)) ### This is wg's usual case ###
       { 
         sample.points <- sample(which(sample.raster@data@values == 1), 
                                 size = n, replace = TRUE, 
@@ -637,21 +633,21 @@ sampleRecords <- function(x, n,
   {
     if(error.probability != 0)
     {
-      #wgTODO: to be more realistic, this should probably be changed so that
-      # false detections can occur in presence-only sampling (so that cells with
-      # a true absence can still get an incorrect positive decection, which 
-      # would in fact cause them to appear in most presence-only datasets).
+      # Willson's TODO: to be more realistic, this should be changed so 
+      # that false detections can occur in presence-only sampling (so that cells 
+      # with a true absence can still get an incorrect positive decection).
+      # False detections probably occur in many real presence-only datasets.
       warning("The error probability has no impact when sampling 'presence only' 
                points, because these samplings occur only within the boundaries of the species range")
     }
-    # once false occurrences are implemented, this next line of code will be 
-    # more relevant because it will get the real p/a value, so will show false
-    # detections
+    # Once false occurrences are implemented, this next line of code will be 
+    # more relevant because it will get the real presence or absence value, 
+    # so it will be easy for the analyst to identify false detetcions.
     sample.points$Real <- extract(sp.raster, sample.points) 
     sample.points$Observed[which(sample.points$Real == 1)] <- 
       rbinom(n = length(which(sample.points$Real == 1)), 
              size = 1, prob = detection.probability)
-    # wg switched this to use rbinom.  Old way preserved in comments for now.
+    # WG switched this to use rbinom.  Old way preserved in comments for now.
     # sample.points <- data.frame(sample.points,
     #                             Real = 1,
     #                             Observed = sample(
@@ -661,7 +657,7 @@ sampleRecords <- function(x, n,
     #                                        detection.probability),
     #                               replace = TRUE))
   } else if(type == "presence-absence")
-  { # get true p/a values for sampled cells
+  { # get true presence/absence values for sampled cells
     sample.points$Real <- extract(sp.raster, sample.points)
 
     if(correct.by.suitability)
