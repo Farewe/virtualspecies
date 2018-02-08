@@ -4,10 +4,10 @@
 #' @description
 #' This function samples with replacement from presences (or presences and 
 #' absences) within a species distribution, either randomly or with a sampling 
-#' bias. This produces a "sampled" dataset with replicates similar to many 
-#' biological  datasets, in which some spatial locations are sampled multiple 
-#' times. The sampling bias can be defined manually or with a set of pre-defined
-#' biases.
+#' bias. This produces a "sampled" dataset that may contain replicates.  This 
+#' is similar to many biological  datasets, in which some spatial locations are 
+#' sampled multiple times. The sampling bias can be defined manually or with a 
+#' set of pre-defined biases.
 #' 
 #' @param x a \code{rasterLayer} object or the output list from 
 #' \code{generateSpFromFun}, \code{generateSpFromPCA}, \code{generateRandomSp}, 
@@ -72,7 +72,7 @@
 #' non-detections for a cell in which the species was present).
 #' 
 #' In cells where the species is absent (in case of a \code{"presence-absence"}
-#' sampling), the function will always assign absence unless 
+#' sampling), the function will always sample absence unless 
 #' \code{error.probability} is greater than 1. In that case, the species can be 
 #' found present with the associated probability of error. Note that this step 
 #' happens AFTER the detection step. Hence, in cells where the species is 
@@ -100,8 +100,8 @@
 #' The argument \code{bias.strength} indicates the strength of the bias.
 #' For example, a value of 50 will result in 50 times more samples within the
 #'  \code{bias.area} than outside.
-#' Conversely, a value of 0.5 will result in half less samples within the
-#' \code{bias.area} than outside.
+#' Conversely, a value of 0.5 will result in half as many samples within the
+#' \code{bias.area} as outside.
 #' 
 #' \bold{How to choose where the sampling is biased:}
 #' 
@@ -137,9 +137,9 @@
 #' } 
 #' 
 #' Otherwise you can define manually your sampling bias, \emph{e.g.} to create
-#' biases along roads. In that case you have to provide to \code{weights} a 
-#' raster layer in which
-#' each cell contains the probability to be sampled.
+#' biases along roads. In that case you must provide to \code{weights} a 
+#' raster layer in which each cell contains the probability of the cell being 
+#' sampled.
 #' 
 #' Setting \code{sample.prevalence} may at least partly
 #' override \code{bias}, e.g. if \code{bias} is specified with \code{extent} to 
@@ -158,29 +158,29 @@
 #' reproducing the sampling will only work if the same original distribution map 
 #' is used.
 #' 
-#' @return a \code{list} with 5 (unbiased sampling) to 6 (biased sampling) 
-#' elements:
+#' @return a \code{list} with 6 elements:
 #' \itemize{
 #' \item{\code{sample.records}: the data.frame containing the coordinates of 
-#' samples, the real presence-absences (or presence-only) and the sampled 
-#' presence-absences}
+#' samples, the real presence or absences values for the cell, and the sampled 
+#' presence-absences (which may be different from the real value for the cell
+#' if \code{detecton.probability} or \code{error.probability} were used).}
 #' \item{\code{sample.plot}: a recorded plot showing the sampled points 
 #' ovelaying the original distribution.}
 #' \item{\code{detection.probability}: the chosen probability of detection of
 #' the virtual species}
 #' \item{\code{error.probability}: the chosen probability to assign presence
 #' in cells where the species is absent}
-#' \item{\code{original.distribution.raster}: the raster of the original species 
-#' distribution.}
 #' \item{\code{bias}: if a bias was chosen, then the type of bias and the
 #' associated \code{area} will be included.}
+#' \item{\code{original.distribution.raster}: the raster of the original species 
+#' distribution.}
 #' }
 #' @export
 #' @import raster
 #' @importFrom utils installed.packages
 #' @importFrom graphics points
 #' @author
-#' Boris Leroy \email{leroy.boris@@gmail.com}
+#' Boris Leroy \email{leroy.boris@@gmail.com},
 #' Willson Gaul \email{wgaul@@hotmail.com}
 #' 
 #' with help from C. N. Meynard, C. Bellard & F. Courchamp
@@ -200,62 +200,59 @@
 #' sp <- generateRandomSp(env, niche.breadth = "wide")
 #' 
 #' # Sampling of 25 presences
-#' sampleRecords(sp, n = 25)
+#' samps <- sampleRecords(sp, n = 25)
+#' head(samps$sample.records)
 #' 
 #' # Sampling of 30 presences and absences
-#' sampleRecords(sp, n = 30, type = "presence-absence")
+#' samps <- sampleRecords(sp, n = 30, type = "presence-absence")
 #' 
 #' # Reducing of the probability of detection
-#' sampleRecords(sp, n = 30, type = "presence-absence", 
-#'               detection.probability = 0.5)
+#' samps <- sampleRecords(sp, n = 30, type = "presence-absence", 
+#'                        detection.probability = 0.5)
 #'                   
 #' # Further reducing in relation to environmental suitability
-#' sampleRecords(sp, n = 30, type = "presence-absence", 
-#'               detection.probability = 0.5,
-#'               correct.by.suitability = TRUE)
+#' samps <- sampleRecords(sp, n = 30, type = "presence-absence", 
+#'                        detection.probability = 0.5,
+#'                        correct.by.suitability = TRUE)
 #'                   
 #' # Creating sampling errors (far too much)
-#' sampleRecords(sp, n = 30, type = "presence-absence", 
-#'               error.probability = 0.5)
+#' samps <- sampleRecords(sp, n = 30, type = "presence-absence", 
+#'                        error.probability = 0.5)
 #'                   
 #' # Introducing a sampling bias (oversampling)
 #' biased.area <- extent(0.5, 0.7, 0.6, 0.8)
-#' sampleRecords(sp, n = 50, type = "presence-absence", 
-#'               bias = "extent",
-#'               bias.area = biased.area)
+#' samps <- sampleRecords(sp, n = 50, type = "presence-absence", 
+#'                        bias = "extent", bias.area = biased.area)
 #' # Showing the area in which the sampling is biased
 #' plot(biased.area, add = TRUE)     
 #' 
 #' # Introducing a sampling bias (no sampling at all in the chosen area)
 #' biased.area <- extent(0.5, 0.7, 0.6, 0.8)
-#' sampleRecords(sp, n = 50, type = "presence-absence", 
-#'               bias = "extent",
-#'               bias.strength = 0,
-#'               bias.area = biased.area)
+#' samps <- sampleRecords(sp, n = 50, type = "presence-absence", 
+#'                        bias = "extent", bias.strength = 0,
+#'                        bias.area = biased.area)
 #' # Showing the area in which the sampling is biased
 #' plot(biased.area, add = TRUE)       
 #' 
-#' # view plot saved as an object in results list
-#' samp <- sampleRecords(sp, n = 30, type = "presence-absence", 
-#'                       detection.probability = 0.5)
-#' samp$sample.plot
+#' # view sample plot saved as an object in results list
+#' samps$sample.plot
 #' 
 #' # reproduce sampling based on the saved .Random.seed from a previous result
-#' samp <- sampleRecords(sp, n = 100, 
-#'                       type = "presence-absence", 
-#'                       detection.probability = 0.7, 
-#'                       bias = "extent", 
-#'                       bias.strength = 50, 
-#'                       bias.area = biased.area)
+#' samps <- sampleRecords(sp, n = 100, 
+#'                        type = "presence-absence", 
+#'                        detection.probability = 0.7, 
+#'                        bias = "extent", 
+#'                        bias.strength = 50, 
+#'                        bias.area = biased.area)
 #' # reset the random seed using the value saved in the attributes               
-#' .Random.seed <- attr(samp, "seed") 
-#' reproduced_samp <- sampleRecords(sp, n = 100, 
-#'                                  type = "presence-absence",
-#'                                  detection.probability = 0.7,
-#'                                  bias = "extent",
-#'                                  bias.strength = 50,
-#'                                  bias.area = biased.area)
-#' identical(samp, reproduced_samp)                     
+#' .Random.seed <- attr(samps, "seed") 
+#' reproduced_samps <- sampleRecords(sp, n = 100, 
+#'                                   type = "presence-absence",
+#'                                   detection.probability = 0.7,
+#'                                   bias = "extent",
+#'                                   bias.strength = 50,
+#'                                   bias.area = biased.area)
+#' identical(samps, reproduced_samps)                     
 
 
 
