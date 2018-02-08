@@ -126,12 +126,11 @@ sp1 <- generateSpFromFun(env, parameters, plot = TRUE)
 sp1
 plot(sp1)
 }
+\seealso{
+\code{\link{generateSpFromPCA}} to generate a virtual species with a PCA approach
+}
 \author{
 Boris Leroy \email{leroy.boris@gmail.com}
 
 with help from C. N. Meynard, C. Bellard & F. Courchamp
 }
-\seealso{
-\code{\link{generateSpFromPCA}} to generate a virtual species with a PCA approach
-}
-

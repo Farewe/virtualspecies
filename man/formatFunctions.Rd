@@ -39,6 +39,7 @@ bio2 = c(fun = "linearFun", a = 2, b = 5))}
 
 Do not use 'x' as a name for your environmental variables.
 }
+
 \examples{
 my.parameters <- formatFunctions(variable1 = c(fun = 'dnorm',
                                             mean = 0.00012, sd = 0.0001),
@@ -72,4 +73,3 @@ Boris Leroy \email{leroy.boris@gmail.com}
 
 with help from C. N. Meynard, C. Bellard & F. Courchamp
 }
-

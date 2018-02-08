@@ -39,4 +39,3 @@ Boris Leroy \email{leroy.boris@gmail.com}
 
 with help from C. N. Meynard, C. Bellard & F. Courchamp
 }
-

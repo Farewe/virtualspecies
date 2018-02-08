@@ -28,12 +28,11 @@ x <- 1:100
 y <- quadraticFun(x, a = 2, b = 2, c = 3)
 plot(y ~ x, type = "l")
 }
+\seealso{
+\code{\link{linearFun}}, \code{\link{quadraticFun}}
+}
 \author{
 Boris Leroy \email{leroy.boris@gmail.com}
 
 Maintainer: Boris Leroy \email{leroy.boris@gmail.com}
 }
-\seealso{
-\code{\link{linearFun}}, \code{\link{quadraticFun}}
-}
-

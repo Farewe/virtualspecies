@@ -440,21 +440,27 @@ sampleOccurrences <- function(x, n,
   {
     if(type == "presence only")
     {
-      sample.points <- dismo::randomPoints(sample.raster * bias.raster, n = n, prob = TRUE, tryf = 1)
+      sample.points <- dismo::randomPoints(sample.raster * bias.raster, n = n, 
+                                           prob = TRUE, tryf = 1)
     } else
     {
       if(is.null(sample.prevalence))
       {
-        sample.points <- dismo::randomPoints(sample.raster * bias.raster, n = n, prob = TRUE, tryf = 1)
+        sample.points <- dismo::randomPoints(sample.raster * bias.raster, n = n, 
+                                             prob = TRUE, tryf = 1)
       } else
       { 
         tmp1 <- sample.raster
         tmp1[sp.raster != 1] <- NA
-        sample.points <- dismo::randomPoints(tmp1 * bias.raster, n = sample.prevalence * n, prob = TRUE, tryf = 1)
+        sample.points <- dismo::randomPoints(tmp1 * bias.raster, 
+                                             n = sample.prevalence * n, 
+                                             prob = TRUE, tryf = 1)
         tmp1 <- sample.raster
         tmp1[sp.raster != 0] <- NA
         sample.points <- rbind(sample.points,
-                               dismo::randomPoints(tmp1 * bias.raster, n = (1 - sample.prevalence) * n, prob = TRUE, 
+                               dismo::randomPoints(tmp1 * bias.raster, 
+                                                   n = (1 - sample.prevalence) * n, 
+                                                   prob = TRUE, 
                                                    tryf = 1))
         rm(tmp1)
       }
