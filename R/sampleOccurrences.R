@@ -22,7 +22,9 @@
 #' @param correct.by.suitability \code{TRUE} or \code{FALSE}. If \code{TRUE}, 
 #' then the probability of detection will be weighted by the suitability, such 
 #' that cells with lower suitabilities will further decrease the chance that 
-#' the species is detected when sampled.
+#' the species is detected when sampled. NOTE: this will NOT increase 
+#' likelihood of samplings in areas of high suitability. In this case look for 
+#' argument weights.
 #' @param error.probability \code{TRUE} or \code{FALSE}. Probability to 
 #' attribute an erroneous presence (False Positive) in cells where the species 
 #' is actually absent.
@@ -131,7 +133,11 @@
 #' on the map.}
 #' } 
 #' 
-#' Otherwise you can define manually your sampling bias, \emph{e.g.} to create
+#' Otherwise you can enter a raster of sampling probability. It can be useful 
+#' if you want to increase likelihood of samplings in areas of high 
+#' suitability (simply enter the suitability raster in weights; see examples
+#' below),
+#' or if you want to define sampling biases manually, emph{e.g.} to to create
 #' biases along roads. In that case you have to provide to \code{weights} a 
 #' raster layer in which each cell contains the probability to be sampled.
 #' 
@@ -197,8 +203,9 @@
 #' # Sampling of 25 presences
 #' sampleOccurrences(sp, n = 25)
 #' 
-#' # Sampling of 30 presences and absebces
+#' # Sampling of 30 presences and absences
 #' sampleOccurrences(sp, n = 30, type = "presence-absence")
+#' 
 #' 
 #' # Reducing of the probability of detection
 #' sampleOccurrences(sp, n = 30, type = "presence-absence", 
@@ -208,6 +215,7 @@
 #' sampleOccurrences(sp, n = 30, type = "presence-absence", 
 #'                   detection.probability = 0.5,
 #'                   correct.by.suitability = TRUE)
+#'                   
 #'                   
 #' # Creating sampling errors (far too much)
 #' sampleOccurrences(sp, n = 30, type = "presence-absence", 
@@ -228,7 +236,18 @@
 #'                   bias.strength = 0,
 #'                   bias.area = biased.area)
 #' # Showing the area in which the sampling is biased
-#' plot(biased.area, add = TRUE)     
+#' plot(biased.area, add = TRUE)    
+#' samps <- sampleOccurrences(sp, n = 50, 
+#'                            bias = "manual",
+#'                            weights = sp$suitab.raster)
+#' plot(sp$suitab.raster)
+#' points(samps$sample.points[, c("x", "y")])
+#' 
+#' # Create a sampling bias so that more presences are sampled in areas with 
+#' higher suitability
+#' 
+#'   
+#'     
 #' 
 #' # Reproduce sampling based on the saved .Random.seed from a previous result
 #' samps <- sampleOccurrences(sp, n = 100, 
