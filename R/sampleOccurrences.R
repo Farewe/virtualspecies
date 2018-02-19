@@ -172,7 +172,7 @@
 #' bias.  
 #' @export
 #' @import raster
-#' @import dismo
+#' @importFrom graphics points
 #' @importFrom utils installed.packages
 #' @author
 #' Boris Leroy \email{leroy.boris@@gmail.com}
@@ -673,15 +673,17 @@ sampleOccurrences <- function(x, n,
   if(plot)
   {
     plot(original.raster)
+    # par(new = TRUE)
     if(type == "presence only")
     {
-      plot(sample.points[, c("x", "y")], pch = 16, cex = .5, add = TRUE)
+      points(sample.points[, c("x", "y")], pch = 16, cex = .5)
     } else
     {
       points(sample.points[sample.points$Observed == 1, c("x", "y")],
-             pch = 16, cex = .8, add = TRUE)
+             pch = 16, cex = .8)
+      # par(new = TRUE)
       points(sample.points[sample.points$Observed == 0, c("x", "y")], 
-             pch = 1, cex = .8, add = TRUE)
+             pch = 1, cex = .8)
     }
     results$sample.plot <- grDevices::recordPlot()
   }

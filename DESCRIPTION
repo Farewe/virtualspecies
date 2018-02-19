@@ -15,7 +15,6 @@ Depends:
     raster
 Imports:
     ade4,
-    dismo,
     graphics,
     grDevices,
     methods,

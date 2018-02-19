@@ -49,7 +49,6 @@
 #' \itemize{
 #' \item{This package makes extensive use of the package \code{\link{raster}} to obtain spatialised
 #' environmental variables, and produce spatialised virtual species distributions.}
-#' \item{\code{\link{dismo}} is used to sample occurrence data from the generated virtual species.}
 #' \item{\code{\link{ade4}} is used to generate species with a PCA approach.}
 #' \item{\code{\link{rworldmap}} is used to obtain free world shapefiles, in order to create
 #' dispersal limitations and sampling biases.}
