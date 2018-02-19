@@ -238,7 +238,7 @@ generateSpFromFun <- function(raster.stack, parameters,
     plot(results$suitab.raster, main = "Environmental suitability of the virtual species")
   }
   
-  class(results) <- append(class(results), "virtualspecies")
+  class(results) <- append("virtualspecies", class(results))
 
   return(results)
 }

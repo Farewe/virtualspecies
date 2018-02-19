@@ -144,11 +144,6 @@ convertToPA(sp1, PA.method = "probability", beta = 0.5,
 sp1 <- convertToPA(sp1, plot = FALSE)
 plot(sp1$pa.raster)
 }
-\author{
-Boris Leroy \email{leroy.boris@gmail.com}
-
-with help from C. N. Meynard, C. Bellard & F. Courchamp
-}
 \references{
 Meynard C.N. & Kaplan D.M. 2013. Using virtual species to study species 
 distributions and model performance. 
@@ -158,4 +153,8 @@ Meynard C.N. & Kaplan D.M. 2011. The effect of a gradual response to the
 environment on species distribution model performance.
 \emph{Ecography} \bold{35}:499-509
 }
+\author{
+Boris Leroy \email{leroy.boris@gmail.com}
 
+with help from C. N. Meynard, C. Bellard & F. Courchamp
+}

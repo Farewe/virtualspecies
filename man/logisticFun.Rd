@@ -49,12 +49,11 @@ plot(y1 ~ x, type = "l", main = expression(alpha \%->\% 0))
 plot(y2 ~ x, type = "l", main = expression(alpha \%~~\% range(x)/10))
 plot(y3 ~ x, type = "l", main = expression(alpha \%->\% infinity))
 }
+\seealso{
+\code{\link{linearFun}}, \code{\link{quadraticFun}}
+}
 \author{
 Boris Leroy \email{leroy.boris@gmail.com}
 
 Maintainer: Boris Leroy \email{leroy.boris@gmail.com}
 }
-\seealso{
-\code{\link{linearFun}}, \code{\link{quadraticFun}}
-}
-

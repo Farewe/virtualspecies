@@ -42,11 +42,6 @@ temp <- seq(-10, 40, length = 100)
 P <- betaFun(x = temp, p1 = 0, p2 = 35, alpha = 0.9, gamma = 0.08)
 plot(P ~ temp, type = "l")
 }
-\author{
-Boris Leroy \email{leroy.boris@gmail.com}
-
-Maintainer: Boris Leroy \email{leroy.boris@gmail.com}
-}
 \references{
 Oksanen, J. & Minchin, P.R. (2002). Continuum theory revisited: what shape 
 are species responses along ecological gradients? \emph{Ecological Modelling}
@@ -55,4 +50,8 @@ are species responses along ecological gradients? \emph{Ecological Modelling}
 \seealso{
 \code{\link{linearFun}}, \code{\link{quadraticFun}}, \code{\link{custnorm}}
 }
+\author{
+Boris Leroy \email{leroy.boris@gmail.com}
 
+Maintainer: Boris Leroy \email{leroy.boris@gmail.com}
+}

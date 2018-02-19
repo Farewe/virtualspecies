@@ -25,12 +25,11 @@ x <- 1:100
 y <- linearFun(x, a = 0.5, b = 0)
 plot(y ~ x, type = "l")
 }
+\seealso{
+\code{\link{logisticFun}}, \code{\link{quadraticFun}}
+}
 \author{
 Boris Leroy \email{leroy.boris@gmail.com}
 
 Maintainer: Boris Leroy \email{leroy.boris@gmail.com}
 }
-\seealso{
-\code{\link{logisticFun}}, \code{\link{quadraticFun}}
-}
-

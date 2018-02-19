@@ -50,4 +50,3 @@ Boris Leroy \email{leroy.boris@gmail.com}, Florian David
 
 Maintainer: Boris Leroy \email{leroy.boris@gmail.com}
 }
-

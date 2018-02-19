@@ -293,7 +293,7 @@ generateSpFromPCA <- function(raster.stack, rescale = TRUE, niche.breadth = "any
                                  means = means,
                                  sds = sds),
                   suitab.raster = suitab.raster)
-  class(results) <- append(class(results), "virtualspecies")
+  class(results) <-  append("virtualspecies", class(results))
   return(results)
 }
 

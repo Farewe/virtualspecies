@@ -161,3 +161,56 @@ plot.virtualspecies <- function(x, ...)
   x <- y
   plot(x, ...)
 }
+
+#' @export
+#' @method print VSSampledPoints
+print.VSSampledPoints <- function(x, ...)
+{
+  # Next line is to ensure retrocompatibility with earlier versions of
+  # virtualspecies where no print function was designed for VSSampledPoints
+  if(!is.list(x$detection.probability))
+  {
+    print(x)
+  } else
+  {
+    cat(paste("Occurrence points sampled from a virtual species"))
+    cat(paste("\n\n- Number of points:", nrow(x$sample.points)))
+    if(length(x$bias))
+    {
+      cat("\n- Sampling bias: ")
+      cat(paste("\n   .Bias type:", 
+                x$bias$bias))
+      cat(paste("\n   .Bias strength:",
+                x$bias$bias.strength))
+    } else
+    {
+      cat("\n- No sampling bias")
+    }
+    cat(paste0("\n- Detection probability: "))
+    cat(paste0("\n   .Probability: ", x$detection.probability$detection.probability))
+    cat(paste0("\n   .Corrected by suitability: ", x$detection.probability$correct.by.suitability))
+    cat(paste0("\n- Probability of identification error (false positive): ", x$error.probability))
+    if(length(x$sample.prevalence))
+    {
+      cat(paste0("\n- Sample prevalence: "))
+      cat(paste0("\n   .True:", x$sample.prevalence["true.sample.prevalence"]))
+      cat(paste0("\n   .Observed:", x$sample.prevalence["observed.sample.prevalence"]))
+    }
+    cat(paste0("\n- Multiple samples can occur in a single cell: ", 
+               ifelse(x$replacement, "Yes", "No")))
+    cat("\n\n")
+    print(x$sample.points)
+  }
+}
+
+#' @export
+#' @method str VSSampledPoints
+str.VSSampledPoints <- function(object, ...)
+{
+  args <- list(...)
+  if(is.null(args$max.level))
+  {
+    args$max.level <- 2
+  }
+  NextMethod("str", object = object, max.level = args$max.level)
+}

@@ -148,14 +148,13 @@ generateSpFromBCA(raster.stack.current = env1, raster.stack.future = env2,
    
                    
 }
-\author{
-Robin Delsol, Boris Leroy
-
-Maintainer: Boris Leroy \email{leroy.boris@gmail.com}
-}
 \seealso{
 \code{\link{generateSpFromFun}} to generate a virtual species with
 the responses to each environmental variables.\code{\link{generateSpFromPCA}} to generate a virtual species with
 the PCA of environmental variables.
 }
+\author{
+Robin Delsol, Boris Leroy
 
+Maintainer: Boris Leroy \email{leroy.boris@gmail.com}
+}
