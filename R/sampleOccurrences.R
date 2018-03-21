@@ -558,7 +558,7 @@ sampleOccurrences <- function(x, n,
     if(type == "presence only")
     {
       number.errors <- stats::rbinom(n = 1, size = 50, prob = error.probability)
-      sample.points <- .randomPoints((1 - sample.raster) * bias.raster,
+      sample.points <- .randomPoints(sample.raster * bias.raster,
                                      n = number.errors, 
                                      prob = TRUE, tryf = 1,
                                      replaceCells = replacement)
@@ -606,7 +606,7 @@ sampleOccurrences <- function(x, n,
     {
       
       number.errors <- stats::rbinom(n = 1, size = n, prob = error.probability)
-      sample.points <- .randomPoints(1 - sample.raster, n = number.errors, 
+      sample.points <- .randomPoints(sample.raster, n = number.errors, 
                                      prob = TRUE, tryf = 1,
                                      replaceCells = replacement)
       sample.points <- rbind(sample.points,
