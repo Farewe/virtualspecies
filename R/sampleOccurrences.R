@@ -557,6 +557,7 @@ sampleOccurrences <- function(x, n,
   {
     if(type == "presence only")
     {
+
       number.errors <- stats::rbinom(n = 1, size = 50, prob = error.probability)
       sample.points <- .randomPoints(sample.raster * bias.raster,
                                      n = number.errors, 
