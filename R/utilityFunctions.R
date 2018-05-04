@@ -84,11 +84,6 @@
     mask2 <- raster(mask)
   }
   
-  if (n > ncell(mask2)) {
-    n <- ncell(mask2)
-    if (warn>0) { warning('changed n to ncell of the mask (extent)') }
-  }
-  
   nn <- n * tryf
   nn <- max(nn, 10)
   
