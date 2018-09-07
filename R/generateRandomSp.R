@@ -294,7 +294,7 @@ generateRandomSp <- function(raster.stack,
   if(convert.to.PA == TRUE) {
     message(" - Converting into Presence - Absence\n")
     
-    # Need to rescale suitability to be between 0 and 1 if rescale = FALSE
+    # Need to adjust alpha to appropriate scale if rescale = FALSE
     if(rescale == FALSE) {
       if(adjust.alpha)
       {
@@ -308,10 +308,8 @@ generateRandomSp <- function(raster.stack,
                              species.prevalence = species.prevalence,
                              plot = FALSE)
     
-      if(plot) plot(stack(results$raw.suitab.raster, 
-                          results$suitab.raster, 
-                          results$pa.raster), main = c("Raw suitability", 
-                                                       "Suitability", 
+      if(plot) plot(stack(results$suitab.raster, 
+                          results$pa.raster), main = c("Suitability", 
                                                        "Presence-absence"))
     } else {
       
