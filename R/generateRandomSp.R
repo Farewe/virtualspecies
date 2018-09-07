@@ -51,6 +51,9 @@
 #' \code{PA.method = "probability"}. The value of \code{alpha} will
 #' shape the logistic function transforming occurrences into presence-absences.
 #' See \code{\link{logisticFun}} and examples therein for the choice of \code{alpha}
+#' @param adjust.alpha \code{TRUE} or \code{FALSE}. Only useful if 
+#' \code{rescale = FALSE}. If  \code{adjust.alpha = TRUE}, then the value of \code{alpha} will
+#' be adjusted to an approparite value  for the range of suitabilities.  
 #' @param species.prevalence \code{NULL} or a numeric value between 0 and 1.
 #' The species prevalence is the proportion of sites actually occupied by the
 #' species. See \code{\link{convertToPA}}
@@ -141,6 +144,7 @@ generateRandomSp <- function(raster.stack,
                              nb.points = 10000,
                              PA.method = "probability",
                              alpha = -.1,
+                             adjust.alpha = TRUE,
                              beta = "random",
                              species.prevalence = NULL,
                              plot = TRUE)
@@ -176,6 +180,7 @@ generateRandomSp <- function(raster.stack,
   if(approach == "pca")
   {
     results <- generateSpFromPCA(raster.stack,
+                                 rescale = rescale,
                                  niche.breadth = niche.breadth,
                                  sample.points = sample.points, 
                                  nb.points = nb.points,
@@ -274,26 +279,53 @@ generateRandomSp <- function(raster.stack,
       valid.cells <- valid.cells * (tmp.rast > 0.05)
     }
     message(" - Calculating species suitability\n")
-    results <- generateSpFromFun(raster.stack, parameters, species.type = species.type, plot = FALSE)
+    results <- generateSpFromFun(raster.stack, 
+                                 parameters, 
+                                 rescale = rescale,
+                                 species.type = species.type, 
+                                 plot = FALSE,
+                                 rescale.each.response = rescale.each.response)
   }
   
   
   
   
   
-  if(convert.to.PA == TRUE)
-  {
+  if(convert.to.PA == TRUE) {
     message(" - Converting into Presence - Absence\n")
-    results <- convertToPA(results, 
-                           PA.method = PA.method,
-                           alpha = alpha,
-                           beta = beta,
-                           species.prevalence = species.prevalence,
-                           plot = FALSE)
     
-    if(plot) plot(stack(results$suitab.raster, results$pa.raster), main = c("Suitability", "Presence-absence"))
-  } else
-  {
+    # Need to rescale suitability to be between 0 and 1 if rescale = FALSE
+    if(rescale == FALSE) {
+      if(adjust.alpha)
+      {
+        alpha <- diff(c(minValue(results$suitab.raster),
+                        maxValue(results$suitab.raster))) * alpha
+      }
+      results <- convertToPA(results, 
+                             PA.method = PA.method,
+                             alpha = alpha,
+                             beta = beta,
+                             species.prevalence = species.prevalence,
+                             plot = FALSE)
+    
+      if(plot) plot(stack(results$raw.suitab.raster, 
+                          results$suitab.raster, 
+                          results$pa.raster), main = c("Raw suitability", 
+                                                       "Suitability", 
+                                                       "Presence-absence"))
+    } else {
+      
+      results <- convertToPA(results, 
+                             PA.method = PA.method,
+                             alpha = alpha,
+                             beta = beta,
+                             species.prevalence = species.prevalence,
+                             plot = FALSE)
+      
+      if(plot) plot(stack(results$suitab.raster, results$pa.raster), 
+                    main = c("Suitability", "Presence-absence"))
+    }
+  } else {
     if(plot) plot(results$suitab.raster, main = "Suitability")
   }
   
