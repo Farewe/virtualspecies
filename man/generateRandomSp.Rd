@@ -9,7 +9,8 @@ generateRandomSp(raster.stack, approach = "automatic", rescale = TRUE,
   "quadratic"), rescale.each.response = TRUE, realistic.sp = TRUE,
   species.type = "multiplicative", niche.breadth = "any",
   sample.points = FALSE, nb.points = 10000, PA.method = "probability",
-  alpha = -0.1, beta = "random", species.prevalence = NULL, plot = TRUE)
+  alpha = -0.1, adjust.alpha = TRUE, beta = "random",
+  species.prevalence = NULL, plot = TRUE)
 }
 \arguments{
 \item{raster.stack}{a RasterStack object, in which each layer represent an environmental 
@@ -67,6 +68,10 @@ probabilities are converted according to a logistic function of threshold
 \code{PA.method = "probability"}. The value of \code{alpha} will
 shape the logistic function transforming occurrences into presence-absences.
 See \code{\link{logisticFun}} and examples therein for the choice of \code{alpha}}
+
+\item{adjust.alpha}{\code{TRUE} or \code{FALSE}. Only useful if 
+\code{rescale = FALSE}. If  \code{adjust.alpha = TRUE}, then the value of \code{alpha} will
+be adjusted to an approparite value  for the range of suitabilities.}
 
 \item{beta}{\code{"random"}, a numeric value in the range of your 
 probabilities or \code{NULL}. This is the threshold of conversion into

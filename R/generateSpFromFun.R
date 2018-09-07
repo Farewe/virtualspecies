@@ -57,7 +57,7 @@
 #' Any response function that can be applied to the environmental variables can
 #' be chosen here. Several functions are proposed in this package:
 #' \code{\link{linearFun}}, \code{\link{logisticFun}} and \code{\link{quadraticFun}}.
-#' Another classical example is the normal distribution: \code{\link[stats]{dnorm}}.
+#' Another classical example is the normal distribution: \code{\link[stats:Normal]{stats::dnorm()}}.
 #' Ther users can also create and use their own functions.
 #' 
 #'   

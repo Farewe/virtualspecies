@@ -263,7 +263,7 @@ plot(sp$suitab.raster)
 points(samps$sample.points[, c("x", "y")])
 
 # Create a sampling bias so that more presences are sampled in areas with 
-higher suitability
+# higher suitability
 
   
     
