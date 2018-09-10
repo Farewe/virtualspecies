@@ -1,3 +1,12 @@
+virtualspecies v1.4-4 (Release date: 2018-09-10)
+==============
+
+Changes:
+* Modified function sampleOccurrences (more features, better output)
+* Added new generic print / str functions for sampleOccurrences outputs
+* Improvements to generateSpFromBCA()
+* Fixed a bug in convertToPA() where the generation of low prevalence species would generate warnings and sometimes fail to obtain a proper beta threshold
+
 virtualspecies v1.4-1 (Release date: 2016-12-22)
 ==============
 
