@@ -86,7 +86,7 @@
 #' \item{\code{suitab.raster.future}: the virtual species distribution, as a Raster object containing the
 #' future environmental suitability}
 #' }
-#' The structure of the virtualspecies object can be seen using str()
+#' The structure of the virtualspecies object can be seen using \code{str()}
 #' 
 #' 
 #' 

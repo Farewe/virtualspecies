@@ -50,7 +50,7 @@ a \code{list} with 3 elements:
 \item{\code{suitab.raster}: the virtual species distribution, as a Raster object containing the
 environmental suitability}
 }
-The structure of the virtualspecies object can be seen using str()
+The structure of the virtualspecies object can be seen using \code{str()}
 }
 \description{
 This functions generates a virtual species distribution by computing a

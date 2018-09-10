@@ -142,7 +142,7 @@ custnorm <- function(x, mean, diff, prob)
 #' @details
 #' p1 and p2 can be seen as the upper and lower critical threshold of the curve.
 #' \code{alpha} and \code{gamma} control the shape of the curve near p1 and p2, respectively.
-#' When \code{alpha} = \code{gamma}, the curve is symetric. Low values of \code{alpha} and \code{gamma} 
+#' When \code{alpha} = \code{gamma}, the curve is symmetric. Low values of \code{alpha} and \code{gamma} 
 #' result in smooth (< 1) to plateau (< 0.01) curves. Higher values result in 
 #' peak (> 10) curves. 
 #' 
@@ -169,28 +169,28 @@ betaFun <- function(x, p1, p2, alpha, gamma)
   ifelse(x > p1 & x < p2, k * ((x - p1)^alpha) * (p2 - x)^gamma, 0)
 }
 
-#' Huisman-Olff-Fresco response function
-#' 
-##' @description A Huisman-Olff-Fresco response function:
-#' \deqn{P = \frac{1}{{1 + e^{a + b x}}} \frac{1}{1 + e^{c - dx}}}{
-#' P = (1 / (1 + exp(a + bx))) * (1 / (1 + exp(c -dx)))}
-#' @param x a numeric value or vector
-#' @param a a numeric value or vector
-#' @param b a numeric value or vector
-#' @param c a numeric value or vector
-#' @return a numeric value or vector resulting from the function
-#' @seealso \code{\link{linearFun}}, \code{\link{quadraticFun}}
-#' @author
-#' Boris Leroy \email{leroy.boris@@gmail.com}
-#'
-#' Maintainer: Boris Leroy \email{leroy.boris@@gmail.com}
-#' @examples
-#' temp <- seq(-10, 40, length = 100)
-#' # A curve similar to a thermal performance curve
-#' P <- HOFFun(x = temp, a = -200, b = 10, c = 10, d = 0.1)
-#' plot(P ~ temp, type = "l")
-#' 
-#' 
+# Huisman-Olff-Fresco response function
+# 
+# @description A Huisman-Olff-Fresco response function:
+# \deqn{P = \frac{1}{{1 + e^{a + b x}}} \frac{1}{1 + e^{c - dx}}}{
+# P = (1 / (1 + exp(a + bx))) * (1 / (1 + exp(c -dx)))}
+# @param x a numeric value or vector
+# @param a a numeric value or vector
+# @param b a numeric value or vector
+# @param c a numeric value or vector
+# @return a numeric value or vector resulting from the function
+# @seealso \code{\link{linearFun}}, \code{\link{quadraticFun}}
+# @author
+# Boris Leroy \email{leroy.boris@@gmail.com}
+#
+# Maintainer: Boris Leroy \email{leroy.boris@@gmail.com}
+# @examples
+# temp <- seq(-10, 40, length = 100)
+# # A curve similar to a thermal performance curve
+# P <- HOFFun(x = temp, a = -200, b = 10, c = 10, d = 0.1)
+# plot(P ~ temp, type = "l")
+# 
+# 
 # .HOFFun <- function(x, a, b, c, d)
 # {
 #   if (a == 0 & b == 0)

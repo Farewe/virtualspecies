@@ -44,7 +44,7 @@ then the function will automatically make the appropriate plots.
 
 Otherwise, you can provide a raster layer/stack of environmental variables to
  \code{x} and a list of functions to \code{parameters} to perform the plot.
-In that case, you have to specifiy the \code{approach}: \code{"reponse"} or
+In that case, you have to specify the \code{approach}: \code{"reponse"} or
 \code{"PCA"}:
 \itemize{
 \item{if \code{approach = "response"}: Provide to \code{parameters} a 

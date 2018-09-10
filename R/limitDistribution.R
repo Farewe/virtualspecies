@@ -83,7 +83,7 @@
 #' \item{\code{occupied.area}: the area occupied by the virtual species as a
 #' Raster of presence-absence}
 #' }
-#' The structure of the virtualspecies object can be seen using str()
+#' The structure of the virtualspecies object can be seen using \code{str()}
 #' @export
 #' @import raster
 #' @importFrom utils installed.packages

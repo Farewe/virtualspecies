@@ -38,7 +38,7 @@ limit the distribution and the area in which the distribution is restricted}
 \item{\code{occupied.area}: the area occupied by the virtual species as a
 Raster of presence-absence}
 }
-The structure of the virtualspecies object can be seen using str()
+The structure of the virtualspecies object can be seen using \code{str()}
 }
 \description{
 This function is designed to limit species distributions to a subsample of

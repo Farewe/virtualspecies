@@ -2,7 +2,7 @@
 #' 
 #' @description
 #' This function is a helper function to simplify the formatting of functions
-#' for generateSpFromFun.
+#' for \code{\link{generateSpFromFun}}
 #' @details
 #' This function formats the \code{parameters} argument of \code{\link{generateSpFromFun}}.  
 #' For each environmental variable, provide a vector containing the function name, and its arguments.  

@@ -17,7 +17,7 @@ plots are rescaled between 0 and 1 with the formula (val - min) / (max - min).}
 }
 \description{
 This function is a helper function to simplify the formatting of functions
-for generateSpFromFun.
+for \code{\link{generateSpFromFun}}
 }
 \details{
 This function formats the \code{parameters} argument of \code{\link{generateSpFromFun}}.  

@@ -76,7 +76,7 @@
 #' \item{\code{suitab.raster}: the virtual species distribution, as a Raster object containing the
 #' environmental suitability}
 #' }
-#' The structure of the virtualspecies object can be seen using str()
+#' The structure of the virtualspecies object can be seen using \code{str()}
 #' @examples
 #' # Create an example stack with four environmental variables
 #' a <- matrix(rep(dnorm(1:100, 50, sd = 25)), 

@@ -101,7 +101,7 @@
 #' \item{\code{PA.conversion}: the parameters used to convert the suitability into presence-absence}
 #' \item{\code{pa.raster}: the presence-absence map, as a Raster object containing 0 (absence) / 1 (presence) / NA}
 #' }
-#' The structure of the virtualspecies object can be seen using str()
+#' The structure of the virtualspecies object can be seen using \code{str()}
 #' @examples
 #' # Create an example stack with two environmental variables
 #' a <- matrix(rep(dnorm(1:100, 50, sd = 25)), 

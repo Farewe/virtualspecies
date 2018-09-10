@@ -8,9 +8,9 @@ generateRandomSp(raster.stack, approach = "automatic", rescale = TRUE,
   convert.to.PA = TRUE, relations = c("gaussian", "linear", "logistic",
   "quadratic"), rescale.each.response = TRUE, realistic.sp = TRUE,
   species.type = "multiplicative", niche.breadth = "any",
-  sample.points = FALSE, nb.points = 10000, PA.method = "probability",
-  alpha = -0.1, adjust.alpha = TRUE, beta = "random",
-  species.prevalence = NULL, plot = TRUE)
+  sample.points = FALSE, nb.points = 10000,
+  PA.method = "probability", alpha = -0.1, adjust.alpha = TRUE,
+  beta = "random", species.prevalence = NULL, plot = TRUE)
 }
 \arguments{
 \item{raster.stack}{a RasterStack object, in which each layer represent an environmental 
@@ -43,7 +43,7 @@ species. If \code{FALSE}, the responses will be randomly generated
 
 \item{species.type}{[response approach] \code{"additive"} or \code{"multiplicative"}. Defines 
 how the final probability of presence is calculated: if \code{"additive"}, responses to each
-variable are summed; if \code{"multiplicative"}, responses are multiplicated.
+variable are summed; if \code{"multiplicative"}, responses are multiplied.
 See \code{\link{generateSpFromFun}}}
 
 \item{niche.breadth}{[pca approach] \code{"any"}, \code{"narrow"} or \code{"wide"}. This parameter
@@ -95,7 +95,7 @@ environmental suitability)}
 \item{\code{PA.conversion}: the parameters used to convert the suitability into presence-absence}
 \item{\code{pa.raster}: the presence-absence map, as a Raster object containing 0 (absence) / 1 (presence) / NA}
 }
-The structure of the virtualspecies can object be seen using str()
+The structure of the virtualspecies can object be seen using \code{str()}
 }
 \description{
 This function generates randomly a virtual species distribution.
@@ -105,7 +105,7 @@ This function generate random virtual species, either using a PCA approach, or u
 a response approach. In case of a response approach, only four response functions are
 currently used: gaussian, linear, logistic and quadratic functions.
 
-Note that in case of numerouse predictor variables, the "response" approach will
+Note that in case of numerous predictor variables, the "response" approach will
 not work well because it will often generate contradicting response functions 
 (e.g., mean annual temperature optimum at degrees C and temperature of the coldest month at
 10 degrees C). In these case, it is advised to use the PCA approach (by default, a PCA approach
@@ -113,11 +113,11 @@ will be used if there are more than 6 predictor variables).
 
 If \code{rescale.each.response = TRUE}, then the probability response to each
 variable will be normalised between 0 and 1 according to the following formula:
-P.rescaled = (P - min(P)) / (max(P) - min (P)). Simlarly, if \code{rescale = TRUE},
+P.rescaled = (P - min(P)) / (max(P) - min (P)). Similarly, if \code{rescale = TRUE},
 the final environmental suitability will be rescaled between 0 and 1 with the same formula.
 
 By default, the function will perform a probabilistic conversion into presence-
-absence, with a randomly chosen beta threshold. If you want to custmose the 
+absence, with a randomly chosen beta threshold. If you want to customise the 
 conversion parameters, you have to define \bold{two} of the three following parameters:
 \itemize{
 \item{\code{beta}: the 'threshold' of the logistic function (i.e. the 

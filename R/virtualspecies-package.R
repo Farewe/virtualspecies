@@ -2,7 +2,7 @@
 #'
 #' This package allows generating virtual species distributions, for example
 #' for testing species distribution modelling protocols. For a complete tutorial, 
-#' see http://borisleroy.com/virtualspecies
+#' see borisleroy.com/virtualspecies
 #' 
 #' 
 #' @details
@@ -37,7 +37,7 @@
 #' of the virtual species}
 #' \item{\code{\link{removeCollinearity}}: this function can be used to remove
 #' collinearity among variables of a stack by selecting a subset of 
-#' non-intercorrelated variables}
+#' non-colinear variables}
 #' \item{\code{\link{synchroniseNA}}: this function can be used to synchronise
 #' NA values among layers of a stack}
 #' }
@@ -54,7 +54,7 @@
 #' dispersal limitations and sampling biases.}
 #' }
 #' @references
-#' Leroy, B. et al. 2015. virtualspecies, an R package to generate virtual species distributions. Ecography. In press.
+#' Leroy, B. et al. 2016. virtualspecies, an R package to generate virtual species distributions. Ecography. 39(6):599-607
 #' @author
 #' Boris Leroy \email{leroy.boris@@gmail.com}
 #' 

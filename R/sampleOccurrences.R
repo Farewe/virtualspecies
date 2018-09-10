@@ -3,7 +3,7 @@
 #' @description
 #' This function samples occurrences/records (presence only or presence-absence) 
 #' within a species distribution, either randomly or with a sampling bias. 
-#' The sampling bias can be defined manually or with a set of pre-defined 
+#' The sampling bias can be defined manually or with a set of predefined 
 #' biases.
 #' 
 #' @param x a \code{rasterLayer} object or the output list from 
@@ -137,7 +137,7 @@
 #' if you want to increase likelihood of samplings in areas of high 
 #' suitability (simply enter the suitability raster in weights; see examples
 #' below),
-#' or if you want to define sampling biases manually, emph{e.g.} to to create
+#' or if you want to define sampling biases manually, \emph{e.g.} to to create
 #' biases along roads. In that case you have to provide to \code{weights} a 
 #' raster layer in which each cell contains the probability to be sampled.
 #' 

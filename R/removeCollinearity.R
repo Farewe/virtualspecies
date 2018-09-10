@@ -1,8 +1,8 @@
 #' Remove collinearity among variables of a a raster stack
 #' 
-#' This functions analyses the correlation among variables of the provideded
+#' This functions analyses the correlation among variables of the provided
 #' stack of environmental variables (using Pearson's R), and can return a 
-#' vector containing names of variables that are not intercorrelated, or a list
+#' vector containing names of variables that are not colinear, or a list
 #' containing grouping variables according to their degree of collinearity.
 #' 
 #' @param raster.stack a RasterStack object, in which each layer represent an environmental 
@@ -34,9 +34,9 @@
 #' according to their degree of correlation. 
 #' 
 #' If \code{select.variables = TRUE}, then the function will return a vector
-#' containing variables that are not intercorrelated.
+#' containing variables that are not colinear.
 #' The variables not correlated to any other variables are automatically included
-#' in this vector. For each group of intercorrelated variables, one variable will
+#' in this vector. For each group of colinear variables, one variable will
 #' be randomly chosen and included in this vector.
 #' 
 #' 

@@ -29,7 +29,7 @@ k is automatically estimated to have a maximum value of P equal to 1.
 \details{
 p1 and p2 can be seen as the upper and lower critical threshold of the curve.
 \code{alpha} and \code{gamma} control the shape of the curve near p1 and p2, respectively.
-When \code{alpha} = \code{gamma}, the curve is symetric. Low values of \code{alpha} and \code{gamma} 
+When \code{alpha} = \code{gamma}, the curve is symmetric. Low values of \code{alpha} and \code{gamma} 
 result in smooth (< 1) to plateau (< 0.01) curves. Higher values result in 
 peak (> 10) curves. 
 
