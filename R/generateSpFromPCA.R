@@ -50,13 +50,13 @@
 #' a fraction of the axis:
 #' \itemize{
 #' \item{\code{"any"}: the standard deviations can have values from 1\% to 50\% of axes' ranges. For example if the first axis of the PCA ranges from -5 to +5,
-#' then sd values along this axe can range from 0.1 to 5.
+#' then sd values along this axis can range from 0.1 to 5.
 #' }
 #' \item{\code{"narrow"}: the standard deviations are limited between 1\% and 10\% of axes' ranges. For example if the first axis of the PCA ranges from -5 to +5,
-#' then sd values along this axe can range from 0.1 to 1.
+#' then sd values along this axis can range from 0.1 to 1.
 #' }
 #' \item{\code{"wide"}: the standard deviations are limited between 10\% and 50\% of axes' ranges. For example if the first axis of the PCA ranges from -5 to +5,
-#' then sd values along this axe can range from 1 to 5.
+#' then sd values along this axis can range from 1 to 5.
 #' }
 #' }
 #' @import raster

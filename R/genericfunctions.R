@@ -174,7 +174,8 @@ print.VSSampledPoints <- function(x, ...)
   } else
   {
     cat(paste("Occurrence points sampled from a virtual species"))
-    cat(paste("\n\n- Number of points:", nrow(x$sample.points)))
+    cat(paste("\n\n- Type:", x$type))
+    cat(paste("\n- Number of points:", nrow(x$sample.points)))
     if(length(x$bias))
     {
       cat("\n- Sampling bias: ")
@@ -199,7 +200,15 @@ print.VSSampledPoints <- function(x, ...)
     cat(paste0("\n- Multiple samples can occur in a single cell: ", 
                ifelse(x$replacement, "Yes", "No")))
     cat("\n\n")
-    print(x$sample.points)
+    if(nrow(x$sample.points) > 10)
+    {
+      cat("First 10 lines: \n")
+      print(x$sample.points[1:10, ])
+      cat(paste0("... ", nrow(x$sample.points) - 10, " more lines."))
+    } else
+    {
+      print(x$sample.points)
+    }
   }
 }
 

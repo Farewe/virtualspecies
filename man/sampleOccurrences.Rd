@@ -74,8 +74,10 @@ where samplings can be duplicated or repeated in time.}
 occurrence points will be plotted.}
 }
 \value{
-a \code{list} with 7 elements:
+a \code{list} with 8 elements:
 \itemize{
+\item{\code{type}: the type of occurrence sampled (presence-absences or 
+presence-only)}
 \item{\code{sample.points}: the data.frame containing the coordinates of 
 samples, the real presence-absences (or presence-only) and the sampled 
 presence-absences}

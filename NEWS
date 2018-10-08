@@ -1,3 +1,10 @@
+virtualspecies v1.4-5 (Release date: 2018-10-08)
+==============
+Changes (ongoing):
+* Fixed several typos
+* Added occurrence type in sampleOccurrences
+* Improved print generic for sampleOccurrences outputs
+
 virtualspecies v1.4-4 (Release date: 2018-09-10)
 ==============
 

@@ -71,7 +71,7 @@ See \code{\link{logisticFun}} and examples therein for the choice of \code{alpha
 
 \item{adjust.alpha}{\code{TRUE} or \code{FALSE}. Only useful if 
 \code{rescale = FALSE}. If  \code{adjust.alpha = TRUE}, then the value of \code{alpha} will
-be adjusted to an approparite value  for the range of suitabilities.}
+be adjusted to an appropriate value  for the range of suitabilities.}
 
 \item{beta}{\code{"random"}, a numeric value in the range of your 
 probabilities or \code{NULL}. This is the threshold of conversion into

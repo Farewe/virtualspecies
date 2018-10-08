@@ -150,8 +150,10 @@
 #' reproducing the sampling will only work if the same original distribution map 
 #' is used.
 #' 
-#' @return a \code{list} with 7 elements:
+#' @return a \code{list} with 8 elements:
 #' \itemize{
+#' \item{\code{type}: the type of occurrence sampled (presence-absences or 
+#' presence-only)}
 #' \item{\code{sample.points}: the data.frame containing the coordinates of 
 #' samples, the real presence-absences (or presence-only) and the sampled 
 #' presence-absences}
@@ -282,7 +284,8 @@ sampleOccurrences <- function(x, n,
                               replacement = FALSE,
                               plot = TRUE)
 {
-  results <- list(detection.probability = list(
+  results <- list(type = type,
+                  detection.probability = list(
                     detection.probability = detection.probability,
                     correct.by.suitability = correct.by.suitability),
                   error.probability = error.probability, 

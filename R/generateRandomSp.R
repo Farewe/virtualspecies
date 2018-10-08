@@ -53,7 +53,7 @@
 #' See \code{\link{logisticFun}} and examples therein for the choice of \code{alpha}
 #' @param adjust.alpha \code{TRUE} or \code{FALSE}. Only useful if 
 #' \code{rescale = FALSE}. If  \code{adjust.alpha = TRUE}, then the value of \code{alpha} will
-#' be adjusted to an approparite value  for the range of suitabilities.  
+#' be adjusted to an appropriate value  for the range of suitabilities.  
 #' @param species.prevalence \code{NULL} or a numeric value between 0 and 1.
 #' The species prevalence is the proportion of sites actually occupied by the
 #' species. See \code{\link{convertToPA}}
