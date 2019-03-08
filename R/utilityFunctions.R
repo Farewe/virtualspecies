@@ -1,5 +1,6 @@
-# These functions have been duplicated from package dismo (author RJ Hijmans)
-# for modifications.
+# Functions ".randomCellsLonLat" , "..randomCellsLonLat2" and ".randomPoints" 
+# have been duplicated from package dismo 
+# (author RJ Hijmans) for modifications.
 # We duplicated them here because we needed a change in randomPoints
 # function, since we use it in a manner that was not initially intended.
 
@@ -185,3 +186,6 @@
     return(xyFromCell(mask, cells))
   }
 }
+
+
+

@@ -193,7 +193,7 @@ generateSpFromPCA <- function(raster.stack, rescale = TRUE, niche.breadth = "any
     pca.object <- ade4::dudi.pca(env.df, scannf = F, nf = max(axes))
   }
   message(" - Defining the response of the species along PCA axes\n")
-  
+
   if(!is.null(means))
   {
     if(!is.numeric(means))
@@ -256,6 +256,8 @@ generateSpFromPCA <- function(raster.stack, rescale = TRUE, niche.breadth = "any
   if(rescale)
   {
     suitab.raster <- (suitab.raster - suitab.raster@data@min) / (suitab.raster@data@max - suitab.raster@data@min)
+    message("   The final environmental suitability was rescaled between 0 and 1.
+                  To disable, set argument rescale = FALSE") 
   }
 
   

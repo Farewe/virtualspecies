@@ -1,6 +1,24 @@
+virtualspecies v1.5 (Release date: )
+==============
+
+Changes (ongoing):
+
+* MAJOR CHANGE: in function convertToPA, for probabilistic conversions, 
+the output now includes the suitabiity raster as modified by the probabilistic
+conversion
+* MAJOR CHANGE: the function convertToPA now includes a linear method for the
+probabilistic conversion
+* Added a series of messages when running generateSpFromFun to inform users about
+the default behaviour of the function (i.e., it rescales all responses between 0 
+and 1 by default).
+
+
+
 virtualspecies v1.4-5 (Release date: 2018-10-08)
 ==============
-Changes (ongoing):
+
+Changes:
+
 * Fixed several typos
 * Added occurrence type in sampleOccurrences
 * Improved print generic for sampleOccurrences outputs
@@ -9,6 +27,7 @@ virtualspecies v1.4-4 (Release date: 2018-09-10)
 ==============
 
 Changes:
+
 * Modified function sampleOccurrences (more features, better output)
 * Added new generic print / str functions for sampleOccurrences outputs
 * Improvements to generateSpFromBCA()

@@ -95,9 +95,20 @@ print.virtualspecies <- function(x, ...)
     cat("\n   .Method =", x$PA.conversion["conversion.method"])
     if(x$PA.conversion["conversion.method"] == "probability")
     {
-      cat("\n   .alpha (slope)           =", x$PA.conversion["alpha"])
-      cat("\n   .beta  (inflexion point) =", x$PA.conversion["beta"])
-      cat("\n   .species prevalence      =", x$PA.conversion["species.prevalence"])
+      if(x$PA.conversion["probabilistic.method"] == "logistic")
+      {
+        cat("\n   .probabilistic method    =", x$PA.conversion["probabilistic.method"])
+        cat("\n   .alpha (slope)           =", x$PA.conversion["alpha"])
+        cat("\n   .beta  (inflexion point) =", x$PA.conversion["beta"])
+        cat("\n   .species prevalence      =", x$PA.conversion["species.prevalence"])
+      } else if(x$PA.conversion["probabilistic.method"] == "linear")
+      {
+        cat("\n   .probabilistic method    =", x$PA.conversion["probabilistic.method"])
+        cat("\n   .a (slope)               =", x$PA.conversion["a"])
+        cat("\n   .b (intercept)           =", x$PA.conversion["b"])
+        cat("\n   .species prevalence      =", x$PA.conversion["species.prevalence"])
+      }
+
     } else if(x$PA.conversion["conversion.method"] == "threshold")
     {
       cat("\n   .threshold           =", x$PA.conversion["cutoff"])

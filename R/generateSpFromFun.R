@@ -27,14 +27,18 @@
 #' The structure of the virtualspecies object can be seen using \code{str()}
 #' @seealso \code{\link{generateSpFromPCA}} to generate a virtual species with a PCA approach
 #' @details
-#' This functions proceeds into several steps:
+#' This function proceeds in two steps:
 #' \enumerate{
 #' \item{The response to each environmental variable is calculated with the functions provided
-#' in \code{parameters}. This results in a probability of presence for each variable.}
-#' \item{If \code{rescale.each.response} is \code{TRUE}, each probability of presence is rescaled between 0 and 1.}
-#' \item{The final probability of presence is calculated according to the chosen \code{species.type}.}
-#' \item{If \code{rescale} is \code{TRUE}, the final probability of presence is rescaled between 0 and 1,
-#' with the formula (val - min) / (max - min).}
+#' in \code{parameters}. This results in a suitability  of each variable.
+#' 
+#' \bold{By default, each response is rescaled between 0 and 1.} Disable with 
+#' \code{rescale.each.response = FALSE}}
+#' \item{The final environmental suitability is calculated according to the 
+#' chosen \code{species.type}.
+#' 
+#' \bold{By default, the final suitability is rescaled between 0 and 1.} Disable with 
+#' \code{rescale = FALSE}}
 #' }
 #' The RasterStack containing environmental variables must have consistent names, 
 #' because they will be checked with the \code{parameters}. For example, they can be named
@@ -122,6 +126,7 @@ generateSpFromFun <- function(raster.stack, parameters,
                               species.type = "multiplicative", rescale.each.response = TRUE,
                               plot = FALSE)
 {
+  message("Generating virtual species environmental suitability...\n")
   approach <- "response"
   if(!(is(raster.stack, "Raster")))
   {
@@ -160,6 +165,20 @@ generateSpFromFun <- function(raster.stack, parameters,
     }
     rm(test)
   }
+  # Adding a message to inform users about the default rescaling of variables
+  if(rescale.each.response)
+  {
+    message(" - The response to each variable was rescaled between 0 and 1. To
+            disable, set argument rescale.each.response = FALSE\n") 
+  }
+  if(rescale)
+  {
+    message(" - The final environmental suitability was rescaled between 0 and 1.
+            To disable, set argument rescale = FALSE\n") 
+  }
+  
+    
+    
   suitab.raster <- stack(sapply(names(raster.stack), FUN = function(y)
   {
     calc(raster.stack[[y]], fun = function(x)
@@ -239,6 +258,5 @@ generateSpFromFun <- function(raster.stack, parameters,
   }
   
   class(results) <- append("virtualspecies", class(results))
-
   return(results)
 }

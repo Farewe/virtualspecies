@@ -4,8 +4,9 @@
 \alias{convertToPA}
 \title{Convert a virtual species distribution (or a suitability raster) into presence-absence}
 \usage{
-convertToPA(x, PA.method = "probability", beta = "random",
-  alpha = -0.05, species.prevalence = NULL, plot = TRUE)
+convertToPA(x, PA.method = "probability", prob.method = "logistic",
+  beta = "random", alpha = -0.05, a = NULL, b = NULL,
+  species.prevalence = NULL, plot = TRUE)
 }
 \arguments{
 \item{x}{a suitability raster, or the output from functions 
@@ -19,15 +20,25 @@ probabilities are converted according to a logistic function of threshold
 \code{beta} and slope \code{alpha}.}
 
 \item{beta}{\code{"random"}, a numeric value in the range of your 
-probabilities or \code{NULL}. This is the threshold of conversion into
-presence-absence (= the inflexion point if \code{PA.method = "probability"}).
+probabilities or \code{NULL}. This is the threshold of conversion into 
+presence-absence (if \code{PA.method = "probability"} and 
+\code{proba.method = "logistic"}, then beta = the inflexion point).
 If \code{"random"}, a numeric value will be randomly generated within the range
 of \code{x}.}
 
 \item{alpha}{\code{NULL} or a negative numeric value. Only useful if 
-\code{PA.method = "probability"}. The value of \code{alpha} will
+\code{PA.method = "probability"} and  \code{proba.method = "logistic"}. 
+The value of \code{alpha} will
 shape the logistic function transforming occurrences into presence-absences.
 See \code{\link{logisticFun}} and examples therein for the choice of \code{alpha}}
+
+\item{a}{\code{NULL} or a  numeric value. Only useful if 
+\code{PA.method = "probability"} and  \code{proba.method = "linear"}. 
+Slope of the linear conversion of environmental suitability.}
+
+\item{b}{\code{NULL} or a  numeric value. Only useful if 
+\code{PA.method = "probability"} and  \code{proba.method = "linear"}. 
+Intercept of the linear conversion of environmental suitability.}
 
 \item{species.prevalence}{\code{NULL} or a numeric value between 0 and 1.
 The species prevalence is the proportion of sites actually occupied by the
@@ -35,6 +46,10 @@ species.}
 
 \item{plot}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, maps of probabilities
 of occurrence and presence-absence will be plotted.}
+
+\item{proba.method}{\code{"logistic"} or \code{"linear"}. Defines how 
+the initial environmental suitability is translated into probabilities of 
+presence/absence.}
 }
 \value{
 a \code{list} containing 5 elements:
@@ -68,10 +83,42 @@ it all becomes threshold. Thus, this threshold approach should be avoided.
 Hence, a more
 realistic conversion consists in converting probabilities into presence -
 absence with a probability function (see references). Such a probability 
-conversion can be performed here with a logit function 
-(see \code{\link{logisticFun}}).
+conversion can be performed with two different methods here:
+\enumerate{
+\item{Using a logistic transformation of  environmental suitability
+(see \code{\link{logisticFun}}). This method is designed to simulate 
+a sharp transition from highly suitable sites to poorly suitable sites. This
+method alters the shape of the environmental suitability.}
+\item{Using a linear transformation of environmental suitability. This method
+will use environmental suitability as the probability of drawing presences 
+in a Bernoulli trial. This method does not alter significantly the shape of
+the environmental suitability, but it may alter suitability values
+depending on the chosen parameters.}}
 
-To perform the probability conversion you have to define two of the
+--- note ---
+
+Regardless of the method you choose to generate your presence-absence
+distribution, the initial environmental suitability will likely be altered:
+\enumerate{
+\item{Threshold method: in this case, the suitability response to the 
+environment is completely lost, which is why it is not recommended.}
+\item{Probabilistic method, logistic conversion: the shape of the
+functional response to the environment is altered}
+\item{Probabilistic method, linear conversion: if the coefficients of the
+linear regression are not slope = 1 and intercept = 0, then the range of
+values of the suitability distribution is altered}}
+
+Therefore, the function stores the modified environmental suitability in the 
+output list, under the object \code{suitab.raster}. The original suitability 
+(before logistic or linear conversion) will be stored in the output list as 
+\code{suitab.before.PA.conversion}. 
+
+--------------------------------------------------------------------------
+
+\bold{PROBABILISTC CONVERSION - LOGISTIC METHOD}
+
+To perform the logistic transformation of environmental suitability
+you have to define two of the
 three following parameters:
 \itemize{
 \item{\code{beta}: the 'threshold' of the logistic function (i.e. the 
@@ -96,6 +143,33 @@ or \code{beta}. In these conditions, the function will retain the \code{alpha} o
 \code{beta} which provides the closest prevalence to your \code{species.prevalence},
 but you may also provide another value of \code{alpha} or \code{beta} to obtain
 a closer prevalence. 
+ 
+--------------------------------------------------------------------------
+
+\bold{PROBABILISTIC CONVERSION - LINEAR METHOD }
+
+To perform the linear transformation of environmental suitability
+you have to define *one* of the following:
+\itemize{
+\item{nothing - in which case your input environmental suitability will be
+used as the probability of occurrence for the Bernoulli trial (it is 
+equivalent to defining a slope \code{a} of 1 and intercept \code{b} of  0.)}
+\item{the coefficients of the linear regression: slope \code{a} and 
+intercept \code{b}. The transformed environmental suitability will
+be used as the probability of occurrence for the Bernoulli trial.}
+\item{\code{species.prevalence}: the proportion of sites in which the 
+species occur. In this case, the function will try to find coefficients
+of a linear regression which results in the requested 
+\code{species.prevalence}.}
+} 
+
+Using a linear transformation may result in suitabilities above 1 or below 0,
+which is not possible. Therefore, all suitabilities above 1 are converted to 
+1, and all suitabilities below 0 are converted to 0 before running the 
+Bernoulli trial. 
+
+
+ --------------------------------------------------------------------------
  
 In all cases, the \code{species.prevalence} indicated in the output is the
 prevalence measured on the output presence-absence map.
@@ -122,11 +196,20 @@ sp1 <- generateSpFromFun(env, parameters, plot = FALSE)
 convertToPA(sp1, PA.method = "threshold", beta = 0.2,  plot = TRUE)
 convertToPA(sp1, PA.method = "threshold", beta = "random", plot = TRUE)
 
-# Conversion into presence-absence with a probability-based approach
+# Conversion into presence-absence with a probability approach using logistic
+# method
 convertToPA(sp1, PA.method = "probability", beta = 0.4, 
               alpha = -0.05, plot = TRUE)
 convertToPA(sp1, PA.method = "probability", beta = "random", 
               alpha = -0.1, plot = TRUE)
+              
+# Conversion into presence-absence with a probability approach using linear 
+# method
+convertToPA(sp1, PA.method = "probability", prob.method = "linear",
+            b = 0, a = 1, plot = TRUE)
+convertToPA(sp1, PA.method = "probability", beta = "random", 
+              alpha = -0.1, plot = TRUE)             
+              
               
 # Conversion into presence-absence by choosing the prevalence
 # Threshold method
