@@ -206,22 +206,30 @@ convertToPA(sp1, PA.method = "probability", beta = "random",
 # Conversion into presence-absence with a probability approach using linear 
 # method
 convertToPA(sp1, PA.method = "probability", prob.method = "linear",
-            b = 0, a = 1, plot = TRUE)
-convertToPA(sp1, PA.method = "probability", beta = "random", 
-              alpha = -0.1, plot = TRUE)             
+            a = 1, b = 0, plot = TRUE)         
               
               
 # Conversion into presence-absence by choosing the prevalence
 # Threshold method
 convertToPA(sp1, PA.method = "threshold",
               species.prevalence = 0.3, plot = TRUE)
-# Probability method, with alpha provided              
+# Logistic method, with alpha provided              
 convertToPA(sp1, PA.method = "probability", alpha = -0.1, 
               species.prevalence = 0.2, plot = TRUE)        
-# Probability method, with beta provided              
+# Logistic method, with beta provided              
 convertToPA(sp1, PA.method = "probability", beta = 0.5, 
               species.prevalence = 0.2, alpha = NULL, 
               plot = TRUE)    
+# Linear method
+convertToPA(sp1, PA.method = "probability", prob.method = "linear",
+            species.prevalence = 0.2,
+            plot = TRUE)              
+convertToPA(sp1, PA.method = "probability", prob.method = "linear",
+            species.prevalence = 0.5,
+            plot = TRUE) 
+convertToPA(sp1, PA.method = "probability", prob.method = "linear",
+            species.prevalence = 0.8,
+            plot = TRUE)                
  
 # Plot the output Presence-Absence raster only             
 sp1 <- convertToPA(sp1, plot = FALSE)
