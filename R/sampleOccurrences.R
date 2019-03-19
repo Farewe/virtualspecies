@@ -14,6 +14,8 @@
 #' @param n an integer. The number of occurrence points / records to sample.
 #' @param type \code{"presence only"} or \code{"presence-absence"}. The type of 
 #' occurrence points to sample.
+#' @param extract.suitability \code{TRUE} or \code{FALSE}. If \code{TRUE}, then
+#' true suitability at sampled locations will also be extracted
 #' @param sampling.area a character string, a \code{polygon} or an \code{extent}
 #' object.
 #' The area in which the sampling will take place. See details.
@@ -152,11 +154,11 @@
 #' 
 #' @return a \code{list} with 8 elements:
 #' \itemize{
-#' \item{\code{type}: the type of occurrence sampled (presence-absences or 
+#' \item{\code{type}: type of occurrence sampled (presence-absences or 
 #' presence-only)}
-#' \item{\code{sample.points}: the data.frame containing the coordinates of 
-#' samples, the real presence-absences (or presence-only) and the sampled 
-#' presence-absences}
+#' \item{\code{sample.points}: data.frame containing the coordinates of 
+#' samples, true and sampled observations (i.e, 1, 0 or NA), and, if asked, the true
+#' environmental suitability in sampled locations}
 #' \item{\code{detection.probability}: the chosen probability of detection of
 #' the virtual species}
 #' \item{\code{error.probability}: the chosen probability to assign presence
@@ -272,6 +274,7 @@
 
 sampleOccurrences <- function(x, n,
                               type = "presence only",
+                              extract.suitability = FALSE,
                               sampling.area = NULL,
                               detection.probability = 1,
                               correct.by.suitability = FALSE,
@@ -312,6 +315,11 @@ sampleOccurrences <- function(x, n,
   } else if ("RasterLayer" %in% class(x))
   {
     sp.raster <- x
+    if(extract.suitability)
+    {
+      stop("Cannot extract sutability when x is not a virtualspecies object. Set
+           extract.suitability = FALSE")
+    }
   } else stop("x must be:\n- a raster layer object\nor\n- the output list from 
               functions generateRandomSp(), convertToPA() or 
               limitDistribution()")
@@ -709,6 +717,13 @@ sampleOccurrences <- function(x, n,
              pch = 1, cex = .8)
     }
     results$sample.plot <- grDevices::recordPlot()
+  }
+  
+  if(extract.suitability)
+  {
+    sample.points <- data.frame(sample.points,
+                                true.suitability = extract(x$suitab.raster,
+                                                           sample.points[, c("x", "y")]))
   }
   
   

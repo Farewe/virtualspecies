@@ -25,8 +25,8 @@ plots are rescaled between 0 and 1.}
 \item{axes.to.plot}{a vector of 2 values listing the two axes of the PCA to plot.
 Only useful for a PCA species.}
 
-\item{no.plot.reset}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, the plot parameters
-will be reset to their initial state after the response has been plotted.}
+\item{no.plot.reset}{\code{TRUE} or \code{FALSE}. If \code{FALSE}, the plot window
+will be reset to its initial state after the response has been plotted.}
 
 \item{...}{further arguments to be passed to \code{plot}. See 
 \code{\link[graphics]{plot}} and \code{\link[graphics]{par}}.}

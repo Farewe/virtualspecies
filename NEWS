@@ -16,6 +16,7 @@ ocurrence.
 * Added a series of messages when running generateSpFromFun to inform users about
 the default behaviour of the function (i.e., it rescales all responses between 0 
 and 1 by default).
+* Added the possibility to extract true suitability in sampleOccurrences
 
 
 

@@ -4,7 +4,8 @@
 \alias{sampleOccurrences}
 \title{Sample occurrences in a virtual species distribution}
 \usage{
-sampleOccurrences(x, n, type = "presence only", sampling.area = NULL,
+sampleOccurrences(x, n, type = "presence only",
+  extract.suitability = FALSE, sampling.area = NULL,
   detection.probability = 1, correct.by.suitability = FALSE,
   error.probability = 0, bias = "no.bias", bias.strength = 50,
   bias.area = NULL, weights = NULL, sample.prevalence = NULL,
@@ -21,6 +22,9 @@ The raster must contain values of 0 or 1 (or NA).}
 
 \item{type}{\code{"presence only"} or \code{"presence-absence"}. The type of 
 occurrence points to sample.}
+
+\item{extract.suitability}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, then
+true suitability at sampled locations will also be extracted}
 
 \item{sampling.area}{a character string, a \code{polygon} or an \code{extent}
 object.
@@ -76,11 +80,11 @@ occurrence points will be plotted.}
 \value{
 a \code{list} with 8 elements:
 \itemize{
-\item{\code{type}: the type of occurrence sampled (presence-absences or 
+\item{\code{type}: type of occurrence sampled (presence-absences or 
 presence-only)}
-\item{\code{sample.points}: the data.frame containing the coordinates of 
-samples, the real presence-absences (or presence-only) and the sampled 
-presence-absences}
+\item{\code{sample.points}: data.frame containing the coordinates of 
+samples, true and sampled observations (i.e, 1, 0 or NA), and, if asked, the true
+environmental suitability in sampled locations}
 \item{\code{detection.probability}: the chosen probability of detection of
 the virtual species}
 \item{\code{error.probability}: the chosen probability to assign presence

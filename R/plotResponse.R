@@ -17,8 +17,8 @@
 #' plots are rescaled between 0 and 1.
 #' @param axes.to.plot a vector of 2 values listing the two axes of the PCA to plot.
 #' Only useful for a PCA species.
-#' @param no.plot.reset \code{TRUE} or \code{FALSE}. If \code{TRUE}, the plot parameters
-#' will be reset to their initial state after the response has been plotted. 
+#' @param no.plot.reset \code{TRUE} or \code{FALSE}. If \code{FALSE}, the plot window
+#' will be reset to its initial state after the response has been plotted. 
 #' @param ... further arguments to be passed to \code{plot}. See 
 #' \code{\link[graphics]{plot}} and \code{\link[graphics]{par}}.
 #' @details
@@ -180,6 +180,7 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = TRUE,
     }
     approach <- x$approach
     details <- x$details
+    rescale <- details$rescale.each.response
     if("parameters" %in% names(details))
     {
       parameters <- x$details$parameters
@@ -197,7 +198,10 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = TRUE,
     mfrow <- c(floor(sqrt(length(parameters))),
                ceiling(sqrt(length(parameters))))
     if (prod(mfrow) < length(parameters)) {mfrow[1] <- mfrow[1] + 1}
-    op <- par(no.readonly = TRUE)
+    if(!no.plot.reset)
+    {
+      op <- par(no.readonly = TRUE)
+    }
     par(mfrow = mfrow,
         mar = c(4.1, 4.1, 0.1, 0.1))
     for(i in names(parameters))
@@ -229,8 +233,11 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = TRUE,
         do.call("plot", args)
         mtext(side = 1, text = i, line = 2, cex = args$cex.lab)
       }
+    }    
+    if(!no.plot.reset)
+    {
+      par(op)
     }
-    par(op)
   } else if (approach == "pca")
   {
     pca.object <- details$pca
