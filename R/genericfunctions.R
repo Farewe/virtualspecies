@@ -157,6 +157,12 @@ plot.virtualspecies <- function(x, ...)
 {
   y <- raster::stack(x$suitab.raster)
   names(y) <- "Suitability.raster"
+  if(!is.null(x$probability.of.occurrence))
+  {
+    y <- stack(y,
+               x$probability.of.occurrence)
+    names(y)[[nlayers(y)]] <- "Probability.of.occurrence.raster"
+  }
   if(!is.null(x$pa.raster))
   {
     y <- stack(y,
