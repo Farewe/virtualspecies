@@ -816,7 +816,7 @@ so these were truncated to 1\n")
   min.suit <- minValue(suit.raster)
   
   #Calculate two extreme potentially valid slopes and intercepts that correspond:
-  slopemax <- (max.suit - target.prevalence) / (max.suit - mean.suit)
+  slopemax <- (max.prob - target.prevalence) / (max.suit - mean.suit)
   slopemin <- target.prevalence / (mean.suit - min.suit)
   
   bmax <- target.prevalence - slopemax * mean.suit 

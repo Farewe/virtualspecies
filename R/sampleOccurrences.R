@@ -14,8 +14,8 @@
 #' @param n an integer. The number of occurrence points / records to sample.
 #' @param type \code{"presence only"} or \code{"presence-absence"}. The type of 
 #' occurrence points to sample.
-#' @param extract.suitability \code{TRUE} or \code{FALSE}. If \code{TRUE}, then
-#' true suitability at sampled locations will also be extracted
+#' @param extract.probability \code{TRUE} or \code{FALSE}. If \code{TRUE}, then
+#' true probability at sampled locations will also be extracted
 #' @param sampling.area a character string, a \code{polygon} or an \code{extent}
 #' object.
 #' The area in which the sampling will take place. See details.
@@ -274,7 +274,7 @@
 
 sampleOccurrences <- function(x, n,
                               type = "presence only",
-                              extract.suitability = FALSE,
+                              extract.probability = FALSE,
                               sampling.area = NULL,
                               detection.probability = 1,
                               correct.by.suitability = FALSE,
@@ -315,10 +315,10 @@ sampleOccurrences <- function(x, n,
   } else if ("RasterLayer" %in% class(x))
   {
     sp.raster <- x
-    if(extract.suitability)
+    if(extract.probability)
     {
-      stop("Cannot extract sutability when x is not a virtualspecies object. Set
-           extract.suitability = FALSE")
+      stop("Cannot extract probability when x is not a virtualspecies object. Set
+           extract.probability = FALSE")
     }
   } else stop("x must be:\n- a raster layer object\nor\n- the output list from 
               functions generateRandomSp(), convertToPA() or 
@@ -719,10 +719,10 @@ sampleOccurrences <- function(x, n,
     results$sample.plot <- grDevices::recordPlot()
   }
   
-  if(extract.suitability)
+  if(extract.probability)
   {
     sample.points <- data.frame(sample.points,
-                                true.suitability = extract(x$suitab.raster,
+                                true.probability = extract(x$suitab.raster,
                                                            sample.points[, c("x", "y")]))
   }
   

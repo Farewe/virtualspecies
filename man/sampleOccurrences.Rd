@@ -5,7 +5,7 @@
 \title{Sample occurrences in a virtual species distribution}
 \usage{
 sampleOccurrences(x, n, type = "presence only",
-  extract.suitability = FALSE, sampling.area = NULL,
+  extract.probability = FALSE, sampling.area = NULL,
   detection.probability = 1, correct.by.suitability = FALSE,
   error.probability = 0, bias = "no.bias", bias.strength = 50,
   bias.area = NULL, weights = NULL, sample.prevalence = NULL,
@@ -23,8 +23,8 @@ The raster must contain values of 0 or 1 (or NA).}
 \item{type}{\code{"presence only"} or \code{"presence-absence"}. The type of 
 occurrence points to sample.}
 
-\item{extract.suitability}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, then
-true suitability at sampled locations will also be extracted}
+\item{extract.probability}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, then
+true probability at sampled locations will also be extracted}
 
 \item{sampling.area}{a character string, a \code{polygon} or an \code{extent}
 object.
