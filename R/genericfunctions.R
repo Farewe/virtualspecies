@@ -215,7 +215,7 @@ print.VSSampledPoints <- function(x, ...)
     {
       cat("First 10 lines: \n")
       print(x$sample.points[1:10, ])
-      cat(paste0("... ", nrow(x$sample.points) - 10, " more lines."))
+      cat(paste0("... ", nrow(x$sample.points) - 10, " more lines.\n"))
     } else
     {
       print(x$sample.points)

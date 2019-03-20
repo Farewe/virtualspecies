@@ -150,8 +150,11 @@ names(env) <- paste("Var", 1:6, sep = "")
 # More than 6 variables: by default a PCA approach will be used
 generateRandomSp(env)
 
-# Manually choosing a response approach
+# Manually choosing a response approach: this may fail because it is hard
+# to find a realistic species with six distinct responses to six variables
+\donttest{
 generateRandomSp(env, approach = "response")
+}
 
 # Randomly choosing the approach
 generateRandomSp(env, approach = "random")

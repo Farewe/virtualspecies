@@ -192,11 +192,11 @@ or if you want to define sampling biases manually, \emph{e.g.} to to create
 biases along roads. In that case you have to provide to \code{weights} a 
 raster layer in which each cell contains the probability to be sampled.
 
-#' The \code{\link{.Random.seed}} and \code{\link{RNGkind}} are stored as 
+The \code{\link{.Random.seed}} and \code{\link{RNGkind}} are stored as 
 \code{\link{attributes}} when the function is called, and can be used to 
 reproduce the results as shown in the examples (though
 it is preferable to set the seed with \code{\link{set.seed}} before calling
-\code{sampleRecords()} and to then use the same value in 
+\code{sampleOccurrences()} and to then use the same value in 
 \code{\link{set.seed}} to reproduce results later. Note that 
 reproducing the sampling will only work if the same original distribution map 
 is used.
