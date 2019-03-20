@@ -52,12 +52,15 @@ the initial environmental suitability is translated into probabilities of
 presence/absence.}
 }
 \value{
-a \code{list} containing 5 elements:
+a \code{list} containing 6 elements:
 \itemize{
 \item{\code{approach}: the approach used to generate the species, \emph{i.e.}, \code{"response"}}
 \item{\code{details}: the details and parameters used to generate the species}
-\item{\code{suitab.raster}: the virtual species distribution, as a Raster object containing the
-environmental suitability)}
+\item{\code{suitab.raster}: the environmental suitability of your virtual 
+species, as a Raster object }
+\item{\code{probability.of.occurrence}: the probability of occurrence of your 
+species, based on the chosen transformation of environmental suitability,
+as a Raster object }
 \item{\code{PA.conversion}: the parameters used to convert the suitability into presence-absence}
 \item{\code{pa.raster}: the presence-absence map, as a Raster object containing 0 (absence) / 1 (presence) / NA}
 }
@@ -71,47 +74,43 @@ a presence-absence raster. The conversion can be threshold-based, or based
 on a probability of conversion (see details).
 }
 \details{
-The conversion of probabilities of occurrence into presence - absence is
-usually performed by selecting a threshold above which presence always occurs,
-and never below. However, this approach may be too much unrealistic because
+The conversion of environmental suitability into presence - absence used to be
+performed by selecting a threshold above which presence always occurs,
+and never below. However, this approach may is unrealistic because
 species may sometime be present in areas with a low probability of occurrence,
 or be absent from areas with a high probability of occurrence. In addition,
 when using a threshold you erase the previously generated response shapes: 
 it all becomes threshold. Thus, this threshold approach should be avoided.
 
  
-Hence, a more
-realistic conversion consists in converting probabilities into presence -
+A more
+realistic conversion consists in converting environmental suitability into
+presence -
 absence with a probability function (see references). Such a probability 
 conversion can be performed with two different methods here:
 \enumerate{
 \item{Using a logistic transformation of  environmental suitability
-(see \code{\link{logisticFun}}). This method is designed to simulate 
-a sharp transition from highly suitable sites to poorly suitable sites. This
-method alters the shape of the environmental suitability.}
-\item{Using a linear transformation of environmental suitability. This method
-will use environmental suitability as the probability of drawing presences 
-in a Bernoulli trial. This method does not alter significantly the shape of
-the environmental suitability, but it may alter suitability values
-depending on the chosen parameters.}}
+(see \code{\link{logisticFun}}). A logistic function on the other hand, will 
+ensure that the simulated probability is within the 0-1 range and allow easy 
+control of species prevalence. However, the 
+logistic function will also flatten out the relationship at the extreme 
+suitability values, and narrow or broaden the intermediate probability values
+depending on the slope of the logistic curve }
+\item{Using a linear transformation of environmental suitability. A linear 
+transformation will preserve the shape of the originally simulated 
+occurrence-environment relationships, uniformly increasing or decreasing the
+probabilities of occurrence across the landscape.}}
 
 --- note ---
 
-Regardless of the method you choose to generate your presence-absence
-distribution, the initial environmental suitability will likely be altered:
-\enumerate{
-\item{Threshold method: in this case, the suitability response to the 
-environment is completely lost, which is why it is not recommended.}
-\item{Probabilistic method, logistic conversion: the shape of the
-functional response to the environment is altered}
-\item{Probabilistic method, linear conversion: if the coefficients of the
-linear regression are not slope = 1 and intercept = 0, then the range of
-values of the suitability distribution is altered}}
+If the Vritual Species study aims at comparing simulated and predicted 
+probability values, it is important to recover the correct simulated 
+probability instead of directly using the initial suitability function. 
 
-Therefore, the function stores the modified environmental suitability in the 
-output list, under the object \code{suitab.raster}. The original suitability 
-(before logistic or linear conversion) will be stored in the output list as 
-\code{suitab.before.PA.conversion}. 
+Therefore, the function stores the probability of occurrence in the 
+output list, under the object \code{probability.of.occurrence}.
+The initial suitability function (before logistic or linear conversion)
+will still be stored in the output list as \code{suitab.raster}. 
 
 --------------------------------------------------------------------------
 
@@ -122,8 +121,11 @@ you have to define two of the
 three following parameters:
 \itemize{
 \item{\code{beta}: the 'threshold' of the logistic function (i.e. the 
-inflexion point)}
-\item{\code{alpha}: the slope of the logistic function}
+inflexion point. It should normaly be in the range of values of your 
+environmental suitability.)}
+\item{\code{alpha}: the slope of the logistic function. It should generally
+be in value equal to something like 1/20 or 1/10 of your environmental 
+suitability range}
 \item{\code{species.prevalence}: the proportion of sites in which the species
 occur}
 }
@@ -163,10 +165,6 @@ of a linear regression which results in the requested
 \code{species.prevalence}.}
 } 
 
-Using a linear transformation may result in suitabilities above 1 or below 0,
-which is not possible. Therefore, all suitabilities above 1 are converted to 
-1, and all suitabilities below 0 are converted to 0 before running the 
-Bernoulli trial. 
 
 
  --------------------------------------------------------------------------
