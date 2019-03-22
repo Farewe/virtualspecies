@@ -19,10 +19,14 @@ presence-absence according to the threshold \code{beta}. If \code{"probability"}
 probabilities are converted according to a logistic function of threshold 
 \code{beta} and slope \code{alpha}.}
 
+\item{prob.method}{\code{"logistic"} or \code{"linear"}. Defines how 
+the initial environmental suitability is translated into probabilities of 
+presence/absence.}
+
 \item{beta}{\code{"random"}, a numeric value in the range of your 
 probabilities or \code{NULL}. This is the threshold of conversion into 
 presence-absence (if \code{PA.method = "probability"} and 
-\code{proba.method = "logistic"}, then beta = the inflexion point).
+\code{prob.method = "logistic"}, then beta = the inflexion point).
 If \code{"random"}, a numeric value will be randomly generated within the range
 of \code{x}.}
 
@@ -46,10 +50,6 @@ species.}
 
 \item{plot}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, maps of probabilities
 of occurrence and presence-absence will be plotted.}
-
-\item{proba.method}{\code{"logistic"} or \code{"linear"}. Defines how 
-the initial environmental suitability is translated into probabilities of 
-presence/absence.}
 }
 \value{
 a \code{list} containing 6 elements:

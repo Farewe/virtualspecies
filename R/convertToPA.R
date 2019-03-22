@@ -14,13 +14,13 @@
 #' presence-absence according to the threshold \code{beta}. If \code{"probability"}, then
 #' probabilities are converted according to a logistic function of threshold 
 #' \code{beta} and slope \code{alpha}.
-#' @param proba.method \code{"logistic"} or \code{"linear"}. Defines how 
+#' @param prob.method \code{"logistic"} or \code{"linear"}. Defines how 
 #' the initial environmental suitability is translated into probabilities of 
 #' presence/absence.
 #' @param beta \code{"random"}, a numeric value in the range of your 
 #' probabilities or \code{NULL}. This is the threshold of conversion into 
 #' presence-absence (if \code{PA.method = "probability"} and 
-#' \code{proba.method = "logistic"}, then beta = the inflexion point).
+#' \code{prob.method = "logistic"}, then beta = the inflexion point).
 #' If \code{"random"}, a numeric value will be randomly generated within the range
 #' of \code{x}.
 #' @param alpha \code{NULL} or a negative numeric value. Only useful if 
@@ -171,6 +171,7 @@
 #' \item{\code{pa.raster}: the presence-absence map, as a Raster object containing 0 (absence) / 1 (presence) / NA}
 #' }
 #' The structure of the virtualspecies object can be seen using \code{str()}
+#' @importFrom stats median rbinom runif
 #' @examples
 #' # Create an example stack with two environmental variables
 #' a <- matrix(rep(dnorm(1:100, 50, sd = 25)), 
@@ -998,7 +999,7 @@ so these were truncated to 1\n")
         {
           b0 <- b0.5
         }
-        b0.5 <- median(c(b0, b1))
+        b0.5 <- stats::median(c(b0, b1))
         raster0.5 = .transf(suit.raster, coefs = c(slop, b0.5))
         distr0.5 = .quickBernoulliTrial(raster0.5)
         prev0.5 <- cellStats(distr0.5, stat = "mean")

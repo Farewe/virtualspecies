@@ -9,6 +9,7 @@
 #' @param sp the output from \code{\link{convertToPA}}.
 #' @param ... further arguments to be passed to \code{plot}. See 
 #' \code{\link[graphics]{plot}} and \code{\link[graphics]{par}}.
+#' 
 #' @export
 #' @import raster
 #' @author
