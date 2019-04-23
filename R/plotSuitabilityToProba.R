@@ -7,6 +7,8 @@
 #' It requires the output from \code{\link{convertToPA}}.
 #' 
 #' @param sp the output from \code{\link{convertToPA}}.
+#' @param add \code{TRUE} or \code{FALSE}. If \code{TRUE}, the relationship
+#' will be added to the currently active graph.
 #' @param ... further arguments to be passed to \code{plot}. See 
 #' \code{\link[graphics]{plot}} and \code{\link[graphics]{par}}.
 #' 
@@ -56,7 +58,7 @@
 #' plotSuitabilityToProba(sp1.highprev)
 #' 
 
-plotSuitabilityToProba <- function(sp, ...)
+plotSuitabilityToProba <- function(sp, add = FALSE, ...)
 {
   if("virtualspecies" %in% class(sp))
   {
@@ -94,7 +96,14 @@ plotSuitabilityToProba <- function(sp, ...)
     y[y < as.numeric(sp$PA.conversion["cutoff"])] <- 0
   }
 
-  plot(y ~ x, type = "l", bty = "l", las = 1, cex.axis = .8, 
-       ylim = c(0, 1), xlab = "Environmental suitability",
-       ylab = "Probability of ocurrence")
+  if(!add)
+  {
+    plot(x = x, y = y, type = "l", bty = "l", las = 1, cex.axis = .8, 
+         ylim = c(0, 1), xlab = "Environmental suitability",
+         ylab = "Probability of ocurrence",
+         ...)
+  } else
+  {
+    lines(x = x, y = y)
+  }
 }

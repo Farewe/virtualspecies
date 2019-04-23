@@ -143,11 +143,35 @@
 #' be used as the probability of occurrence for the Bernoulli trial.}
 #' \item{\code{species.prevalence}: the proportion of sites in which the 
 #' species occur. In this case, the function will try to find coefficients
-#' of a linear regression which results in the requested 
-#' \code{species.prevalence}.}
+#' of a linear regression which results in the requested \code{species.prevalence}
+#' (see below).}
 #' } 
 #' 
+#' Method used to find coefficients of a linear regression which results in the
+#' requested \code{species.prevalence}:
 #' 
+#' \enumerate{
+#' \item{The simplest linear transformation of habitat suitability would
+#' be to just multiply the raw suitability by a constant. For example, if the 
+#' raw average suitability in the area is 0.04, it means an expected prevalence
+#' of 0.40. To to go from this expected prevalence of 0.04 to an expected
+#' prevalence of 0.4, we can just multiply the raw suitability by 10. It is the
+#' default choice, unless it results in probabilities superior to 1 or raw
+#' suitability have values below 0, in which case the function proceeds to
+#'  method 2.}
+#' \item{If it does not work, then we look at the line that passes through 
+#' (min suitability, 0) and (mean suitability, desired prevalence). For this 
+#' line, we only need to ensure that the maximum probability of occurence is 
+#' lower than 1. Otherwise, the function proceeds to method 3.}
+#' \item{If method 2 fails, then we test the line going through (mean 
+#' suitability, desired prevalence) and (max suitability, 1). If the minimum
+#' probability resulting from this line is greater than 0, then this method is 
+#' correct.
+#' }
+#' }
+#' 
+#' One of these 3 lines should always work. In fact, one of the last two has to 
+#' work, and it does not hurt to try the first one which is simpler.
 #' 
 #'  --------------------------------------------------------------------------
 #'  
@@ -803,93 +827,149 @@ so these were truncated to 1\n")
   return(x)
 }
 
-
-
-.findLinearConversion <- function(suit.raster,
-                                  target.prevalence, 
-                                  max.prob=1)
-#We could limit the desired maximum probability to less than 1
+.findLinearConversion = function(suit.raster,
+                                 target.prevalence)
 {
-  #Use a subsample of size n of the raster to work with:
-  # temp=sampleRandom(suit.raster, size = n)
-  max.suit <- maxValue(suit.raster)
-  mean.suit <- cellStats(suit.raster, stat = "mean")
-  min.suit <- minValue(suit.raster)
+  suit.max <- maxValue(suit.raster)
+  suit.mean <- cellStats(suit.raster, stat = "mean")
+  suit.min <- minValue(suit.raster)
   
-  #Calculate two extreme potentially valid slopes and intercepts that correspond:
-  slopemax <- (max.prob - target.prevalence) / (max.suit - mean.suit)
-  slopemin <- target.prevalence / (mean.suit - min.suit)
+  xs = c(suit.min, suit.max)
+  ys = c(0, 1)
   
-  bmax <- target.prevalence - slopemax * mean.suit 
-  bmin <- target.prevalence - slopemin * mean.suit 
-  
-  #Pick an initial slope that is in between both extremes; let's say we take the mean value and re-estimate the intercept:
-  slope = (slopemax + slopemin) / 2
-  b = target.prevalence - slope * mean.suit
-  new.suit = suit.raster * slope + b
-  
-
-  if(minValue(new.suit) < 0)
+  # Only include (0,0) case if suitability >= 0
+  if (suit.min >= 0) 
   {
-    a1 <- slope
-    a0.5 <- slope / 2
-    a0 <- 0
-    while (minValue(new.suit) > 0.001 |
-           minValue(new.suit) < 0)
-    {
-      b0.5 = target.prevalence - a0.5 * mean.suit
-      suit.0.5 = suit.raster * a0.5 + b0.5
-      if(minValue(suit.0.5) < 0)
-      {
-        a1 <- a0.5
-        a0.5 <- a0 + (a1 - a0) / 2
-      } else
-      {
-        a0 <- a0.5
-        a0.5 <- a0 + (a1 - a0) / 2
-      }
-      new.suit = suit.0.5
-    }
-    slope <- a0.5
-    b <- b0.5
+    xs = c(0, xs)
+    ys = c(0, ys) 
   }
- 
-  if(maxValue(new.suit) > max.prob)
-  {
-    a1 <- slope
-    a0.5 <- slope / 2
-    a0 <- 0
-    while (abs(maxValue(new.suit) - max.prob) > 0.001 |
-           maxValue(new.suit) > max.prob)
-    {
-      b0.5 = target.prevalence - a0.5 * mean.suit
-      suit.0.5 = suit.raster * a0.5 + b0.5
-      if(maxValue(suit.0.5) > max.prob)
-      {
-        a1 <- a0.5
-        a0.5 <- a0 + (a1 - a0) / 2
-      } else
-      {
-        a0 <- a0.5
-        a0.5 <- a0 + (a1 - a0) / 2
-      }
-      new.suit = suit.0.5
-    }
-    slope <- a0.5
-    b <- b0.5
-  }
+  
+  AB = .abcoefs(suit.mean,
+                target.prevalence,
+                xs,
+                ys)
+  
+  ymn = .lab(suit.min, AB$a, AB$b)
+  ymx = .lab(suit.max, AB$a, AB$b)
+  
+  # Round to avoid very small floating point calculation errors
+  ymn = round(ymn, 6)
+  ymx = round(ymx, 6)
+  
+  I = min(which(ymn >= 0 & ymx <= 1)) # Find first one that works
   
   
   #Calculate the resulting prevalence:
+  new.suit <- AB$a[I] * suit.raster + AB$b[I]
   distr = .quickBernoulliTrial(new.suit)
   prev = cellStats(distr, stat = "mean")
   
-  return(list(a = slope,
-              b = b,
+  return(list(a = AB$a[I],
+              b = AB$b[I],
               prevalence = prev,
               probability.of.occurrence = new.suit,
               distribution = distr))
 }
+
+# Get line coefficients from two points
+.abcoefs = function(x1, y1, x2, y2)
+{
+  list(b = y1 - x1 * (y1 - y2) / (x1 - x2), 
+       a = (y1 - y2) / (x1 - x2)) 
+}
+
+# Function for a line with intercept (b) and slope (a)
+.lab = function(x, b, a)
+{
+  a * x + b 
+}
+
+# Older version of the linear conversion, working but difficult to explain
+# .findLinearConversion <- function(suit.raster,
+#                                   target.prevalence, 
+#                                   max.prob=1)
+# #We could limit the desired maximum probability to less than 1
+# {
+#   #Use a subsample of size n of the raster to work with:
+#   # temp=sampleRandom(suit.raster, size = n)
+#   max.suit <- maxValue(suit.raster)
+#   mean.suit <- cellStats(suit.raster, stat = "mean")
+#   min.suit <- minValue(suit.raster)
+#   
+#   #Calculate two extreme potentially valid slopes and intercepts that correspond:
+#   slopemax <- (max.prob - target.prevalence) / (max.suit - mean.suit)
+#   slopemin <- target.prevalence / (mean.suit - min.suit)
+#   
+#   bmax <- target.prevalence - slopemax * mean.suit 
+#   bmin <- target.prevalence - slopemin * mean.suit 
+#   
+#   #Pick an initial slope that is in between both extremes; let's say we take the mean value and re-estimate the intercept:
+#   slope = (slopemax + slopemin) / 2
+#   b = target.prevalence - slope * mean.suit
+#   new.suit = suit.raster * slope + b
+#   
+# 
+#   if(minValue(new.suit) < 0)
+#   {
+#     a1 <- slope
+#     a0.5 <- slope / 2
+#     a0 <- 0
+#     while (minValue(new.suit) > 0.001 |
+#            minValue(new.suit) < 0)
+#     {
+#       b0.5 = target.prevalence - a0.5 * mean.suit
+#       suit.0.5 = suit.raster * a0.5 + b0.5
+#       if(minValue(suit.0.5) < 0)
+#       {
+#         a1 <- a0.5
+#         a0.5 <- a0 + (a1 - a0) / 2
+#       } else
+#       {
+#         a0 <- a0.5
+#         a0.5 <- a0 + (a1 - a0) / 2
+#       }
+#       new.suit = suit.0.5
+#     }
+#     slope <- a0.5
+#     b <- b0.5
+#   }
+#  
+#   if(maxValue(new.suit) > max.prob)
+#   {
+#     a1 <- slope
+#     a0.5 <- slope / 2
+#     a0 <- 0
+#     while (abs(maxValue(new.suit) - max.prob) > 0.001 |
+#            maxValue(new.suit) > max.prob)
+#     {
+#       b0.5 = target.prevalence - a0.5 * mean.suit
+#       suit.0.5 = suit.raster * a0.5 + b0.5
+#       if(maxValue(suit.0.5) > max.prob)
+#       {
+#         a1 <- a0.5
+#         a0.5 <- a0 + (a1 - a0) / 2
+#       } else
+#       {
+#         a0 <- a0.5
+#         a0.5 <- a0 + (a1 - a0) / 2
+#       }
+#       new.suit = suit.0.5
+#     }
+#     slope <- a0.5
+#     b <- b0.5
+#   }
+#   
+#   
+#   #Calculate the resulting prevalence:
+#   distr = .quickBernoulliTrial(new.suit)
+#   prev = cellStats(distr, stat = "mean")
+#   
+#   return(list(a = slope,
+#               b = b,
+#               prevalence = prev,
+#               probability.of.occurrence = new.suit,
+#               distribution = distr))
+# }
 
 .findTruncatedLinearConversion <- function(suit.raster, target.prevalence,
                                  m = FALSE,

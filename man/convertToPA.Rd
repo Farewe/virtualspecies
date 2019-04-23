@@ -161,11 +161,35 @@ intercept \code{b}. The transformed environmental suitability will
 be used as the probability of occurrence for the Bernoulli trial.}
 \item{\code{species.prevalence}: the proportion of sites in which the 
 species occur. In this case, the function will try to find coefficients
-of a linear regression which results in the requested 
-\code{species.prevalence}.}
+of a linear regression which results in the requested \code{species.prevalence}
+(see below).}
 } 
 
+Method used to find coefficients of a linear regression which results in the
+requested \code{species.prevalence}:
 
+\enumerate{
+\item{The simplest linear transformation of habitat suitability would
+be to just multiply the raw suitability by a constant. For example, if the 
+raw average suitability in the area is 0.04, it means an expected prevalence
+of 0.40. To to go from this expected prevalence of 0.04 to an expected
+prevalence of 0.4, we can just multiply the raw suitability by 10. It is the
+default choice, unless it results in probabilities superior to 1 or raw
+suitability have values below 0, in which case the function proceeds to
+ method 2.}
+\item{If it does not work, then we look at the line that passes through 
+(min suitability, 0) and (mean suitability, desired prevalence). For this 
+line, we only need to ensure that the maximum probability of occurence is 
+lower than 1. Otherwise, the function proceeds to method 3.}
+\item{If method 2 fails, then we test the line going through (mean 
+suitability, desired prevalence) and (max suitability, 1). If the minimum
+probability resulting from this line is greater than 0, then this method is 
+correct.
+}
+}
+
+One of these 3 lines should always work. In fact, one of the last two has to 
+work, and it does not hurt to try the first one which is simpler.
 
  --------------------------------------------------------------------------
  

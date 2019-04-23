@@ -5,10 +5,13 @@
 \title{Visualise the function that was used to transform environmental suitability into
 probability of occurrence}
 \usage{
-plotSuitabilityToProba(sp, ...)
+plotSuitabilityToProba(sp, add = FALSE, ...)
 }
 \arguments{
 \item{sp}{the output from \code{\link{convertToPA}}.}
+
+\item{add}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, the relationship
+will be added to the currently active graph.}
 
 \item{...}{further arguments to be passed to \code{plot}. See 
 \code{\link[graphics]{plot}} and \code{\link[graphics]{par}}.}
