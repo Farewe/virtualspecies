@@ -45,7 +45,7 @@
 #' @author
 #' Boris Leroy \email{leroy.boris@@gmail.com}
 #' 
-#' with help from C. N. Meynard, C. Bellard & F. Courchamp
+#' with help from C. N. Meynard, D.M. Kaplan, C. Bellard & F. Courchamp
 #' @references
 #' Meynard C.N. & Kaplan D.M. 2013. Using virtual species to study species 
 #' distributions and model performance. 
