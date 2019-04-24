@@ -45,6 +45,7 @@ This function generates a virtual species distribution from a RasterStack of env
 variables and a defined set of responses to each environmental parameter.
 }
 \details{
+\link[=http://borisleroy.com/virtualspecies_tutorial/02-response.html]{Online tutorial for this function}
 This function proceeds in two steps:
 \enumerate{
 \item{The response to each environmental variable is calculated with the functions provided

@@ -21,6 +21,9 @@
 #' @param plot \code{TRUE} or \code{FALSE}. If \code{TRUE}, the resulting limited
 #' distribution will be plotted.
 #' @details
+#' \link[=http://borisleroy.com/virtualspecies_tutorial/08-dispersallimitation.html]{Online tutorial for this function}
+#' 
+#' 
 #' \bold{How the function works:}
 #' 
 #' The function will remove occurrences of the species outside the chosen area:

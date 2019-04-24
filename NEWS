@@ -1,7 +1,7 @@
-virtualspecies v1.5 (Release date: 2019-04-23)
+virtualspecies v1.5 (Release date: 2019-04-30)
 ==============
 
-Changes (ongoing):
+Changes:
 
 * MAJOR CHANGE: in function convertToPA, for probabilistic conversions, 
 the output now includes the probability of occurrence raster. This probability
