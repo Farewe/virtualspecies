@@ -57,7 +57,7 @@
 #' @param plot \code{TRUE} or \code{FALSE}. If \code{TRUE}, the sampled 
 #' occurrence points will be plotted.
 #' @details
-#' \link[=http://borisleroy.com/virtualspecies_tutorial/07-sampleoccurrences.html]{Online tutorial for this function}
+#' \href{http://borisleroy.com/virtualspecies_tutorial/07-sampleoccurrences.html}{Online tutorial for this function}
 #' 
 #' 
 #' 

@@ -34,7 +34,7 @@
 #' set \code{sample.points = TRUE} and choose the number of points to sample with
 #' \code{nb.points}. 
 #' @details
-#' \link[=http://borisleroy.com/virtualspecies_tutorial/03-PCA.html]{Online tutorial for this function}
+#' \href{http://borisleroy.com/virtualspecies_tutorial/03-PCA.html}{Online tutorial for this function}
 #' 
 #' 
 #' This function proceeds in 3 steps:

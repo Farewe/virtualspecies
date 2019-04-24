@@ -59,7 +59,7 @@
 #' species. See \code{\link{convertToPA}}
 #' @param plot \code{TRUE} or \code{FALSE}. If \code{TRUE}, the generated virtual species will be plotted.
 #' @details
-#' \link[=http://borisleroy.com/virtualspecies_tutorial/05-randomspecies.html]{Online tutorial for this function}
+#' \href{http://borisleroy.com/virtualspecies_tutorial/05-randomspecies.html}{Online tutorial for this function}
 #' 
 #' 
 #' 

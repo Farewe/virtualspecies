@@ -101,6 +101,10 @@ The structure of the virtualspecies can object be seen using \code{str()}
 This function generates randomly a virtual species distribution.
 }
 \details{
+\href{http://borisleroy.com/virtualspecies_tutorial/05-randomspecies.html}{Online tutorial for this function}
+
+
+
 This function generate random virtual species, either using a PCA approach, or using
 a response approach. In case of a response approach, only four response functions are
 currently used: gaussian, linear, logistic and quadratic functions.

@@ -56,7 +56,7 @@
 #' \emph{Ecography} \bold{35}:499-509
 #' 
 #' @details 
-#' \link[=http://borisleroy.com/virtualspecies_tutorial/04-presenceabsence.html]{Online tutorial for this function}
+#' \href{http://borisleroy.com/virtualspecies_tutorial/04-presenceabsence.html}{Online tutorial for this function}
 #' 
 #' 
 #' 
