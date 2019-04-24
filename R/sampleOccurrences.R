@@ -722,7 +722,7 @@ sampleOccurrences <- function(x, n,
   if(extract.probability)
   {
     sample.points <- data.frame(sample.points,
-                                true.probability = extract(x$suitab.raster,
+                                true.probability = extract(x$probability.of.occurrence,
                                                            sample.points[, c("x", "y")]))
   }
   
