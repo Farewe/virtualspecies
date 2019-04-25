@@ -106,6 +106,11 @@ The sampling bias can be defined manually or with a set of predefined
 biases.
 }
 \details{
+\href{http://borisleroy.com/virtualspecies_tutorial/07-sampleoccurrences.html}{Online tutorial for this function}
+
+
+
+
 \bold{How the function works:}
 
 The function randomly selects \code{n} cells in which samples occur. If a 

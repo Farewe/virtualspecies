@@ -1,12 +1,12 @@
-virtualspecies v1.5 (Release date: 2019-04-23)
+virtualspecies v1.5 (Release date: 2019-04-30)
 ==============
 
-Changes (ongoing):
+Changes:
 
 * MAJOR CHANGE: in function convertToPA, for probabilistic conversions, 
 the output now includes the probability of occurrence raster. This probability
 of occurrence corresponds to the environmental suitability modified by the 
-probabilistic conversion to presence-absence. 
+probabilistic conversion method used to draw presences and absences.
 * MAJOR CHANGE: the function convertToPA now includes a linear method for the
 probabilistic conversion. The linear conversion can be performed manually (e.g.,
 provide slope and intercept) or automatically to fit the chosen prevalence.
@@ -16,7 +16,8 @@ ocurrence.
 * Added a series of messages when running generateSpFromFun to inform users about
 the default behaviour of the function (i.e., it rescales all responses between 0 
 and 1 by default).
-* Added the possibility to extract true suitability in sampleOccurrences
+* Added the possibility to extract true probability of occurrence in
+sampleOccurrences
 
 
 

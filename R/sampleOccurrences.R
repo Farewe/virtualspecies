@@ -57,6 +57,11 @@
 #' @param plot \code{TRUE} or \code{FALSE}. If \code{TRUE}, the sampled 
 #' occurrence points will be plotted.
 #' @details
+#' \href{http://borisleroy.com/virtualspecies_tutorial/07-sampleoccurrences.html}{Online tutorial for this function}
+#' 
+#' 
+#' 
+#' 
 #' \bold{How the function works:}
 #' 
 #' The function randomly selects \code{n} cells in which samples occur. If a 
@@ -722,7 +727,7 @@ sampleOccurrences <- function(x, n,
   if(extract.probability)
   {
     sample.points <- data.frame(sample.points,
-                                true.probability = extract(x$suitab.raster,
+                                true.probability = extract(x$probability.of.occurrence,
                                                            sample.points[, c("x", "y")]))
   }
   

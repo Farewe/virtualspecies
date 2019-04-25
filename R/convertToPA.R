@@ -56,6 +56,10 @@
 #' \emph{Ecography} \bold{35}:499-509
 #' 
 #' @details 
+#' \href{http://borisleroy.com/virtualspecies_tutorial/04-presenceabsence.html}{Online tutorial for this function}
+#' 
+#' 
+#' 
 #' The conversion of environmental suitability into presence - absence used to be
 #' performed by selecting a threshold above which presence always occurs,
 #' and never below. However, this approach may is unrealistic because
@@ -96,7 +100,7 @@
 #' 
 #' --------------------------------------------------------------------------
 #' 
-#' \bold{PROBABILISTC CONVERSION - LOGISTIC METHOD}
+#' \bold{PROBABILISTIC CONVERSION - LOGISTIC METHOD}
 #' 
 #' To perform the logistic transformation of environmental suitability
 #' you have to define two of the

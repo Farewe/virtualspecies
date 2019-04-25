@@ -59,6 +59,9 @@ along the two first axes of the PCA. The response to axes of the PCA is
 determined with gaussian functions.
 }
 \details{
+\href{http://borisleroy.com/virtualspecies_tutorial/03-PCA.html}{Online tutorial for this function}
+
+
 This function proceeds in 3 steps:
 \enumerate{
 \item{A PCA of environmental conditions is generated}

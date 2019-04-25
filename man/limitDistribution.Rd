@@ -50,6 +50,9 @@ This function basically takes any type of raster and will limit values above
 0 to areas where the species is allowed to disperse.
 }
 \details{
+\href{http://borisleroy.com/virtualspecies_tutorial/08-dispersallimitation.html}{Online tutorial for this function}
+
+
 \bold{How the function works:}
 
 The function will remove occurrences of the species outside the chosen area:

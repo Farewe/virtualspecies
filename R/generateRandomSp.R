@@ -59,6 +59,10 @@
 #' species. See \code{\link{convertToPA}}
 #' @param plot \code{TRUE} or \code{FALSE}. If \code{TRUE}, the generated virtual species will be plotted.
 #' @details
+#' \href{http://borisleroy.com/virtualspecies_tutorial/05-randomspecies.html}{Online tutorial for this function}
+#' 
+#' 
+#' 
 #' This function generate random virtual species, either using a PCA approach, or using
 #' a response approach. In case of a response approach, only four response functions are
 #' currently used: gaussian, linear, logistic and quadratic functions.
