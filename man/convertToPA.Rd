@@ -107,7 +107,7 @@ probabilities of occurrence across the landscape.}}
 
 --- note ---
 
-If the Vritual Species study aims at comparing simulated and predicted 
+If the Virtual Species study aims at comparing simulated and predicted 
 probability values, it is important to recover the correct simulated 
 probability instead of directly using the initial suitability function. 
 
