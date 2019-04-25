@@ -104,6 +104,6 @@ plotSuitabilityToProba <- function(sp, add = FALSE, ...)
          ...)
   } else
   {
-    lines(x = x, y = y)
+    lines(x = x, y = y, ...)
   }
 }

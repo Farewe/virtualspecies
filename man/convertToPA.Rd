@@ -269,5 +269,5 @@ environment on species distribution model performance.
 \author{
 Boris Leroy \email{leroy.boris@gmail.com}
 
-with help from C. N. Meynard, C. Bellard & F. Courchamp
+with help from C. N. Meynard, D.M. Kaplan, C. Bellard & F. Courchamp
 }
