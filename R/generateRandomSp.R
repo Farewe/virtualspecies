@@ -315,9 +315,7 @@ generateRandomSp <- function(raster.stack,
                              species.prevalence = species.prevalence,
                              plot = FALSE)
     
-      if(plot) plot(stack(results$suitab.raster, 
-                          results$pa.raster), main = c("Suitability", 
-                                                       "Presence-absence"))
+      if(plot) plot(results)
     } else {
       
       results <- convertToPA(results, 
@@ -327,11 +325,10 @@ generateRandomSp <- function(raster.stack,
                              species.prevalence = species.prevalence,
                              plot = FALSE)
       
-      if(plot) plot(stack(results$suitab.raster, results$pa.raster), 
-                    main = c("Suitability", "Presence-absence"))
+      if(plot) plot(results)
     }
   } else {
-    if(plot) plot(results$suitab.raster, main = "Suitability")
+    if(plot) plot(results)
   }
   
   return(results)
