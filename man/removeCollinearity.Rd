@@ -6,7 +6,7 @@
 \usage{
 removeCollinearity(raster.stack, multicollinearity.cutoff = 0.7,
   select.variables = FALSE, sample.points = FALSE, nb.points = 10000,
-  plot = FALSE)
+  plot = FALSE, method = "pearson")
 }
 \arguments{
 \item{raster.stack}{a RasterStack object, in which each layer represent an environmental 
@@ -30,6 +30,11 @@ value may not be representative of the environmental conditions in your raster.}
 
 \item{plot}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, the hierarchical
 ascendant classification used to group variables will be plotted.}
+
+\item{method}{\code{"pearson"}, \code{"spearman"} or \code{"kendall"}.
+The correlation method to be used. If your variables are skewed or have 
+outliers (e.g. when working with precipitation variables) you should favour
+the Spearman or Kendall methods.}
 }
 \value{
 a vector of non correlated variables, or a list where each element is a

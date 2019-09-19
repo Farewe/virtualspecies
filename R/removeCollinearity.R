@@ -21,6 +21,10 @@
 #' value may not be representative of the environmental conditions in your raster.
 #' @param plot \code{TRUE} or \code{FALSE}. If \code{TRUE}, the hierarchical
 #' ascendant classification used to group variables will be plotted.
+#' @param method \code{"pearson"}, \code{"spearman"} or \code{"kendall"}.
+#' The correlation method to be used. If your variables are skewed or have 
+#' outliers (e.g. when working with precipitation variables) you should favour
+#' the Spearman or Kendall methods.
 #' @return
 #' a vector of non correlated variables, or a list where each element is a
 #' group of non correlated variables.
@@ -76,7 +80,8 @@
 
 removeCollinearity <- function(raster.stack, multicollinearity.cutoff = .7,
                                select.variables = FALSE, sample.points = FALSE, 
-                               nb.points = 10000, plot = FALSE)
+                               nb.points = 10000, plot = FALSE,
+                               method = "pearson")
 {
   if(sample.points)
   {
@@ -104,7 +109,7 @@ removeCollinearity <- function(raster.stack, multicollinearity.cutoff = .7,
                        dimnames = list(names(raster.stack), names(raster.stack)))
   
   # Correlation based on Pearson
-  cor.matrix <- 1 - abs(stats::cor(env.df, method = "pearson"))
+  cor.matrix <- 1 - abs(stats::cor(env.df, method = method))
   
   # Transforming the correlation matrix into an ascendent hierarchical classification
   dist.matrix <- stats::as.dist(cor.matrix)
