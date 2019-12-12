@@ -153,7 +153,7 @@ generateSpFromFun <- function(raster.stack, parameters,
           names(parameters)[i], "'. See help(generateSpFromFun) for more details.",
           sep = "")}
     test <- tryCatch(match.fun(parameters[[i]]$fun), error = function(c) "error")
-    if(class(test) != "function")
+    if(!inherits(test, "function"))
     {
       stop(paste("The function ", parameters[[i]]$fun, " does not exist, please verify spelling.", sep = ""))
     }

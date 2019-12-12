@@ -269,14 +269,14 @@ convertToPA <- function(x,
                         plot = TRUE)
 
 {
-  if("virtualspecies" %in% class(x))
+  if(inherits(x, "virtualspecies"))
   {
-    if("RasterLayer" %in% class(x$suitab.raster))
+    if(inherits(x$suitab.raster, "RasterLayer"))
     {
       sp.raster <- x$suitab.raster
     } else stop("x must be:\n- a raster layer object\nor\n- the output list from functions
                generateSpFromFun(), generateSpFromPCA() or generateRandomSp()")
-  } else if ("RasterLayer" %in% class(x))
+  } else if (inherits(x, "RasterLayer"))
   {
     sp.raster <- x
   } else stop("x must be:\n- a raster layer object\nor\n- the output list from functions
@@ -685,7 +685,7 @@ convertToPA <- function(x,
   
   species.prevalence <- cellStats(PA.raster, stat = "mean")
   
-  if("virtualspecies" %in% class(x))
+  if(inherits(x, "virtualspecies"))
   {
     if(PA.method == "threshold")
     {
@@ -729,7 +729,7 @@ convertToPA <- function(x,
                   main = c("Environmental suitability",
                            "Probability of occurrence", 
                            "Presence-absence"))
-  } else if ("RasterLayer" %in% class(x))
+  } else if (inherits(x, "RasterLayer"))
   {
     if(PA.method == "threshold")
     {

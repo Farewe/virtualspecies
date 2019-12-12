@@ -65,7 +65,7 @@
     }
   }
   
-  if (class(ext)=='character') {
+  if (inherits(ext, 'character')) {
     if (! ext %in% c('points')) { 
       stop("if ext is a character variable it should be 'points'") 
     } else if (missing(p)) { 
@@ -92,7 +92,7 @@
     stopifnot(hasValues(mask))
     cells <- crop(mask, mask2)
     cells <- try( stats::na.omit(cbind(1:ncell(cells), getValues(cells))))
-    if (class(cells) == 'try-error') {
+    if (inherits(cells, 'try-error')) {
       stop("the raster is too large to be used with 'prob=TRUE'")
     }
     prob <- cells[,2]

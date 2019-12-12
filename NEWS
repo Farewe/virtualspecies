@@ -1,3 +1,9 @@
+virtualspecies v1.5.1 (Release date: 2019-12-12)
+==============
+
+Changes:
+* Internal changes for compatibility with the upcoming R 4.0.0 version
+
 virtualspecies v1.5 (Release date: 2019-04-30)
 ==============
 

@@ -60,7 +60,7 @@
 
 plotSuitabilityToProba <- function(sp, add = FALSE, ...)
 {
-  if("virtualspecies" %in% class(sp))
+  if(inherits(sp, "virtualspecies"))
   {
     if(!("PA.conversion" %in% names(sp)))
     {

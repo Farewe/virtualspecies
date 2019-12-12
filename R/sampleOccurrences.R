@@ -306,18 +306,18 @@ sampleOccurrences <- function(x, n,
   attr(results, "seed") <- .Random.seed
   
   
-  if("virtualspecies" %in% class(x))
+  if(inherits(x, "virtualspecies"))
   {
-    if("RasterLayer" %in% class(x$occupied.area))
+    if(inherits(x$occupied.area, "RasterLayer"))
     {
       sp.raster <- x$occupied.area
-    } else if("RasterLayer" %in% class(x$pa.raster))
+    } else if(inherits(x$pa.raster, "RasterLayer"))
     {
       sp.raster <- x$pa.raster
     } else stop("x must be:\n- a raster layer object\nor\n- the output list from
                 functions generateRandomSp(), convertToPA() or 
                 limitDistribution()")
-  } else if ("RasterLayer" %in% class(x))
+  } else if (inherits(x, "RasterLayer"))
   {
     sp.raster <- x
     if(extract.probability)
@@ -361,9 +361,9 @@ sampleOccurrences <- function(x, n,
         worldmap@data$SOVEREIGNT %in% sampling.area | 
           worldmap@data$REGION %in% sampling.area |
           worldmap@data$continent %in% sampling.area), ]
-    } else if(!(class(sampling.area) %in% c("SpatialPolygons",
-                                            "SpatialPolygonsDataFrame", 
-                                            "Extent")))
+    } else if(!(inherits(sampling.area, c("SpatialPolygons",
+                                          "SpatialPolygonsDataFrame", 
+                                          "Extent"))))
     {
       stop("Please provide to sampling.area either \n
            - the names of countries, region and/or continents in which to sample\n
@@ -383,7 +383,7 @@ sampleOccurrences <- function(x, n,
   
   if(correct.by.suitability)
   {
-    if(!("virtualspecies" %in% class(x)) | !("suitab.raster" %in% names(x)))
+    if(!(inherits(x, "virtualspecies")) | !("suitab.raster" %in% names(x)))
     {
       stop("If you choose to weight the probability of detection by the suitability of the species (i.e., correct.by.suitability = TRUE),
            then you need to provide an appropriate virtual species containing a suitability raster to x.")
@@ -469,8 +469,8 @@ sampleOccurrences <- function(x, n,
     # This is especially important given that randomPoints weights samplings by 
     # the cell area (because cells closer to the equator are larger)
   {
-    if(!(class(bias.area) %in% c("SpatialPolygons", 
-                                 "SpatialPolygonsDataFrame")))
+    if(!(inherits(bias.area, c("SpatialPolygons", 
+                               "SpatialPolygonsDataFrame"))))
     {
       stop("If you choose bias = 'polygon', please provide a polygon of class 
            SpatialPolygons or SpatialPolygonsDataFrame to argument bias.area")
@@ -503,7 +503,7 @@ sampleOccurrences <- function(x, n,
   
   if (bias == "manual")
   {
-    if(!("RasterLayer" %in% class(weights)))
+    if(!(inherits(weights, "RasterLayer")))
     {
       stop("You must provide a raster layer of weights (to argument weights) 
            if you choose bias == 'manual'")
@@ -546,7 +546,7 @@ sampleOccurrences <- function(x, n,
     bias.raster <- bias.raster * bias.raster1
   } else if(bias == "extent")
   {
-    if(!(class(bias.area) == "Extent"))
+    if(!(inherits(bias.area, "Extent")))
     {
       message("No object of class extent provided: click twice on the map to draw the extent in which presence points will be sampled")
       plot(sp.raster)

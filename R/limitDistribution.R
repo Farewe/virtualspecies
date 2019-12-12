@@ -135,14 +135,14 @@ limitDistribution <- function(x,
 {
   
   
-  if("virtualspecies" %in% class(x))
+  if(inherits(x, "virtualspecies"))
   {
-    if("RasterLayer" %in% class(x$pa.raster))
+    if(inherits(x$pa.raster, "RasterLayer"))
     {
       sp.raster <- x$pa.raster
       results <- x
     } else stop("x must be:\n- a raster layer object\nor\n- the output list from function convertToPA(), generateSpFromFun(), generateSpFromPCA() or generateRandomSp()")
-  } else if ("RasterLayer" %in% class(x))
+  } else if (inherits(x, "RasterLayer"))
   {
     sp.raster <- x
     results <- list(sp.raster)
@@ -199,7 +199,7 @@ limitDistribution <- function(x,
     # This is especially important given that randomPoints weights samplings by the cell area (because cells closer to
     # the equator are larger)
   {
-    if(!(class(area) %in% c("SpatialPolygons", "SpatialPolygonsDataFrame")))
+    if(!(inherits(area, c("SpatialPolygons", "SpatialPolygonsDataFrame"))))
     {
       stop("If you choose geographical.limit = 'polygon', please provide a polygon of class SpatialPolygons or SpatialPolygonsDataFrame to argument area")
     }
@@ -208,7 +208,7 @@ limitDistribution <- function(x,
                                        area = area)
   } else if(geographical.limit == "extent")
   {
-    if(!(class(area) == "Extent"))
+    if(!(inherits(area, "Extent")))
     {
       message("No object of class extent (or wrong object) provided: click twice on the map to draw the extent in which presence points will be sampled")
       plot(sp.raster)
@@ -216,7 +216,7 @@ limitDistribution <- function(x,
     }
   } else if(geographical.limit == "raster")
   {
-    if (!("RasterLayer" %in% class(area)))
+    if (!(inherits(area, "RasterLayer")))
     {
       stop("If you choose to limit the distribution with a raster, please provide the raster to argument 'area'")    
     }
