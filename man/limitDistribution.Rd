@@ -4,8 +4,7 @@
 \alias{limitDistribution}
 \title{Limit a virtual species distribution to a defined area}
 \usage{
-limitDistribution(x, geographical.limit = "extent", area = NULL,
-  plot = TRUE)
+limitDistribution(x, geographical.limit = "extent", area = NULL, plot = TRUE)
 }
 \arguments{
 \item{x}{a \code{rasterLayer} object composed of 0, 1 and NA, or the output list from 

@@ -4,9 +4,15 @@
 \alias{removeCollinearity}
 \title{Remove collinearity among variables of a a raster stack}
 \usage{
-removeCollinearity(raster.stack, multicollinearity.cutoff = 0.7,
-  select.variables = FALSE, sample.points = FALSE, nb.points = 10000,
-  plot = FALSE, method = "pearson")
+removeCollinearity(
+  raster.stack,
+  multicollinearity.cutoff = 0.7,
+  select.variables = FALSE,
+  sample.points = FALSE,
+  nb.points = 10000,
+  plot = FALSE,
+  method = "pearson"
+)
 }
 \arguments{
 \item{raster.stack}{a RasterStack object, in which each layer represent an environmental 

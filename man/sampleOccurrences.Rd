@@ -4,12 +4,23 @@
 \alias{sampleOccurrences}
 \title{Sample occurrences in a virtual species distribution}
 \usage{
-sampleOccurrences(x, n, type = "presence only",
-  extract.probability = FALSE, sampling.area = NULL,
-  detection.probability = 1, correct.by.suitability = FALSE,
-  error.probability = 0, bias = "no.bias", bias.strength = 50,
-  bias.area = NULL, weights = NULL, sample.prevalence = NULL,
-  replacement = FALSE, plot = TRUE)
+sampleOccurrences(
+  x,
+  n,
+  type = "presence only",
+  extract.probability = FALSE,
+  sampling.area = NULL,
+  detection.probability = 1,
+  correct.by.suitability = FALSE,
+  error.probability = 0,
+  bias = "no.bias",
+  bias.strength = 50,
+  bias.area = NULL,
+  weights = NULL,
+  sample.prevalence = NULL,
+  replacement = FALSE,
+  plot = TRUE
+)
 }
 \arguments{
 \item{x}{a \code{rasterLayer} object or the output list from 

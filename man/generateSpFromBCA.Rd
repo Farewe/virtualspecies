@@ -4,10 +4,18 @@
 \alias{generateSpFromBCA}
 \title{Generate a virtual species distribution from a Between Component Analysis of environmental variables}
 \usage{
-generateSpFromBCA(raster.stack.current, raster.stack.future,
-  rescale = TRUE, niche.breadth = "any", means = NULL, sds = NULL,
-  bca = NULL, sample.points = FALSE, nb.points = 10000,
-  plot = TRUE)
+generateSpFromBCA(
+  raster.stack.current,
+  raster.stack.future,
+  rescale = TRUE,
+  niche.breadth = "any",
+  means = NULL,
+  sds = NULL,
+  bca = NULL,
+  sample.points = FALSE,
+  nb.points = 10000,
+  plot = TRUE
+)
 }
 \arguments{
 \item{raster.stack.current}{a RasterStack object, in which each layer represent an environmental 

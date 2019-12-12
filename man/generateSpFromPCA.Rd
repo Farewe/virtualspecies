@@ -4,9 +4,18 @@
 \alias{generateSpFromPCA}
 \title{Generate a virtual species distribution with a PCA of environmental variables}
 \usage{
-generateSpFromPCA(raster.stack, rescale = TRUE, niche.breadth = "any",
-  axes = c(1, 2), means = NULL, sds = NULL, pca = NULL,
-  sample.points = FALSE, nb.points = 10000, plot = TRUE)
+generateSpFromPCA(
+  raster.stack,
+  rescale = TRUE,
+  niche.breadth = "any",
+  axes = c(1, 2),
+  means = NULL,
+  sds = NULL,
+  pca = NULL,
+  sample.points = FALSE,
+  nb.points = 10000,
+  plot = TRUE
+)
 }
 \arguments{
 \item{raster.stack}{a RasterStack object, in which each layer represent an environmental 

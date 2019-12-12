@@ -4,8 +4,15 @@
 \alias{plotResponse}
 \title{Visualise the response of the virtual species to environmental variables}
 \usage{
-plotResponse(x, parameters = NULL, approach = NULL, rescale = TRUE,
-  axes.to.plot = NULL, no.plot.reset = FALSE, ...)
+plotResponse(
+  x,
+  parameters = NULL,
+  approach = NULL,
+  rescale = TRUE,
+  axes.to.plot = NULL,
+  no.plot.reset = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{the output from \code{\link{generateSpFromFun}}, \code{\link{generateSpFromPCA}}, 

@@ -4,9 +4,15 @@
 \alias{generateSpFromFun}
 \title{Generate a virtual species distributions with responses to environmental variables}
 \usage{
-generateSpFromFun(raster.stack, parameters, rescale = TRUE,
-  formula = NULL, species.type = "multiplicative",
-  rescale.each.response = TRUE, plot = FALSE)
+generateSpFromFun(
+  raster.stack,
+  parameters,
+  rescale = TRUE,
+  formula = NULL,
+  species.type = "multiplicative",
+  rescale.each.response = TRUE,
+  plot = FALSE
+)
 }
 \arguments{
 \item{raster.stack}{a RasterStack object, in which each layer represent an environmental 

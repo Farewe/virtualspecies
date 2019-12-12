@@ -4,9 +4,17 @@
 \alias{convertToPA}
 \title{Convert a virtual species distribution (or a suitability raster) into presence-absence}
 \usage{
-convertToPA(x, PA.method = "probability", prob.method = "logistic",
-  beta = "random", alpha = -0.05, a = NULL, b = NULL,
-  species.prevalence = NULL, plot = TRUE)
+convertToPA(
+  x,
+  PA.method = "probability",
+  prob.method = "logistic",
+  beta = "random",
+  alpha = -0.05,
+  a = NULL,
+  b = NULL,
+  species.prevalence = NULL,
+  plot = TRUE
+)
 }
 \arguments{
 \item{x}{a suitability raster, or the output from functions 

@@ -4,13 +4,25 @@
 \alias{generateRandomSp}
 \title{Generate a random virtual species distribution from environmental variables}
 \usage{
-generateRandomSp(raster.stack, approach = "automatic", rescale = TRUE,
-  convert.to.PA = TRUE, relations = c("gaussian", "linear", "logistic",
-  "quadratic"), rescale.each.response = TRUE, realistic.sp = TRUE,
-  species.type = "multiplicative", niche.breadth = "any",
-  sample.points = FALSE, nb.points = 10000,
-  PA.method = "probability", alpha = -0.1, adjust.alpha = TRUE,
-  beta = "random", species.prevalence = NULL, plot = TRUE)
+generateRandomSp(
+  raster.stack,
+  approach = "automatic",
+  rescale = TRUE,
+  convert.to.PA = TRUE,
+  relations = c("gaussian", "linear", "logistic", "quadratic"),
+  rescale.each.response = TRUE,
+  realistic.sp = TRUE,
+  species.type = "multiplicative",
+  niche.breadth = "any",
+  sample.points = FALSE,
+  nb.points = 10000,
+  PA.method = "probability",
+  alpha = -0.1,
+  adjust.alpha = TRUE,
+  beta = "random",
+  species.prevalence = NULL,
+  plot = TRUE
+)
 }
 \arguments{
 \item{raster.stack}{a RasterStack object, in which each layer represent an environmental 
