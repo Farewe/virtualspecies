@@ -84,7 +84,10 @@ formatFunctions <- function(x = NULL, rescale = TRUE, ...)
       details[[i]]$args <- a
     }
   }
-  if (is(x, "Raster"))
+  if(inherits(x, "Raster")) {
+    x <- rast(x)
+  }
+  if(inherits(x, "SpatRaster"))
   {
     plotResponse(x = x, parameters = details, rescale = rescale, approach = "response")
   } else if (!is.null(x))

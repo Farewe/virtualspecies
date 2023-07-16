@@ -86,8 +86,8 @@
 #' # Create an example stack with two environmental variables
 #' a <- matrix(rep(dnorm(1:100, 50, sd = 25)), 
 #'             nrow = 100, ncol = 100, byrow = TRUE)
-#' env <- stack(raster(a * dnorm(1:100, 50, sd = 25)),
-#'              raster(a * 1:100))
+#' env <- c(rast(a * dnorm(1:100, 50, sd = 25)),
+#'          rast(a * 1:100))
 #' names(env) <- c("variable1", "variable2")
 #' plot(env) # Illustration of the variables
 #' 
@@ -125,20 +125,24 @@
 
 generateSpFromFun <- function(raster.stack, parameters, 
                               rescale = TRUE, formula = NULL, 
-                              species.type = "multiplicative", rescale.each.response = TRUE,
+                              species.type = "multiplicative",
+                              rescale.each.response = TRUE,
                               plot = FALSE)
 {
+  if(inherits(raster.stack, "Raster")) {
+    raster.stack <- rast(raster.stack)
+  }
   message("Generating virtual species environmental suitability...\n")
   approach <- "response"
-  if(!(is(raster.stack, "Raster")))
+  if(!(inherits(raster.stack, "SpatRaster")))
   {
-    stop("raster.stack must be a raster stack object")
+    stop("raster.stack must be a SpatRaster object")
   }
-  if(any(is.na(maxValue(raster.stack))))
-  {
-    raster.stack <- setMinMax(raster.stack)
-  }
-  n.l <- nlayers(raster.stack)
+  # if(any(is.na(maxValue(raster.stack))))
+  # {
+  #   raster.stack <- setMinMax(raster.stack)
+  # }
+  n.l <- nlyr(raster.stack)
   if(n.l != length(parameters)) 
   {stop("Provide as many layers in raster.stack as functions on parameters")}
   if(any(!(names(parameters) %in% names(raster.stack)) |
@@ -181,26 +185,29 @@ generateSpFromFun <- function(raster.stack, parameters,
   
     
     
-  suitab.raster <- stack(sapply(names(raster.stack), FUN = function(y)
+  suitab.raster <- rast(lapply(names(raster.stack), FUN = function(y)
   {
-    calc(raster.stack[[y]], fun = function(x)
+    app(raster.stack[[y]], fun = function(x)
     {
       do.call(match.fun(parameters[[y]]$fun), args = c(list(x), parameters[[y]]$args))
     }
     )
   }))
+  names(suitab.raster) <- names(parameters)
   
   for (var in names(raster.stack))
   {
-    parameters[[var]]$min <- raster.stack[[var]]@data@min
-    parameters[[var]]$max <- raster.stack[[var]]@data@max
+    parameters[[var]]$min <- global(x[[var]], "min")[1, 1]
+    parameters[[var]]$max <- global(x[[var]], "max")[1, 1]
   }
   
   if(rescale.each.response)
   {
-    suitab.raster <- stack(sapply(names(suitab.raster), function(y)
+    suitab.raster <- rast(lapply(names(suitab.raster), function(y)
       {
-        (suitab.raster[[y]] - suitab.raster[[y]]@data@min) / (suitab.raster[[y]]@data@max - suitab.raster[[y]]@data@min)
+        (suitab.raster[[y]] - global(suitab.raster[[y]], "min")[1, 1]) / 
+        (global(suitab.raster[[y]], "max")[1, 1] - 
+           global(suitab.raster[[y]], "min")[1, 1])
       }))
   }
 
@@ -210,11 +217,11 @@ generateSpFromFun <- function(raster.stack, parameters,
     if(species.type == "multiplicative")
     {
       formula <- paste(names(suitab.raster), collapse = " * ")
-      suitab.raster <- raster::overlay(suitab.raster, fun = prod)
+      suitab.raster <- app(suitab.raster, fun = prod)
     } else if (species.type == "additive")
     {
       formula <- paste(names(suitab.raster), collapse = " + ")
-      suitab.raster <- raster::overlay(suitab.raster, fun = sum)
+      suitab.raster <- app(suitab.raster, fun = sum)
     } else stop("If you do not provide a formula, please choose either species.type = 'additive' or 'multiplicative'")
   } else
   {
@@ -233,15 +240,17 @@ generateSpFromFun <- function(raster.stack, parameters,
                               formula,
                               "}"
       )))
-      suitab.raster <- raster::overlay(suitab.raster, fun = custom.fun)
+      suitab.raster <- lapp(suitab.raster, fun = custom.fun)
       print(formula)
     }
   }
 
   if(rescale)
   {
-    suitab.raster <- (suitab.raster - suitab.raster@data@min) / (suitab.raster@data@max - suitab.raster@data@min)
+    suitab.raster <- (suitab.raster - global(suitab.raster, "min")[1, 1]) / 
+      (global(suitab.raster, "max")[1, 1] - global(suitab.raster, "min")[1, 1])
   }
+  names(suitab.raster) <- "VSP suitability"
     
 
   results <- list(approach = approach,
@@ -256,7 +265,9 @@ generateSpFromFun <- function(raster.stack, parameters,
 
   if(plot)
   {
-    plot(results$suitab.raster, main = "Environmental suitability of the virtual species")
+    plot(results$suitab.raster, 
+         main = "Environmental suitability of the virtual species",
+         col = viridis::viridis(20))
   }
   
   class(results) <- append("virtualspecies", class(results))

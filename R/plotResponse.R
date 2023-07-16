@@ -91,12 +91,15 @@
 plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = TRUE,
                          axes.to.plot = NULL, no.plot.reset = FALSE, ...)
 {
-  if(is(x, "Raster")) 
+  if(inherits(x, "Raster")) {
+    x <- rast(x)
+  }
+  if(inherits(x, "SpatRaster")) 
   {
-    if(any(is.na(maxValue(x, warn = FALSE))))
-    {
-      x <- setMinMax(x)
-    }
+    # if(any(is.na(maxValue(x, warn = FALSE))))
+    # {
+    #   x <- setMinMax(x)
+    # }
     if (length(approach) > 1) {stop("Only one approach can be plotted at a time")}
     if (approach == "response")
     {
@@ -104,7 +107,7 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = TRUE,
       {
         stop("If you choose the response approach please provide the parameters")
       }
-      if(nlayers(x) != length(parameters)) 
+      if(nlyr(x) != length(parameters)) 
       {
         stop("Provide as many layers in x as functions on parameters")
       }
@@ -114,8 +117,8 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = TRUE,
       }
       for (var in names(x))
       {
-        parameters[[var]]$min <- x[[var]]@data@min
-        parameters[[var]]$max <- x[[var]]@data@max
+        parameters[[var]]$min <- global(x[[var]], "min")[1, 1]
+        parameters[[var]]$max <- global(x[[var]], "max")[1, 1]
       }
       parameters
     } else if (approach == "pca")
@@ -268,7 +271,8 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = TRUE,
     }
     par(mar = c(4.1, 4.1, 4.1, 4.6))
     defaults <- list(x = pca.object$li[, axes.to.plot],
-                     col = c(grey(.8), rev(heat.colors(150))[51:200])[match(round(probabilities * 100, 0), 0:100)],
+                     col = c(grey(.8), rev(heat.colors(150))[51:200])[
+                       match(round(probabilities * 100, 0), 0:100)],
                      xlim = c(xmin, xmax),
                      ylim = c(ymin, ymax),
                      main = paste0("PCA of environmental conditions\nAxes ", 
