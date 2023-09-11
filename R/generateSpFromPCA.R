@@ -130,42 +130,51 @@
 #'            
 
 
-generateSpFromPCA <- function(raster.stack, rescale = TRUE, niche.breadth = "any",
-                              axes = c(1, 2), means = NULL, sds = NULL, pca = NULL,
-                              sample.points = FALSE, nb.points = 10000,
+generateSpFromPCA <- function(raster.stack, 
+                              rescale = TRUE, 
+                              niche.breadth = "any",
+                              axes = c(1, 2),
+                              means = NULL, 
+                              sds = NULL, 
+                              pca = NULL,
+                              sample.points = FALSE,
+                              nb.points = 10000,
                               plot = TRUE)
 {
-  if(!(is(raster.stack, "Raster")))
+  if(inherits(raster.stack, "Raster")) {
+    raster.stack <- rast(raster.stack)
+  }
+  if(!(inherits(raster.stack, "SpatRaster")))
   {
-    stop("raster.stack must be a raster stack object")
+    stop("raster.stack must be a SpatRaster object")
   }
   if(sample.points)
   {
-    if(!is.numeric(nb.points))
-    {stop("nb.points must be a numeric value corresponding to the number of pixels to sample from raster.stack")}
-    env.df <- sampleRandom(raster.stack, size = nb.points, na.rm = TRUE)
+    if(!is.numeric(nb.points)) { 
+      stop("nb.points must be a numeric value corresponding to the number of",
+            " pixels to sample from raster.stack")
+      }
+    env.df <- spatSample(raster.stack, size = nb.points, na.rm = TRUE)
   } else
   {
-    if(canProcessInMemory(raster.stack, n = 2))
+    message("Reading raster values. If it fails for very large rasters, use",
+            " arguments 'sample.points = TRUE' and define a number of",
+            " points to sample with 'nb.point'.")
+    env.df <- values(raster.stack)
+    if(any(is.na(env.df))) # Removing NAs if applicable
     {
-      env.df <- getValues(raster.stack)
-      if(any(is.na(env.df)))
-      {
-        env.df <- env.df[-unique(which(is.na(env.df), arr.ind = T)[, 1]), ] # Removing NAs 
-      }
-    } else
-    {
-      stop("Your computer does not have enough memory to extract all the values from raster.stack. 
-           Use the argument sample.points = TRUE, and adjust the number of points to use with nb.points. More details in ?generateSpFromPCA")
+      env.df <- env.df[-unique(which(is.na(env.df), arr.ind = T)[, 1]), ]  
     }
   }
   
   if(!is.null(pca))
   {
     if(!all(class(pca) %in% c("pca", "dudi"))) 
-    {stop("Please provide an appropriate pca.object (output of dudi.pca()) to make the pca plot.")}
+    {stop("Please provide an appropriate pca.object (output of dudi.pca()) to",
+          " make the pca plot.")}
     if(any(!(names(pca$tab) %in% names(raster.stack))))
-    {stop("The variables used to make the pca must be the same as variables names in raster.stack")}
+    {stop("The variables used to make the pca must be the same as variables", 
+          " names in raster.stack")}
         
     pca.object <- pca
     rm(pca)
@@ -180,14 +189,15 @@ generateSpFromPCA <- function(raster.stack, rescale = TRUE, niche.breadth = "any
     if(sample.points)
     {
       if(!is.numeric(nb.points))
-      {stop("nb.points must be a numeric value corresponding to the number of pixels to sample from raster.stack")}
-      env.df <- sampleRandom(raster.stack, size = nb.points, na.rm = TRUE)
+      {stop("nb.points must be a numeric value corresponding to the number of",
+            " pixels to sample from raster.stack")}
+      env.df <- spatSample(raster.stack, size = nb.points, na.rm = TRUE)
     } else
     {
-      env.df <- getValues(raster.stack)
+      env.df <- values(raster.stack)
       if(any(is.na(env.df)))
       {
-        env.df <- env.df[-unique(which(is.na(env.df), arr.ind = T)[, 1]), ] # Removing NAs 
+        env.df <- env.df[-unique(which(is.na(env.df), arr.ind = T)[, 1]), ] 
       }
     }
     
@@ -200,9 +210,11 @@ generateSpFromPCA <- function(raster.stack, rescale = TRUE, niche.breadth = "any
   if(!is.null(means))
   {
     if(!is.numeric(means))
-    {stop("Please provide numeric means for the gaussian function to compute probabilities of presence")}
+    {stop("Please provide numeric means for the gaussian function to compute",
+          " probabilities of presence")}
     if(!is.vector(means) | length(means) != length(axes))
-    {stop("Please provide a vector with as many means as chosen axes for the gaussian function (argument 'means')")}
+    {stop("Please provide a vector with as many means as chosen axes for the",
+          " gaussian function (argument 'means')")}
   } else
   {
     means <- pca.object$li[sample(1:nrow(pca.object$li), 1), ]
@@ -214,16 +226,20 @@ generateSpFromPCA <- function(raster.stack, rescale = TRUE, niche.breadth = "any
   if(!is.null(sds))
   {
     if(!is.numeric(sds))
-    {stop("Please provide numeric standard deviations for the gaussian function to compute probabilities of presence")}
+    {stop("Please provide numeric standard deviations for the gaussian", 
+          " function to compute probabilities of presence")}
     if(!is.vector(sds) | length(sds) != length(axes))
-    {stop("Please provide a vector with  as many standard deviations as chosen axes for the gaussian function (argument 'sds')")}
+    {stop("Please provide a vector with  as many standard deviations as", 
+          " chosen axes for the gaussian function (argument 'sds')")}
     if(any(sds < 0))
     {stop("The standard deviations must have a positive value!")}
-    message("    - You have provided standard deviations, so argument niche.breadth will be ignored.\n")
+    message("    - You have provided standard deviations, so argument", 
+            " niche.breadth will be ignored.\n")
   } else
   {
     # Defining a range of values to determine sds for the gaussian functions
-    axes.sdrange <- sapply(axes, .range.function, pca.object)
+    axes.sdrange <- vapply(axes, .range.function, pca.object, 
+                           FUN.VALUE = numeric(2))
     colnames(axes.sdrange) <- paste0("axis.", axes)
     
     
@@ -245,22 +261,33 @@ generateSpFromPCA <- function(raster.stack, rescale = TRUE, niche.breadth = "any
       stop("niche.breadth must be one of these: 'any', 'narrow', 'wide")
     }
     
-    sds <- sapply(axes, .sd.sample, sdrange = axes.sdrange, sdfloor = floor.sd, sdceiling = ceiling.sd)
+    sds <- vapply(axes, .sd.sample, sdrange = axes.sdrange, sdfloor = floor.sd, 
+                  sdceiling = ceiling.sd, FUN.VALUE = numeric(1))
     names(sds) <- paste0("sd", axes)
     
   }
   
  
   message(" - Calculating suitability values\n")
-  pca.env <- calc(raster.stack[[sel.vars]], fun = function(x, ...)
-    {.pca.coordinates(x, pca = pca.object, na.rm = TRUE, axes = axes)})
+  pca.env <- app(raster.stack[[sel.vars]], fun = function(x, ...) {
+    .pca.coordinates(x, pca = pca.object, na.rm = TRUE, axes = axes)
+  })
   
-  suitab.raster <- calc(pca.env, fun = function(x, ...){.prob.gaussian(x, means = means, sds = sds)})
+  suitab.raster <- app(pca.env, fun = function(x, ...) {
+    .prob.gaussian(x, means = means, sds = sds)
+  })
+  
   if(rescale)
   {
-    suitab.raster <- (suitab.raster - suitab.raster@data@min) / (suitab.raster@data@max - suitab.raster@data@min)
+    max_ <- global(suitab.raster, "max")[1, 1]
+    min_ <- global(suitab.raster, "min")[1, 1]
+    
+    suitab.raster <- (suitab.raster - min_) / (max_ - min_)
     message("   The final environmental suitability was rescaled between 0 and 1.
                   To disable, set argument rescale = FALSE") 
+  } else {
+    max_ <- NA
+    min_ <- NA
   }
 
   
@@ -274,17 +301,18 @@ generateSpFromPCA <- function(raster.stack, rescale = TRUE, niche.breadth = "any
                  parameters = list(pca = pca.object,
                                    axes = axes,
                                    means = means,
-                                   sds = sds), no.plot.reset = T)
+                                   sds = sds,
+                                   rescale = TRUE), no.plot.reset = T)
     
-    image(suitab.raster, axes = T, ann = F, asp = 1,
+    plot(suitab.raster, axes = T, ann = F, asp = 1,
           main = "Environmental suitability of the virtual species",
-          las = 1, col = rev(terrain.colors(12)), bty = "n")
-    
-    legend(title = "Pixel\nsuitability", "right", inset = c(-0.1, 0),
-           legend = c(1, 0.8, 0.6, 0.4, 0.2, 0),
-           fill = terrain.colors(6), bty = "n")   
+          las = 1, col = viridis::viridis(10), bty = "n")
+    # 
+    # legend(title = "Pixel\nsuitability", "right", inset = c(-0.1, 0),
+    #        legend = c(1, 0.8, 0.6, 0.4, 0.2, 0),
+    #        fill = terrain.colors(6), bty = "n")   
         
-    title("Environmental suitability of the virtual species")
+    # title("Environmental suitability of the virtual species")
 
 
     par(op)
@@ -296,7 +324,9 @@ generateSpFromPCA <- function(raster.stack, rescale = TRUE, niche.breadth = "any
                                  rescale = rescale,
                                  axes = axes, 
                                  means = means,
-                                 sds = sds),
+                                 sds = sds,
+                                 max_prob_rescale = max_,
+                                 min_prob_rescale = min_),
                   suitab.raster = suitab.raster)
   class(results) <-  append("virtualspecies", class(results))
   return(results)

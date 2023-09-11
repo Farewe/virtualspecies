@@ -116,20 +116,20 @@
 #' a <- matrix(rep(dnorm(1:100, 50, sd = 25)), 
 #'             nrow = 100, ncol = 100, byrow = TRUE)
 #' 
-#' env1 <- stack(raster(a * dnorm(1:100, 50, sd = 25)),
-#'               raster(a * 1:100),
-#'               raster(a),
-#'               raster(t(a)))
+#' env1 <- stack(rast(a * dnorm(1:100, 50, sd = 25)),
+#'               rast(a * 1:100),
+#'               rast(a),
+#'               rast(t(a)))
 #' names(env1) <- c("var1", "var2", "var3", "var4")
 #' plot(env1) # Illustration of the variables
 #' 
 #' b <- matrix(rep(dnorm(1:100, 25, sd = 50)), 
 #'             nrow = 100, ncol = 100, byrow = TRUE)
 #' 
-#' env2 <- stack(raster(b * dnorm(1:100, 50, sd = 25)),
-#'               raster(b * 1:100),
-#'               raster(b),
-#'               raster(t(b)))
+#' env2 <- stack(rast(b * dnorm(1:100, 50, sd = 25)),
+#'               rast(b * 1:100),
+#'               rast(b),
+#'               rast(t(b)))
 #' 
 #' names(env2) <- c("var1", "var2", "var3", "var4")
 #' plot(env2) # Illustration of the variables 
@@ -154,52 +154,70 @@
 #'    
 #'                    
 
-generateSpFromBCA <- function(raster.stack.current, raster.stack.future, rescale = TRUE, niche.breadth = "any",
+generateSpFromBCA <- function(raster.stack.current, raster.stack.future, 
+                              rescale = TRUE, niche.breadth = "any",
                               means = NULL, sds = NULL, bca = NULL,
                               sample.points = FALSE, nb.points = 10000,
                               plot = TRUE)
 {
-  
-  if(!(is(raster.stack.current, "RasterStack"))){
-    stop("raster.stack.current must be a raster stack object")
+  if(inherits(raster.stack.current, "Raster")) {
+    raster.stack.current <- rast(raster.stack.current)
   }
-  if(!(is(raster.stack.future,  "RasterStack"))){
-    stop("raster.stack.future must be a raster stack object")
+  if(inherits(raster.stack.future, "Raster")) {
+    raster.stack.future <- rast(raster.stack.future)
+  }
+  
+  if(!(inherits(raster.stack.current, "SpatRaster"))){
+    stop("raster.stack.current must be a SpatRaster object")
+  }
+  if(!(inherits(raster.stack.future, "SpatRaster"))){
+    stop("raster.stack.future must be a SpatRaster object")
   }
   if(!all((names(raster.stack.future) %in% names(raster.stack.current)))){
-    stop("The variables names in raster.stack.future must be the same as variables names in raster.stack.current")
+    stop("The variables names in raster.stack.future must be the same as ", 
+         "variables names in raster.stack.current")
   }
-  if((calc(raster.stack.current, sum) == calc(raster.stack.future, sum))@data@min==1){
+  if(global(app(raster.stack.current, sum) == app(raster.stack.future, sum), 
+            fun = sum) == ncell(raster.stack.current)){
     stop("Please provide two different rasters")
   }
   if(sample.points){
     if(!is.numeric(nb.points))
-    {stop("nb.points must be a numeric value corresponding to the number of pixels to sample from raster.stack.current 
-          and from raster.stack.future")}
+    {stop("nb.points must be a numeric value corresponding to the number of", 
+    " pixels to sample from raster.stack.current ", 
+    "and from raster.stack.future")}
     
-    env.df.current <- sampleRandom(raster.stack.current, size = nb.points, na.rm = TRUE)
-    env.df.future  <- sampleRandom(raster.stack.future , size = nb.points, na.rm = TRUE)
+    env.df.current <- spatSample(raster.stack.current, size = nb.points, 
+                                 na.rm = TRUE)
+    env.df.future  <- spatSample(raster.stack.future , size = nb.points,
+                                 na.rm = TRUE)
     
     } else
     {
-      if(canProcessInMemory(raster.stack.current, n = 4)){
-        env.df.current <- getValues(raster.stack.current)
-        env.df.future  <- getValues(raster.stack.future)
+      message("Reading raster values. If it fails for very large rasters, use",
+              " arguments 'sample.points = TRUE' and define a number of",
+              " points to sample with 'nb.point'.")
+      
+      # if(canProcessInMemory(raster.stack.current, n = 4)){
+        env.df.current <- values(raster.stack.current)
+        env.df.future  <- values(raster.stack.future)
         
         if(any(is.na(env.df.current)))
         {
-          env.df.current <- env.df.current[-unique(which(is.na(env.df.current), arr.ind = T)[, 1]), ] # Removing NAs 
+          env.df.current <- env.df.current[-unique(which(is.na(env.df.current), 
+                                                         arr.ind = T)[, 1]), ] 
         }
         if(any(is.na(env.df.future)))
         {
-          env.df.future <- env.df.future[-unique(which(is.na(env.df.future), arr.ind = T)[, 1]), ] # Removing NAs 
+          env.df.future <- env.df.future[-unique(which(is.na(env.df.future),
+                                                       arr.ind = T)[, 1]), ] 
         }
-      } else
-      {
-        stop("Your computer does not have enough memory to extract all the values from raster.stack.current. 
-             Use the argument sample.points = TRUE, and adjust the number of points to use with nb.points. 
-             More details in ?generateSpFromBCA")
-      }
+      # } else
+      # {
+      #   stop("Your computer does not have enough memory to extract all the values from raster.stack.current. 
+      #        Use the argument sample.points = TRUE, and adjust the number of points to use with nb.points. 
+      #        More details in ?generateSpFromBCA")
+      # }
     }
   
   if(!is.null(bca)){
@@ -246,9 +264,11 @@ generateSpFromBCA <- function(raster.stack.current, raster.stack.future, rescale
   
   if(!is.null(means)){
     if(!is.numeric(means))
-    {stop("Please provide numeric means for the gaussian function to compute probabilities of presence")}
+    {stop("Please provide numeric means for the gaussian function to compute ", 
+          "probabilities of presence")}
     if(!is.vector(means) | length(means) != 2)
-    {stop("Please provide a vector with 2 means for the gaussian function (one for each of the two between axes)")}
+    {stop("Please provide a vector with 2 means for the gaussian function ", 
+          "(one for each of the two between axes)")}
   } else
   {
     means <- between.object$ls[sample(1:nrow(between.object$ls), 1), ] #[1, ]
@@ -288,16 +308,22 @@ generateSpFromBCA <- function(raster.stack.current, raster.stack.future, rescale
     # Random sampling of parameters
     if(niche.breadth == "any")
     {
-      sds <- c(sd1 = sample(seq((axis1[2] - axis1[1])/100, (axis1[2] - axis1[1])/2, length = 1000), 1),
-               sd2 = sample(seq((axis2[2] - axis2[1])/100, (axis2[2] - axis2[1])/2, length = 1000), 1))
+      sds <- c(sd1 = sample(seq((axis1[2] - axis1[1])/100,
+                                (axis1[2] - axis1[1])/2, length = 1000), 1),
+               sd2 = sample(seq((axis2[2] - axis2[1])/100, 
+                                (axis2[2] - axis2[1])/2, length = 1000), 1))
     } else if (niche.breadth == "narrow")
     {
-      sds <- c(sd1 = sample(seq((axis1[2] - axis1[1])/100, (axis1[2] - axis1[1])/10, length = 1000), 1),
-               sd2 = sample(seq((axis2[2] - axis2[1])/100, (axis2[2] - axis2[1])/10, length = 1000), 1))
+      sds <- c(sd1 = sample(seq((axis1[2] - axis1[1])/100, 
+                                (axis1[2] - axis1[1])/10, length = 1000), 1),
+               sd2 = sample(seq((axis2[2] - axis2[1])/100, 
+                                (axis2[2] - axis2[1])/10, length = 1000), 1))
     } else if (niche.breadth == "wide")
     {
-      sds <- c(sd1 = sample(seq((axis1[2] - axis1[1])/10, (axis1[2] - axis1[1])/2, length = 1000), 1),
-               sd2 = sample(seq((axis2[2] - axis2[1])/10, (axis2[2] - axis2[1])/2, length = 1000), 1))
+      sds <- c(sd1 = sample(seq((axis1[2] - axis1[1])/10, 
+                                (axis1[2] - axis1[1])/2, length = 1000), 1),
+               sd2 = sample(seq((axis2[2] - axis2[1])/10, 
+                                (axis2[2] - axis2[1])/2, length = 1000), 1))
     } else
     {
       stop("niche.breadth must be one of these: 'any', 'narrow', 'wide")
@@ -305,25 +331,59 @@ generateSpFromBCA <- function(raster.stack.current, raster.stack.future, rescale
   }
   
   message(" - Calculating current suitability values\n")
-  rasters.env.current <- calc(raster.stack.current[[sel.vars]], fun = function(x, ...)
-  {.pca.coordinates(x, pca = between.object,  na.rm = TRUE, axes = c(1, 2))})
-  suitab.raster.current <- calc(rasters.env.current, fun = function(x, ...){.prob.gaussian(x, means = means, sds = sds)})
+  
+  rasters.env.current <- app(raster.stack.current[[sel.vars]],
+                             fun = function(x, ...) {
+                               .pca.coordinates(x, pca = between.object,  
+                                                na.rm = TRUE, axes = c(1, 2))
+                             })
+  
+  suitab.raster.current <- app(rasters.env.current, 
+                               fun = function(x, ...) {
+                                 .prob.gaussian(x, means = means, sds = sds)
+                               })
   
   message(" - Calculating future suitability values\n")
-  rasters.env.future  <- calc(raster.stack.future [[sel.vars]], fun = function(x, ...)
-  {.pca.coordinates(x, pca = between.object,  na.rm = TRUE, axes = c(1, 2))})
-  suitab.raster.future  <- calc(rasters.env.future , fun = function(x, ...){.prob.gaussian(x, means = means, sds = sds)})
+  
+  rasters.env.future  <- app(raster.stack.future[[sel.vars]],
+                             fun = function(x, ...) {
+                               .pca.coordinates(x, pca = between.object, 
+                                                na.rm = TRUE, axes = c(1, 2))
+                             })
+  suitab.raster.future  <- app(rasters.env.future , 
+                                fun = function(x, ...) {
+                                  .prob.gaussian(x, means = means, sds = sds)
+                                })
   
   if(!is.null(bca)){
-    between.env.current <- .pca.coordinates(env.df.current, pca = between.object,  na.rm = TRUE)
-    between.env.future  <- .pca.coordinates(env.df.future , pca = between.object,  na.rm = TRUE)
-    between.object$ls   <- as.data.frame( rbind(between.env.current, between.env.future) )
+    between.env.current <- .pca.coordinates(env.df.current,
+                                            pca = between.object,  na.rm = TRUE)
+    between.env.future  <- .pca.coordinates(env.df.future , 
+                                            pca = between.object,  na.rm = TRUE)
+    between.object$ls   <- as.data.frame( rbind(between.env.current, 
+                                                between.env.future) )
   }
   
-  if(rescale){
-    suitab.raster.current <- (suitab.raster.current - suitab.raster.current@data@min) / (suitab.raster.current@data@max - suitab.raster.current@data@min)
-    suitab.raster.future  <- (suitab.raster.future  - suitab.raster.future@data@min)  / (suitab.raster.future@data@max  - suitab.raster.future@data@min)
+  if(rescale)
+  {
+    max_ <- max(global(suitab.raster.current, "max")[1, 1],
+                global(suitab.raster.future, "max")[1, 1])
+    min_ <- min(global(suitab.raster.current, "min")[1, 1],
+                global(suitab.raster.future, "min")[1, 1])
+    
+    suitab.raster.current <- 
+      (suitab.raster.current - min_) / (max_ - min_)
+    
+    suitab.raster.future <- 
+      (suitab.raster.future - min_) / (max_ - min_)
+    
+    message("   The final environmental suitability was rescaled between 0 and",
+            "1. To disable, set argument rescale = FALSE") 
+  } else {
+    max_ <- NA
+    min_ <- NA
   }
+
   stack.lengths <- c(nrow(env.df.current), nrow(env.df.future))
   
   if(plot){
@@ -361,9 +421,11 @@ generateSpFromBCA <- function(raster.stack.current, raster.stack.future, rescale
                   details = list(variables = sel.vars,
                                  bca = between.object,
                                  rescale = rescale,
-                                 axes = c(1, 2), # Will be changed later if the choice of axes is implemented
+                                 axes = c(1, 2), 
                                  means = means,
                                  sds = sds,
+                                 max_prob_rescale = max_,
+                                 min_prob_rescale = min_,
                                  stack.lengths = stack.lengths),
                   suitab.raster.current = suitab.raster.current,
                   suitab.raster.future = suitab.raster.future)

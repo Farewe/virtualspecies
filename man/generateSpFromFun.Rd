@@ -102,8 +102,8 @@ their response functions.
 # Create an example stack with two environmental variables
 a <- matrix(rep(dnorm(1:100, 50, sd = 25)), 
             nrow = 100, ncol = 100, byrow = TRUE)
-env <- stack(raster(a * dnorm(1:100, 50, sd = 25)),
-             raster(a * 1:100))
+env <- c(rast(a * dnorm(1:100, 50, sd = 25)),
+         rast(a * 1:100))
 names(env) <- c("variable1", "variable2")
 plot(env) # Illustration of the variables
 

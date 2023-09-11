@@ -1,8 +1,8 @@
 Package: virtualspecies
 Type: Package
 Title: Generation of Virtual Species Distributions
-Version: 1.5.1
-Date: 2019-12-12
+Version: 1.6
+Date: 2023-09-11
 Author: Boris Leroy [cre, aut], Christine N. Meynard [ctb], Celine Bellard [ctb], Franck Courchamp [ctb], Robin Delsol [ctb], Willson Gaul [ctb]
 Maintainer: Boris Leroy <leroy.boris@gmail.com>
 Description: Provides a framework for generating virtual species distributions,
@@ -13,15 +13,18 @@ Description: Provides a framework for generating virtual species distributions,
 Encoding: UTF-8
 License: GPL (>=2.0)
 Depends:
-    raster
+    raster,
+    terra
 Imports:
     ade4,
     graphics,
     grDevices,
     methods,
     rworldmap,
+    sf,
     sp,
     stats,
-    utils
+    utils,
+    viridis
 URL: http://borisleroy.com/virtualspecies
-RoxygenNote: 7.0.2
+RoxygenNote: 7.2.3
