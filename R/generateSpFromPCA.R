@@ -84,10 +84,10 @@
 #' # Create an example stack with four environmental variables
 #' a <- matrix(rep(dnorm(1:100, 50, sd = 25)), 
 #'             nrow = 100, ncol = 100, byrow = TRUE)
-#' env <- stack(raster(a * dnorm(1:100, 50, sd = 25)),
-#'              raster(a * 1:100),
-#'              raster(a * logisticFun(1:100, alpha = 10, beta = 70)),
-#'              raster(t(a)))
+#' env <- c(rast(a * dnorm(1:100, 50, sd = 25)),
+#'              rast(a * 1:100),
+#'              rast(a * logisticFun(1:100, alpha = 10, beta = 70)),
+#'              rast(t(a)))
 #' names(env) <- c("var1", "var2", "var3", "var4")
 #' plot(env) # Illustration of the variables
 #' 
@@ -302,7 +302,7 @@ generateSpFromPCA <- function(raster.stack,
                                    axes = axes,
                                    means = means,
                                    sds = sds,
-                                   rescale = TRUE), no.plot.reset = T)
+                                   rescale = rescale), no.plot.reset = T)
     
     plot(suitab.raster, axes = T, ann = F, asp = 1,
           main = "Environmental suitability of the virtual species",
@@ -327,10 +327,21 @@ generateSpFromPCA <- function(raster.stack,
                                  sds = sds,
                                  max_prob_rescale = max_,
                                  min_prob_rescale = min_),
-                  suitab.raster = suitab.raster)
+                  suitab.raster = wrap(suitab.raster,
+                                       proxy = FALSE))
   class(results) <-  append("virtualspecies", class(results))
   return(results)
 }
+
+
+# setMethod("[", signature(x = "virtualspecies", i = "missing", j = "index",
+#                          drop = "logical"), 
+#           function(x, i, j, ..., drop) {
+#             # add any behavior for ...
+#             `[`(x@m, i, j, drop=drop)
+#           }
+# )
+
 
 # Functions useful for the PCA approach
 

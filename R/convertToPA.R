@@ -271,16 +271,22 @@ convertToPA <- function(x,
 {
   if(inherits(x, "virtualspecies"))
   {
-    if(inherits(x$suitab.raster, "RasterLayer"))
+    if(inherits(x$suitab.raster, "SpatRaster"))
     {
       sp.raster <- x$suitab.raster
-    } else stop("x must be:\n- a raster layer object\nor\n- the output list from functions
-               generateSpFromFun(), generateSpFromPCA() or generateRandomSp()")
+    } else stop("x must be:\n- a raster layer object from package terra", 
+                " \nor\n- the output list", 
+                " from functions generateSpFromFun(), generateSpFromPCA() or ", 
+                "generateRandomSp()")
   } else if (inherits(x, "RasterLayer"))
   {
+    sp.raster <- rast(x)
+  } else if(inherits(x, "spatRaster")) {
     sp.raster <- x
-  } else stop("x must be:\n- a raster layer object\nor\n- the output list from functions
-               generateSpFromFun(), generateSpFromPCA() or generateRandomSp()")
+  } else stop("x must be:\n- a raster layer object from package terra", 
+              " \nor\n- the output list", 
+              " from functions generateSpFromFun(), generateSpFromPCA() or ", 
+              "generateRandomSp()")
   
   if(any(is.na(maxValue(sp.raster))))
   {
