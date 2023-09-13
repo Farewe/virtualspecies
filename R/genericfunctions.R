@@ -1,4 +1,35 @@
 #' @export
+#' @method `$` virtualspecies
+`$.virtualspecies` <- function(x, name)
+{
+  if(inherits(as.list(x)[[name]], "PackedSpatRaster")) {
+    return(unwrap(`[[`(as.list(x), name)))
+  } else {
+    return(`[[`(as.list(x), name))
+  }
+}
+
+#' @export
+#' @method `[[` virtualspecies
+`[[.virtualspecies` <- function(x, name)
+{
+  if(inherits(as.list(x)[[name]], "PackedSpatRaster")) {
+    return(unwrap(`[[`(as.list(x), name)))
+  } else {
+    return(`[[`(as.list(x), name))
+  }
+}
+
+#' @export
+#' @method `as.list` virtualspecies
+as.list.virtualspecies <- function(x)
+{
+  class(x) <- "list"
+  return(x)
+}
+
+
+#' @export
 #' @method print virtualspecies
 print.virtualspecies <- function(x, ...)
 {

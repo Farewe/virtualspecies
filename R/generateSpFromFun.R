@@ -197,8 +197,8 @@ generateSpFromFun <- function(raster.stack, parameters,
   
   for (var in names(raster.stack))
   {
-    parameters[[var]]$min <- global(x[[var]], "min")[1, 1]
-    parameters[[var]]$max <- global(x[[var]], "max")[1, 1]
+    parameters[[var]]$min <- global(suitab.raster[[var]], "min")[1, 1]
+    parameters[[var]]$max <- global(suitab.raster[[var]], "max")[1, 1]
   }
   
   if(rescale.each.response)
@@ -260,9 +260,11 @@ generateSpFromFun <- function(raster.stack, parameters,
                                  rescale.each.response = rescale.each.response,
                                  rescale = rescale,
                                  parameters = parameters),
-                  suitab.raster = suitab.raster
+                  suitab.raster = wrap(suitab.raster,
+                                       proxy = FALSE)
   )
-
+  class(results) <- append("virtualspecies", class(results))
+  
   if(plot)
   {
     plot(results$suitab.raster, 
@@ -270,6 +272,6 @@ generateSpFromFun <- function(raster.stack, parameters,
          col = viridis::viridis(20))
   }
   
-  class(results) <- append("virtualspecies", class(results))
+
   return(results)
 }

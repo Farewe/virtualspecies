@@ -333,18 +333,7 @@ generateSpFromPCA <- function(raster.stack,
   return(results)
 }
 
-
-# setMethod("[", signature(x = "virtualspecies", i = "missing", j = "index",
-#                          drop = "logical"), 
-#           function(x, i, j, ..., drop) {
-#             # add any behavior for ...
-#             `[`(x@m, i, j, drop=drop)
-#           }
-# )
-
-
 # Functions useful for the PCA approach
-
 .f <- function(x, co) x %*% co
 
 

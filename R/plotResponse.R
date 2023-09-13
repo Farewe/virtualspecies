@@ -88,8 +88,9 @@
 #' plotResponse(sp2)
 #' 
 
-plotResponse <- function(x, parameters = NULL, approach = NULL, 
-                         axes.to.plot = NULL, no.plot.reset = FALSE, ...)
+plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = NULL,
+                         axes.to.plot = NULL, no.plot.reset = FALSE, 
+                         rescale.each.response = NULL, ...)
 {
   if(inherits(x, "Raster")) {
     x <- rast(x)
@@ -121,7 +122,21 @@ plotResponse <- function(x, parameters = NULL, approach = NULL,
         parameters[[var]]$min <- global(x[[var]], "min")[1, 1]
         parameters[[var]]$max <- global(x[[var]], "max")[1, 1]
       }
-      parameters
+      if(!is.null(rescale.each.response)){
+        if(rescale.each.response) {
+          rescale <- TRUE
+        } else if (!rescale.each.response) {
+          rescale <- FALSE
+        } else {
+          stop("rescale.each.response must be TRUE or FALSE")
+        }
+      } else {
+        message("No default value was defined for rescale.each.response, ",
+                "setting rescale.each.response = TRUE")
+        rescale <- TRUE # We use rescale for the rest of the code 
+        # but it corresponds to rescale.each.response here
+      }
+      
     } else if (approach == "pca")
     {
       if(any(!(parameters$variables %in% names(x))))
@@ -144,7 +159,7 @@ plotResponse <- function(x, parameters = NULL, approach = NULL,
         rescale <- TRUE
         warning("Argument rescale was not specified, so it was automatically ",
                 "defined to TRUE. Verify that this is what you want.")
-      }
+      } 
       details <- parameters
     } else 
       if (approach == "bca") {
@@ -172,8 +187,7 @@ plotResponse <- function(x, parameters = NULL, approach = NULL,
              to responsePlot()")
       }
       details <- parameters
-    }
-    else if (is.null(approach))
+    } else if (is.null(approach))
     {
       stop("Please choose the approach: 'response' or 'pca'.")
     }
@@ -226,7 +240,8 @@ plotResponse <- function(x, parameters = NULL, approach = NULL,
                      length = 1000)
       if(rescale)
       {
-        values <- do.call(match.fun(parameters[[i]]$fun), args = c(list(cur.seq), parameters[[i]]$args))
+        values <- do.call(match.fun(parameters[[i]]$fun), 
+                          args = c(list(cur.seq), parameters[[i]]$args))
         values <- (values - min(values)) / (max(values) - min(values))
         # Formating plotting arguments
         defaults <- list(x = cur.seq, y = values, type = "l", bty = "l",

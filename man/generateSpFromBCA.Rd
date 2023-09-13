@@ -119,20 +119,20 @@ and set the number of points to sample with \code{nb.points}.
 a <- matrix(rep(dnorm(1:100, 50, sd = 25)), 
             nrow = 100, ncol = 100, byrow = TRUE)
 
-env1 <- stack(raster(a * dnorm(1:100, 50, sd = 25)),
-              raster(a * 1:100),
-              raster(a),
-              raster(t(a)))
+env1 <- stack(rast(a * dnorm(1:100, 50, sd = 25)),
+              rast(a * 1:100),
+              rast(a),
+              rast(t(a)))
 names(env1) <- c("var1", "var2", "var3", "var4")
 plot(env1) # Illustration of the variables
 
 b <- matrix(rep(dnorm(1:100, 25, sd = 50)), 
             nrow = 100, ncol = 100, byrow = TRUE)
 
-env2 <- stack(raster(b * dnorm(1:100, 50, sd = 25)),
-              raster(b * 1:100),
-              raster(b),
-              raster(t(b)))
+env2 <- stack(rast(b * dnorm(1:100, 50, sd = 25)),
+              rast(b * 1:100),
+              rast(b),
+              rast(t(b)))
 
 names(env2) <- c("var1", "var2", "var3", "var4")
 plot(env2) # Illustration of the variables 

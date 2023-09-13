@@ -8,8 +8,10 @@ plotResponse(
   x,
   parameters = NULL,
   approach = NULL,
+  rescale = NULL,
   axes.to.plot = NULL,
   no.plot.reset = FALSE,
+  rescale.each.response = NULL,
   ...
 )
 }
@@ -25,6 +27,9 @@ containing the associated parameters. See details.}
 approach: either \code{"response"} for a per-variable response approach, or
 \code{"pca"} for a PCA approach.}
 
+\item{rescale}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, individual response
+plots are rescaled between 0 and 1.}
+
 \item{axes.to.plot}{a vector of 2 values listing the two axes of the PCA to plot.
 Only useful for a PCA species.}
 
@@ -33,9 +38,6 @@ will be reset to its initial state after the response has been plotted.}
 
 \item{...}{further arguments to be passed to \code{plot}. See 
 \code{\link[graphics]{plot}} and \code{\link[graphics]{par}}.}
-
-\item{rescale}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, individual response
-plots are rescaled between 0 and 1.}
 }
 \description{
 This function plots the relationships between the virtual species and the environmental variables.

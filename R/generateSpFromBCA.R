@@ -427,8 +427,10 @@ generateSpFromBCA <- function(raster.stack.current, raster.stack.future,
                                  max_prob_rescale = max_,
                                  min_prob_rescale = min_,
                                  stack.lengths = stack.lengths),
-                  suitab.raster.current = suitab.raster.current,
-                  suitab.raster.future = suitab.raster.future)
+                  suitab.raster.current = wrap(suitab.raster.current,
+                                               proxy = FALSE),
+                  suitab.raster.future = wrap(suitab.raster.current,
+                                              proxy = FALSE))
   class(results) <- append("virtualspecies", class(results))
   return(results)
 }

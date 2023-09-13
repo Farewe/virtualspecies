@@ -11,7 +11,8 @@ parameters <- formatFunctions(variable1 = c(fun = 'dnorm', mean = 1e-04,
                                              sd = 1e-04),
                               variable2 = c(fun = 'linearFun', a = 1, b = 0))
 
-plotResponse(x = env, parameters = parameters, rescale = TRUE, approach = "response")
+plotResponse(x = env, parameters = parameters, 
+             approach = "response")
 
 
 # If you provide env, then you can see the shape of response functions:
@@ -46,3 +47,56 @@ sp1 <- generateSpFromFun(env, parameters, plot = TRUE,
                          species.type = "multiplicative",
                          rescale = FALSE,
                          rescale.each.response = TRUE)
+sp1 <- generateSpFromFun(env, parameters, plot = TRUE,
+                         formula = "sqrt(variable1) + variable2 + 2 * variable2^2 + variable2^3",
+                         species.type = "multiplicative",
+                         rescale = TRUE,
+                         rescale.each.response = TRUE)
+
+
+sp2 <- convertToPA(sp1,
+                   PA.method = "threshold")
+sp2 <- convertToPA(sp1,
+                   PA.method = "threshold",
+                   beta = 0.5)
+sp2 <- convertToPA(sp1,
+                   PA.method = "threshold",
+                   beta = 0)
+sp2 <- convertToPA(sp1,
+                   PA.method = "threshold",
+                   beta = 1)
+sp2 <- convertToPA(sp1,
+                   PA.method = "threshold",
+                   beta = "random")
+sp2 <- convertToPA(sp1,
+                   PA.method = "threshold",
+                   species.prevalence = .2)
+sp2 <- convertToPA(sp1,
+                   PA.method = "threshold",
+                   species.prevalence = .02)
+sp2 <- convertToPA(sp1,
+                   PA.method = "threshold",
+                   species.prevalence = .9)
+sp2 <- convertToPA(sp1,
+                   PA.method = "threshold",
+                   species.prevalence = .99)
+sp2 <- convertToPA(sp1,
+                   PA.method = "probability",
+                   prob.method = "logistic",
+                   beta = "random",
+                   a = NULL,
+                   b = NULL,
+                   species.prevalence = .99)
+sp2 <- convertToPA(sp1,
+                   PA.method = "probability",
+                   prob.method = "logistic",
+                   beta = "random",
+                   a = NULL,
+                   b = NULL,
+                   species.prevalence = .5)
+sp2 <- convertToPA(sp1,
+                   PA.method = "probability",
+                   prob.method = "logistic",
+                   beta = .5,
+                   a = NULL,
+                   b = NULL)

@@ -14,14 +14,16 @@
 #' Boris Leroy \email{leroy.boris@@gmail.com}
 #' 
 #' with help from C. N. Meynard, C. Bellard & F. Courchamp
+#' @importFrom terra mem_info mask app
+#' @importFrom utils capture.output
 #' @examples
 #' # Creation of a stack with different NAs across layers
 #' m <- matrix(nr = 10, nc = 10, 1:100)
-#' r1 <- raster(m)
-#' r2 <- raster(m)
+#' r1 <- rast(m)
+#' r2 <- rast(m)
 #' r1[sample(1:ncell(r1), 20)] <- NA
 #' r2[sample(1:ncell(r2), 20)] <- NA
-#' s <- stack(r1, r2)
+#' s <- c(r1, r2)
 #' 
 #' 
 #' # Effect of the synchroniseNA() function
@@ -31,19 +33,41 @@
 #' 
 synchroniseNA <- function(x)
 {
-  if(canProcessInMemory(x, n = 2))
-  {
-    val <- getValues(x)
-    if(any(is.na(val)))
+  if(inherits(x, "SpatRaster")) {
+    # The gain in performance is only about 7% so this code is currently
+    # commented.
+    # opt <- terra:::spatOptions()
+    # opt$ncopies = 2
+    # mem <- x@ptr$mem_needs(opt)
+    # 
+    # if(mem[1] < prod(mem[2:3])) {
+    #   val <- values(x)
+    #   if(any(is.na(val)))
+    #   {
+    #     NA.pos <- unique(which(is.na(val), arr.ind = T)[, 1])
+    #   }
+    #   val[NA.pos, ] <- NA
+    #   x <- setValues(x, val)
+    #   return(x)
+    # } else {
+      x <- terra::mask(x, terra::app(x, fun = sum))
+      return(x)
+    # }
+  } else if(inherits(x, "RasterStack")){
+    if(canProcessInMemory(x, n = 2))
     {
-      NA.pos <- unique(which(is.na(val), arr.ind = T)[, 1])
+      val <- getValues(x)
+      if(any(is.na(val)))
+      {
+        NA.pos <- unique(which(is.na(val), arr.ind = T)[, 1])
+      }
+      val[NA.pos, ] <- NA
+      x <- setValues(x, val)
+      return(x)
+    } else
+    {
+      x <- mask(x, calc(x, fun = sum))
+      return(x)
     }
-    val[NA.pos, ] <- NA
-    x <- setValues(x, val)
-    return(x)
-  } else
-  {
-    x <- mask(x, calc(x, fun = sum))
-    return(x)
   }
 }
