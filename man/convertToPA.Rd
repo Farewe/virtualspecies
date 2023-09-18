@@ -2,7 +2,8 @@
 % Please edit documentation in R/convertToPA.R
 \name{convertToPA}
 \alias{convertToPA}
-\title{Convert a virtual species distribution (or a suitability raster) into presence-absence}
+\title{Convert a virtual species distribution (or a suitability raster) 
+into presence-absence}
 \usage{
 convertToPA(
   x,
@@ -17,13 +18,14 @@ convertToPA(
 )
 }
 \arguments{
-\item{x}{a suitability raster, or the output from functions 
+\item{x}{the output from functions 
 \code{\link{generateSpFromFun}}, \code{\link{generateSpFromPCA}} 
-or \code{\link{generateRandomSp}}}
+or \code{\link{generateRandomSp}}, or a suitability SpatRaster}
 
 \item{PA.method}{\code{"threshold"} or \code{"probability"}. If 
 \code{"threshold"}, then occurrence probabilities are simply converted into
-presence-absence according to the threshold \code{beta}. If \code{"probability"}, then
+presence-absence according to the threshold \code{beta}. If 
+\code{"probability"}, then
 probabilities are converted according to a logistic function of threshold 
 \code{beta} and slope \code{alpha}.}
 
@@ -42,7 +44,8 @@ of \code{x}.}
 \code{PA.method = "probability"} and  \code{proba.method = "logistic"}. 
 The value of \code{alpha} will
 shape the logistic function transforming occurrences into presence-absences.
-See \code{\link{logisticFun}} and examples therein for the choice of \code{alpha}}
+See \code{\link{logisticFun}} and examples therein for the choice of 
+\code{alpha}}
 
 \item{a}{\code{NULL} or a  numeric value. Only useful if 
 \code{PA.method = "probability"} and  \code{proba.method = "linear"}. 
@@ -56,40 +59,49 @@ Intercept of the linear conversion of environmental suitability.}
 The species prevalence is the proportion of sites actually occupied by the
 species.}
 
-\item{plot}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, maps of probabilities
+\item{plot}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, maps of 
+probabilities
 of occurrence and presence-absence will be plotted.}
 }
 \value{
 a \code{list} containing 6 elements:
 \itemize{
-\item{\code{approach}: the approach used to generate the species, \emph{i.e.}, \code{"response"}}
-\item{\code{details}: the details and parameters used to generate the species}
+\item{\code{approach}: the approach used to generate the species, 
+\emph{i.e.}, \code{"response"}}
+\item{\code{details}: the details and parameters used to generate the 
+species}
 \item{\code{suitab.raster}: the environmental suitability of your virtual 
 species, as a Raster object }
 \item{\code{probability.of.occurrence}: the probability of occurrence of your 
 species, based on the chosen transformation of environmental suitability,
 as a Raster object }
-\item{\code{PA.conversion}: the parameters used to convert the suitability into presence-absence}
-\item{\code{pa.raster}: the presence-absence map, as a Raster object containing 0 (absence) / 1 (presence) / NA}
+\item{\code{PA.conversion}: the parameters used to convert the suitability 
+into presence-absence}
+\item{\code{pa.raster}: the presence-absence map, as a Raster object 
+containing 0 (absence) / 1 (presence) / NA}
 }
 The structure of the virtualspecies object can be seen using \code{str()}
 }
 \description{
 This functions converts the probabilities of presence from the output of
- \code{\link{generateSpFromFun}}, \code{\link{generateSpFromPCA}}, \code{\link{generateRandomSp}}
+ \code{\link{generateSpFromFun}}, \code{\link{generateSpFromPCA}}, 
+ \code{\link{generateRandomSp}}
 or a suitability raster into
 a presence-absence raster. The conversion can be threshold-based, or based
 on a probability of conversion (see details).
 }
 \details{
-\href{http://borisleroy.com/virtualspecies_tutorial/04-presenceabsence.html}{Online tutorial for this function}
+\href{http://borisleroy.com/virtualspecies_tutorial/04-presenceabsence.html}{
+Online tutorial for this function}
 
 
 
-The conversion of environmental suitability into presence - absence used to be
+The conversion of environmental suitability into presence - absence used to 
+be
 performed by selecting a threshold above which presence always occurs,
 and never below. However, this approach may is unrealistic because
-species may sometime be present in areas with a low probability of occurrence,
+species may sometime be present in areas with a low probability of 
+occurrence,
 or be absent from areas with a high probability of occurrence. In addition,
 when using a threshold you erase the previously generated response shapes: 
 it all becomes threshold. Thus, this threshold approach should be avoided.
@@ -153,9 +165,12 @@ The relationship between species prevalence, alpha and beta is dependent
 on the available range of environmental conditions (see Meynard and Kaplan,
 2011 and especially the Supporting Information). As a consequence, the 
 desired species prevalence may not be available for the defined \code{alpha} 
-or \code{beta}. In these conditions, the function will retain the \code{alpha} or
-\code{beta} which provides the closest prevalence to your \code{species.prevalence},
-but you may also provide another value of \code{alpha} or \code{beta} to obtain
+or \code{beta}. In these conditions, the function will retain the 
+\code{alpha} or
+\code{beta} which provides the closest prevalence to your 
+\code{species.prevalence},
+but you may also provide another value of \code{alpha} or \code{beta} to 
+obtain
 a closer prevalence. 
  
 --------------------------------------------------------------------------
@@ -173,7 +188,8 @@ intercept \code{b}. The transformed environmental suitability will
 be used as the probability of occurrence for the Bernoulli trial.}
 \item{\code{species.prevalence}: the proportion of sites in which the 
 species occur. In this case, the function will try to find coefficients
-of a linear regression which results in the requested \code{species.prevalence}
+of a linear regression which results in the requested 
+\code{species.prevalence}
 (see below).}
 } 
 
@@ -216,8 +232,8 @@ The approximation of \code{alpha} or \code{beta} to the chosen
 # Create an example stack with two environmental variables
 a <- matrix(rep(dnorm(1:100, 50, sd = 25)), 
             nrow = 100, ncol = 100, byrow = TRUE)
-env <- stack(raster(a * dnorm(1:100, 50, sd = 25)),
-             raster(a * 1:100))
+env <- c(rast(a * dnorm(1:100, 50, sd = 25)),
+         rast(a * 1:100))
 names(env) <- c("variable1", "variable2")
 
 # Creation of the parameter list

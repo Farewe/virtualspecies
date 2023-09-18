@@ -1,17 +1,20 @@
-#' Convert a virtual species distribution (or a suitability raster) into presence-absence
+#' Convert a virtual species distribution (or a suitability raster) 
+#' into presence-absence
 #' 
 #' This functions converts the probabilities of presence from the output of
-#'  \code{\link{generateSpFromFun}}, \code{\link{generateSpFromPCA}}, \code{\link{generateRandomSp}}
+#'  \code{\link{generateSpFromFun}}, \code{\link{generateSpFromPCA}}, 
+#'  \code{\link{generateRandomSp}}
 #' or a suitability raster into
 #' a presence-absence raster. The conversion can be threshold-based, or based
 #' on a probability of conversion (see details).
 #' 
-#' @param x a suitability raster, or the output from functions 
+#' @param x the output from functions 
 #' \code{\link{generateSpFromFun}}, \code{\link{generateSpFromPCA}} 
-#' or \code{\link{generateRandomSp}}
+#' or \code{\link{generateRandomSp}}, or a suitability SpatRaster
 #' @param PA.method \code{"threshold"} or \code{"probability"}. If 
 #' \code{"threshold"}, then occurrence probabilities are simply converted into
-#' presence-absence according to the threshold \code{beta}. If \code{"probability"}, then
+#' presence-absence according to the threshold \code{beta}. If 
+#' \code{"probability"}, then
 #' probabilities are converted according to a logistic function of threshold 
 #' \code{beta} and slope \code{alpha}.
 #' @param prob.method \code{"logistic"} or \code{"linear"}. Defines how 
@@ -27,7 +30,8 @@
 #' \code{PA.method = "probability"} and  \code{proba.method = "logistic"}. 
 #' The value of \code{alpha} will
 #' shape the logistic function transforming occurrences into presence-absences.
-#' See \code{\link{logisticFun}} and examples therein for the choice of \code{alpha}
+#' See \code{\link{logisticFun}} and examples therein for the choice of 
+#' \code{alpha}
 #' @param a \code{NULL} or a  numeric value. Only useful if 
 #' \code{PA.method = "probability"} and  \code{proba.method = "linear"}. 
 #' Slope of the linear conversion of environmental suitability.
@@ -37,7 +41,8 @@
 #' @param species.prevalence \code{NULL} or a numeric value between 0 and 1.
 #' The species prevalence is the proportion of sites actually occupied by the
 #' species.
-#' @param plot \code{TRUE} or \code{FALSE}. If \code{TRUE}, maps of probabilities
+#' @param plot \code{TRUE} or \code{FALSE}. If \code{TRUE}, maps of 
+#' probabilities
 #' of occurrence and presence-absence will be plotted.
 #' 
 #' @export
@@ -56,14 +61,17 @@
 #' \emph{Ecography} \bold{35}:499-509
 #' 
 #' @details 
-#' \href{http://borisleroy.com/virtualspecies_tutorial/04-presenceabsence.html}{Online tutorial for this function}
+#' \href{http://borisleroy.com/virtualspecies_tutorial/04-presenceabsence.html}{
+#' Online tutorial for this function}
 #' 
 #' 
 #' 
-#' The conversion of environmental suitability into presence - absence used to be
+#' The conversion of environmental suitability into presence - absence used to 
+#' be
 #' performed by selecting a threshold above which presence always occurs,
 #' and never below. However, this approach may is unrealistic because
-#' species may sometime be present in areas with a low probability of occurrence,
+#' species may sometime be present in areas with a low probability of 
+#' occurrence,
 #' or be absent from areas with a high probability of occurrence. In addition,
 #' when using a threshold you erase the previously generated response shapes: 
 #' it all becomes threshold. Thus, this threshold approach should be avoided.
@@ -127,9 +135,12 @@
 #' on the available range of environmental conditions (see Meynard and Kaplan,
 #' 2011 and especially the Supporting Information). As a consequence, the 
 #' desired species prevalence may not be available for the defined \code{alpha} 
-#' or \code{beta}. In these conditions, the function will retain the \code{alpha} or
-#' \code{beta} which provides the closest prevalence to your \code{species.prevalence},
-#' but you may also provide another value of \code{alpha} or \code{beta} to obtain
+#' or \code{beta}. In these conditions, the function will retain the 
+#' \code{alpha} or
+#' \code{beta} which provides the closest prevalence to your 
+#' \code{species.prevalence},
+#' but you may also provide another value of \code{alpha} or \code{beta} to 
+#' obtain
 #' a closer prevalence. 
 #'  
 #' --------------------------------------------------------------------------
@@ -147,7 +158,8 @@
 #' be used as the probability of occurrence for the Bernoulli trial.}
 #' \item{\code{species.prevalence}: the proportion of sites in which the 
 #' species occur. In this case, the function will try to find coefficients
-#' of a linear regression which results in the requested \code{species.prevalence}
+#' of a linear regression which results in the requested 
+#' \code{species.prevalence}
 #' (see below).}
 #' } 
 #' 
@@ -188,24 +200,30 @@
 #' @return
 #' a \code{list} containing 6 elements:
 #' \itemize{
-#' \item{\code{approach}: the approach used to generate the species, \emph{i.e.}, \code{"response"}}
-#' \item{\code{details}: the details and parameters used to generate the species}
+#' \item{\code{approach}: the approach used to generate the species, 
+#' \emph{i.e.}, \code{"response"}}
+#' \item{\code{details}: the details and parameters used to generate the 
+#' species}
 #' \item{\code{suitab.raster}: the environmental suitability of your virtual 
 #' species, as a Raster object }
 #' \item{\code{probability.of.occurrence}: the probability of occurrence of your 
 #' species, based on the chosen transformation of environmental suitability,
 #' as a Raster object }
-#' \item{\code{PA.conversion}: the parameters used to convert the suitability into presence-absence}
-#' \item{\code{pa.raster}: the presence-absence map, as a Raster object containing 0 (absence) / 1 (presence) / NA}
+#' \item{\code{PA.conversion}: the parameters used to convert the suitability 
+#' into presence-absence}
+#' \item{\code{pa.raster}: the presence-absence map, as a Raster object 
+#' containing 0 (absence) / 1 (presence) / NA}
 #' }
 #' The structure of the virtualspecies object can be seen using \code{str()}
+#' 
+#' 
 #' @importFrom stats median rbinom runif
 #' @examples
 #' # Create an example stack with two environmental variables
 #' a <- matrix(rep(dnorm(1:100, 50, sd = 25)), 
 #'             nrow = 100, ncol = 100, byrow = TRUE)
-#' env <- stack(raster(a * dnorm(1:100, 50, sd = 25)),
-#'              raster(a * 1:100))
+#' env <- c(rast(a * dnorm(1:100, 50, sd = 25)),
+#'          rast(a * 1:100))
 #' names(env) <- c("variable1", "variable2")
 #' 
 #' # Creation of the parameter list
@@ -271,24 +289,31 @@ convertToPA <- function(x,
 {
   if(inherits(x, "virtualspecies"))
   {
-    if(inherits(x$suitab.raster, "SpatRaster"))
+    if(x$approach == "bca") {
+      approach <- "bca"
+      sp.raster <- x$suitab.raster.current
+    } else if(inherits(x$suitab.raster, "SpatRaster"))
     {
+      approach <- "not bca"
       sp.raster <- x$suitab.raster
     } else stop("x must be:\n- a raster layer object from package terra", 
                 " \nor\n- the output list", 
-                " from functions generateSpFromFun(), generateSpFromPCA() or ", 
-                "generateRandomSp()")
+                " from functions generateSpFromFun(), generateSpFromPCA(), ", 
+                "generateRandomSp() or generateSpFromBCA()")
   } else if (inherits(x, "RasterLayer"))
   {
+    approach <- "not bca"
     sp.raster <- rast(x)
-  } else if (inherits(x, "spatRaster")) {
+  } else if (inherits(x, "SpatRaster")) {
+    approach <- "not bca"
     sp.raster <- x
   } else stop("x must be:\n- a raster layer object from package terra", 
               " \nor\n- the output list", 
-              " from functions generateSpFromFun(), generateSpFromPCA() or ", 
-              "generateRandomSp()")
-  min_p <- global(sp.raster, min)[1, 1]
-  max_p <- global(sp.raster, max)[1, 1]
+              " from functions generateSpFromFun(), generateSpFromPCA(), ", 
+              "generateRandomSp() or generateSpFromBCA()")
+  min_p <- global(sp.raster, min, na.rm = TRUE)[1, 1]
+  max_p <- global(sp.raster, max, na.rm = TRUE)[1, 1]
+  
 
   if(PA.method == "threshold")
   {
@@ -534,7 +559,8 @@ convertToPA <- function(x,
             
             alpha.test <- rbind(alpha.test, c(alpha, 
                                               global(PA.raster,
-                                                     stat = "mean")[1, 1]))
+                                                     stat = "mean", 
+                                                     na.rm = TRUE)[1, 1]))
           }
           epsilon <- species.prevalence - alpha.test[, 2]
           if(all(epsilon > 0))
@@ -553,8 +579,10 @@ convertToPA <- function(x,
           {
             while (all(abs(epsilon) > 0.01))
             {
-              alpha <- (alpha.test[which(epsilon == max(epsilon[epsilon < 0])), 1] + 
-                          alpha.test[which(epsilon == min(epsilon[epsilon > 0])), 1]) / 2
+              alpha <- (alpha.test[which(epsilon == 
+                                           max(epsilon[epsilon < 0])), 1] + 
+                          alpha.test[which(epsilon == 
+                                             min(epsilon[epsilon > 0])), 1]) / 2
               proba.of.occurrence <- app(sp.raster, fun = function(x)
               {
                 logisticFun(x, beta = beta, alpha = alpha)
@@ -562,7 +590,9 @@ convertToPA <- function(x,
               PA.raster <- .quickBernoulliTrial(proba.of.occurrence)
               
               alpha.test <- rbind(alpha.test, c(alpha, 
-                                                global(PA.raster, stat = "mean")[1, 1]))
+                                                global(PA.raster,
+                                                       stat = "mean",
+                                                       na.rm = TRUE)[1, 1]))
               
               epsilon <- species.prevalence - alpha.test[, 2]
             }
@@ -590,7 +620,8 @@ convertToPA <- function(x,
             
             beta.test <- rbind(beta.test, 
                                c(beta, 
-                                 global(PA.raster, stat = "mean")[1, 1]))
+                                 global(PA.raster, stat = "mean", 
+                                        na.rm = TRUE)[1, 1]))
           }
           epsilon <- data.frame(epsi = species.prevalence - beta.test[, 2], 
                                 prevalence = beta.test[, 2])
@@ -630,7 +661,8 @@ convertToPA <- function(x,
               
               beta.test <- rbind(beta.test,
                                  c(beta, 
-                                   global(PA.raster, stat = "mean")[1, 1]))
+                                   global(PA.raster, stat = "mean",
+                                          na.rm = TRUE)[1, 1]))
               epsilon <- data.frame(epsi = species.prevalence - beta.test[, 2], 
                                     prevalence = beta.test[, 2])
             }
@@ -644,11 +676,12 @@ convertToPA <- function(x,
       
       PA.raster <- .quickBernoulliTrial(proba.of.occurrence)
       
-      if(global(PA.raster, stat = "max")[1, 1] == 0) # Necessary to generate 
+      if(global(PA.raster, stat = "max", 
+                na.rm = TRUE)[1, 1] == 0) # Necessary to generate 
         # species with very low prevalence
         # Without this step, rasters with only zeros can be generated
       {                           
-        while(global(PA.raster, stat = "max")[1, 1] == 0)
+        while(global(PA.raster, stat = "max", na.rm = TRUE)[1, 1] == 0)
         {
           proba.of.occurrence <- app(sp.raster, fun = function(x)
           {
@@ -657,6 +690,16 @@ convertToPA <- function(x,
           
           PA.raster <- .quickBernoulliTrial(proba.of.occurrence)
         }
+      }
+      
+      if(approach == "bca") {
+        proba.of.occurrence.future <- app(x$suitab.raster.future,
+                                          fun = function(x)
+        {
+          logisticFun(x, beta = beta, alpha = alpha)
+        })
+        
+        PA.raster.future <- .quickBernoulliTrial(proba.of.occurrence.future)
       }
     } else if(prob.method == "linear")
     {
@@ -669,22 +712,35 @@ convertToPA <- function(x,
         b <- tmp$b
         proba.of.occurrence <- unwrap(tmp$probability.of.occurrence)
         PA.raster <- unwrap(tmp$distribution)
+        if(approach == "bca") {
+          proba.of.occurrence.future <- .transf(x$suitab.raster.future, c(a, b))
+          PA.raster.future <- .quickBernoulliTrial(proba.of.occurrence.future)
+        }
       } else 
       {
         proba.of.occurrence <- .transf(sp.raster, c(a, b))
         PA.raster <- .quickBernoulliTrial(proba.of.occurrence)
+        if(approach == "bca") {
+          proba.of.occurrence.future <- .transf(x$suitab.raster.future, c(a, b))
+          PA.raster.future <- .quickBernoulliTrial(proba.of.occurrence.future)
+        }
       }
     } else if(prob.method == "truncated linear")
     { # This one is not documented in the package, I have only used it for
       # self testings. It works if anyone is interested enough to read these 
       # lines ;)
-      tmp <- .findTruncatedLinearConversion(sp.raster, 
-                                            target.prevalence = species.prevalence)
+      tmp <- .findTruncatedLinearConversion(
+        sp.raster, 
+        target.prevalence = species.prevalence)
       
       a <- tmp$a
       b <- tmp$b
       proba.of.occurrence <- unwrap(tmp$probability.of.occurrence)
       PA.raster <- unwrap(tmp$distribution)
+      if(approach == "bca") {
+        proba.of.occurrence.future <- .transf(x$suitab.raster.future, c(a, b))
+        PA.raster.future <- .quickBernoulliTrial(proba.of.occurrence.future)
+      }
     }
   } else if (PA.method == "threshold")
   {
@@ -692,7 +748,8 @@ convertToPA <- function(x,
     {
       beta <- global(sp.raster, 
                      fun = quantile,
-                     probs = 1 - species.prevalence)[1, 1]
+                     probs = 1 - species.prevalence,
+                     na.rm = TRUE)[1, 1]
     }
     
     PA.raster <- proba.of.occurrence <-  
@@ -700,12 +757,20 @@ convertToPA <- function(x,
                matrix(data = c(-Inf, beta, 0,
                                beta, +Inf, 1), 
                       nc = 3, nr = 2, byrow = TRUE))
+    if(approach == "bca") {
+      PA.raster.future <- proba.of.occurrence.future <-
+        classify(x$suitab.raster.future,
+                 matrix(data = c(-Inf, beta, 0,
+                                 beta, +Inf, 1), 
+                        nc = 3, nr = 2, byrow = TRUE))
+        
+    }
     
   } else {
     stop("Wrong PA.method entered (either 'probability' or 'threshold')")
   }
   
-  species.prevalence <- global(PA.raster, stat = "mean")[1, 1]
+  species.prevalence <- global(PA.raster, stat = "mean", na.rm = TRUE)[1, 1]
   
   if(inherits(x, "virtualspecies"))
   {
@@ -742,17 +807,46 @@ convertToPA <- function(x,
                      "\n- intercept (b) = ", b,
                      "\n- species prevalence =", species.prevalence, "\n\n"))
     }
-    x$probability.of.occurrence <- wrap(proba.of.occurrence)
-    x$pa.raster <- wrap(PA.raster)
+    if(approach == "bca") {
+      x$probability.of.occurrence.current <- wrap(proba.of.occurrence)
+      x$pa.raster.current <- wrap(PA.raster)
+      x$probability.of.occurrence.future <- wrap(proba.of.occurrence.future)
+      x$pa.raster.future <- wrap(PA.raster.future)
+    } else {
+      x$probability.of.occurrence <- wrap(proba.of.occurrence)
+      x$pa.raster <- wrap(PA.raster)
+    }
+
+    
+    
     results <- x
-    if(plot) plot(c(results$suitab.raster,
-                        results$probability.of.occurrence, 
-                        results$pa.raster),
-                  main = c("Environmental suitability",
-                           "Probability of occurrence", 
-                           "Presence-absence"),
-                  col = rev(viridis::magma(10)))
-  } else if (inherits(x, "RasterLayer"))
+    if(plot) {
+      if(approach == "bca") {
+        plot(c(results$suitab.raster.current,
+               results$probability.of.occurrence.current, 
+               results$pa.raster.current,
+               results$suitab.raster.future,
+               results$probability.of.occurrence.future, 
+               results$pa.raster.future),
+             main = c("Current suitability",
+                      "Current prob of occ", 
+                      "Current pres-abs",
+                      "Future suitability",
+                      "Future prob of occ", 
+                      "Future pres-abs"),
+             col = rev(viridis::magma(10)))
+      } else {
+        plot(c(results$suitab.raster,
+               results$probability.of.occurrence, 
+               results$pa.raster),
+             main = c("Environmental suitability",
+                      "Probability of occurrence", 
+                      "Presence-absence"),
+             col = rev(viridis::magma(10)))
+      }
+
+    }
+  } else if (inherits(x, "SpatRaster"))
   {
     if(PA.method == "threshold")
     {
@@ -787,10 +881,12 @@ convertToPA <- function(x,
                      "\n- intercept (b) = ", b,
                      "\n- species prevalence =", species.prevalence, "\n\n"))
     }
+
     results <- list(suitab.raster = wrap(x),
                     probability.of.occurrence = wrap(proba.of.occurrence),
                     PA.conversion = PA.conversion,
                     pa.raster = wrap(PA.raster))
+    
     if(plot) plot(c(results$suitab.raster,
                         results$probability.of.occurrence,
                         results$pa.raster), 
@@ -818,8 +914,8 @@ convertToPA <- function(x,
 .transf <- function(x, coefs)
 {
   x <- x * coefs[1] + coefs[2]
-  minval <- global(x, min)[1, 1]
-  maxval <- global(x, max)[1, 1]
+  minval <- global(x, min, na.rm = TRUE)[1, 1]
+  maxval <- global(x, max, na.rm = TRUE)[1, 1]
     
   if(minval < 0 | maxval > 1)
   {
@@ -845,9 +941,9 @@ so these were truncated to 1\n")
 .findLinearConversion = function(suit.raster,
                                  target.prevalence)
 {
-  suit.max <- global(suit.raster, max)[1, 1]
-  suit.mean <- global(suit.raster, stat = "mean")[1, 1]
-  suit.min <- global(suit.raster)[1, 1]
+  suit.max <- global(suit.raster, max, na.rm = TRUE)[1, 1]
+  suit.mean <- global(suit.raster, stat = "mean", na.rm = TRUE)[1, 1]
+  suit.min <- global(suit.raster, na.rm = TRUE)[1, 1]
   
   xs = c(suit.min, suit.max)
   ys = c(0, 1)
@@ -877,7 +973,7 @@ so these were truncated to 1\n")
   #Calculate the resulting prevalence:
   new.suit <- AB$a[I] * suit.raster + AB$b[I]
   distr = .quickBernoulliTrial(new.suit)
-  prev = global(distr, stat = "mean")[1, 1]
+  prev = global(distr, stat = "mean", na.rm = TRUE)[1, 1]
   
   return(list(a = AB$a[I],
               b = AB$b[I],
@@ -905,9 +1001,9 @@ so these were truncated to 1\n")
                                  plot.conv = FALSE)
 {
   
-  max.suit <- global(suit.raster, stat = "max")[1, 1]
-  min.suit <- global(suit.raster, stat = "min")[1, 1]
-  mean.suit <- global(suit.raster, stat = "mean")[1, 1]
+  max.suit <- global(suit.raster, stat = "max", na.rm = TRUE)[1, 1]
+  min.suit <- global(suit.raster, stat = "min", na.rm = TRUE)[1, 1]
+  mean.suit <- global(suit.raster, stat = "mean", na.rm = TRUE)[1, 1]
   
   slopemax <- (1 - target.prevalence) / (max.suit - mean.suit)
   slopemin <- target.prevalence / (mean.suit - min.suit)
@@ -917,10 +1013,10 @@ so these were truncated to 1\n")
   
   new.suit.max = .transf(suit.raster, coefs = c(slopemax, bmax))
   distr.max <- .quickBernoulliTrial(new.suit.max)
-  prev.max <- global(distr.max, stat = "mean")[1, 1]
+  prev.max <- global(distr.max, stat = "mean", na.rm = TRUE)[1, 1]
   new.suit.min = .transf(suit.raster, coefs = c(slopemin, bmin))
   distr.min <- .quickBernoulliTrial(new.suit.min)
-  prev.min <- global(distr.min, stat = "mean")[1, 1]
+  prev.min <- global(distr.min, stat = "mean", na.rm = TRUE)[1, 1]
   
   if(target.prevalence > max(c(prev.max, prev.min)))
   {
@@ -968,7 +1064,7 @@ so these were truncated to 1\n")
                 intercept = bpos)
     raster0 <- .transf(suit.raster, coefs = params)
     distr0 <- .quickBernoulliTrial(raster0)
-    prev0 <- global(distr0, stat = "mean")[1, 1]
+    prev0 <- global(distr0, stat = "mean", na.rm = TRUE)[1, 1]
   }
   
   
@@ -984,13 +1080,14 @@ so these were truncated to 1\n")
       b1 <- .99 # Just below 1 to avoid a reponse fully equal to 1
     } else
     {
-      b1 <- - global(suit.raster, stat = "max")[1, 1] * slop + 0.01
+      b1 <- - global(suit.raster, stat = "max",
+                     na.rm = TRUE)[1, 1] * slop + 0.01
       # Just above minimum value to avoid a reponse fully equal to 0
     }
     
     raster1 = .transf(suit.raster, coefs = c(slop, b1))
     distr1 = .quickBernoulliTrial(raster1)
-    prev1 <- global(distr1, stat = "mean")[1, 1]
+    prev1 <- global(distr1, stat = "mean", na.rm = TRUE)[1, 1]
     if(m) cat("prev1 = ", prev1, "\n")
     if(abs(prev1 - target.prevalence) > 0.01)
     {
@@ -998,7 +1095,7 @@ so these were truncated to 1\n")
       b0.5 <- median(c(b0, b1))
       raster0.5 = .transf(suit.raster, coefs = c(slop, b0.5))
       distr0.5 = .quickBernoulliTrial(raster0.5)
-      prev0.5 <- global(distr0.5, stat = "mean")[1, 1]
+      prev0.5 <- global(distr0.5, stat = "mean", na.rm = TRUE)[1, 1]
       while(abs(prev0.5 - target.prevalence) > 0.01)
       {
         if(target.prevalence >= min(c(prev0, prev0.5)) & 
@@ -1012,7 +1109,7 @@ so these were truncated to 1\n")
         b0.5 <- stats::median(c(b0, b1))
         raster0.5 = .transf(suit.raster, coefs = c(slop, b0.5))
         distr0.5 = .quickBernoulliTrial(raster0.5)
-        prev0.5 <- global(distr0.5, stat = "mean")[1, 1]
+        prev0.5 <- global(distr0.5, stat = "mean", na.rm = TRUE)[1, 1]
         if(m) cat("b0.5 = ", b0.5, " - prevalence = ", prev0.5, "\n")
       }
       rasterfinal <- raster0.5

@@ -156,18 +156,18 @@ generateRandomSp <- function(raster.stack,
                              species.prevalence = NULL,
                              plot = TRUE)
 {
-  if(!(is(raster.stack, "Raster")))
-  {
-    stop("raster.stack must be a raster stack object")
+  if(inherits(raster.stack, "Raster")) {
+    raster.stack <- rast(raster.stack)
   }
-  if(any(is.na(maxValue(raster.stack))))
+  if(!(inherits(raster.stack, "SpatRaster")))
   {
-    raster.stack <- setMinMax(raster.stack)
+    stop("raster.stack must be a SpatRaster object")
   }
+
   
   if(approach == "automatic")
   {
-    if(nlayers(raster.stack) <= 5)
+    if(nlyr(raster.stack) <= 5)
     {
       approach <- "response"
     } else
@@ -179,7 +179,8 @@ generateRandomSp <- function(raster.stack,
     approach <- sample(c("response", "pca"), 1)
   } else if(!(approach %in% c("response", "pca")))
   {
-    stop("Argument approach was misspecified. Either choose 'automatic', 'random', 'response' or 'pca'.")
+    stop("Argument approach was misspecified. Either choose 'automatic', ",
+         "'random', 'response' or 'pca'.")
   }
   
   var.names <- names(raster.stack)
@@ -199,7 +200,8 @@ generateRandomSp <- function(raster.stack,
     if(any(!(relations %in% c("gaussian", "linear", "logistic", "quadratic"))))
     {
       stop(paste("Wrong relation type specified: pick among '", 
-                 paste(c("gaussian", "linear", "logistic", "quadratic"), collapse = " "), "'",
+                 paste(c("gaussian", "linear", "logistic", "quadratic"), 
+                       collapse = " "), "'",
                  collapse = " "))
     }
     valid.cells <- setValues(raster.stack[[1]], 1)
@@ -209,46 +211,53 @@ generateRandomSp <- function(raster.stack,
       
       cur.var <- var.order[i]
       cur.rast <- raster.stack[[cur.var]]
-      if(realistic.sp) cur.rast <- cur.rast * valid.cells # Cur.rast is here restricted to current suitable conds
+      if(realistic.sp) cur.rast <- cur.rast * valid.cells # Cur.rast is 
+      # here restricted to current suitable conds
       
       type <- sample(relations, 1)
       
+      min_ <- global(cur.rast, "min", na.rm = TRUE)[1, 1]
+      max_ <- global(cur.rast, "max", na.rm = TRUE)[1, 1]
+      
+      
       if (type == "gaussian")
       {
-        parameters[[cur.var]] <- list(fun = 'dnorm',
-                                      args = c(mean = sample(seq(cur.rast@data@min,
-                                                                 cur.rast@data@max, 
-                                                                 length = 100000), 1),
-                                               sd = sample(seq(0, 
-                                                               (raster.stack[[cur.var]]@data@max - raster.stack[[cur.var]]@data@min), 
-                                                               length = 100000), 1))
+        parameters[[cur.var]] <- list(
+          fun = 'dnorm',
+          args = c(mean = sample(seq(min_,
+                                     max_, 
+                                     length = 100000), 1),
+                   sd = sample(seq(0, 
+                                   (max_ - min_), 
+                                   length = 100000), 1))
         )
       } else if (type == "linear")
       { # At the moment this is not really useful because the rescale will transforme the results in either 0:1 or 1:0, regardless of the slope
         # To be improved later
-        parameters[[cur.var]] <- list(fun = 'linearFun',
-                                      args = c(a = sample(seq(-1, 1, length = 100), 1),
-                                               b = sample(seq(raster.stack[[cur.var]]@data@min, 
-                                                              raster.stack[[cur.var]]@data@max, 
-                                                              length = 100000), 1))
+        parameters[[cur.var]] <- list(
+          fun = 'linearFun',
+          args = c(a = sample(seq(-1, 1, length = 100), 1),
+                   b = sample(seq(min_, 
+                                  max_, 
+                                  length = 100000), 1))
         )
       } else if (type == "logistic")
       {
-        beta.t <- sample(seq(raster.stack[[cur.var]]@data@min,
-                             raster.stack[[cur.var]]@data@max,
+        beta.t <- sample(seq(min_,
+                             max_,
                              length = 1000000), 1)
-        alpha.t <-  sample(c(seq((raster.stack[[cur.var]]@data@max - raster.stack[[cur.var]]@data@min)/1000,
-                                 (raster.stack[[cur.var]]@data@max - raster.stack[[cur.var]]@data@min)/100, length = 10),
-                             seq((raster.stack[[cur.var]]@data@max - raster.stack[[cur.var]]@data@min)/100,
-                                 (raster.stack[[cur.var]]@data@max - raster.stack[[cur.var]]@data@min)/10, length = 100),
-                             seq((raster.stack[[cur.var]]@data@max - raster.stack[[cur.var]]@data@min)/10,
-                                 (raster.stack[[cur.var]]@data@max - raster.stack[[cur.var]]@data@min)*10, length = 10)), size = 1)
+        alpha.t <-  sample(c(seq((max_ - min_)/1000,
+                                 (max_ - min_)/100, length = 10),
+                             seq((max_ - min_)/100,
+                                 (max_ - min_)/10, length = 100),
+                             seq((max_ - min_)/10,
+                                 (max_ - min_)*10, length = 10)), size = 1)
         if(realistic.sp == TRUE)
         {
-          if(beta.t > cur.rast@data@max)
+          if(beta.t > max_)
           {
             alpha.t <- alpha.t
-          } else if (beta.t < cur.rast@data@min)
+          } else if (beta.t < min_)
           {
             alpha.t <- -alpha.t
           } else
@@ -263,8 +272,8 @@ generateRandomSp <- function(raster.stack,
         )
       } else if (type == "quadratic")
       {
-        max.point <- sample(seq(cur.rast@data@min,
-                                cur.rast@data@max, 
+        max.point <- sample(seq(min_,
+                                max_, 
                                 length = 1000), 1)
         a <- sample(seq(-.01, -20, length = 10000), 1)
         b <- - max.point * 2 * a
@@ -277,12 +286,15 @@ generateRandomSp <- function(raster.stack,
       }
       
       # Restricting values to suitable conditions
-      tmp.rast <- calc(raster.stack[[cur.var]], fun = function(x)
+      tmp.rast <- app(raster.stack[[cur.var]], fun = function(x)
       {
-        do.call(match.fun(parameters[[cur.var]]$fun), args = c(list(x), parameters[[cur.var]]$args))
+        do.call(match.fun(parameters[[cur.var]]$fun), 
+                args = c(list(x), parameters[[cur.var]]$args))
       }
       )
-      tmp.rast <- (tmp.rast - tmp.rast@data@min) / (tmp.rast@data@max - tmp.rast@data@min)
+      tmp.rast <- (tmp.rast - global(tmp.rast, "min", na.rm = TRUE)) /
+        (global(tmp.rast, "max", na.rm = TRUE) - 
+           global(tmp.rast, "min", na.rm = TRUE))
       valid.cells <- valid.cells * (tmp.rast > 0.05)
     }
     message(" - Calculating species suitability\n")

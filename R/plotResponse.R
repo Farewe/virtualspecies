@@ -65,10 +65,10 @@
 #' # Create an example stack with four environmental variables
 #' a <- matrix(rep(dnorm(1:100, 50, sd = 25)), 
 #'             nrow = 100, ncol = 100, byrow = TRUE)
-#' env <- stack(raster(a * dnorm(1:100, 50, sd = 25)),
-#'              raster(a * 1:100),
-#'              raster(a * logisticFun(1:100, alpha = 10, beta = 70)),
-#'              raster(t(a)))
+#' env <- c(rast(a * dnorm(1:100, 50, sd = 25)),
+#'          rast(a * 1:100),
+#'          rast(a * logisticFun(1:100, alpha = 10, beta = 70)),
+#'          rast(t(a)))
 #' names(env) <- c("var1", "var2", "var3", "var4")
 #' 
 #' # Per-variable response approach:
@@ -119,8 +119,8 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = NULL,
       }
       for (var in names(x))
       {
-        parameters[[var]]$min <- global(x[[var]], "min")[1, 1]
-        parameters[[var]]$max <- global(x[[var]], "max")[1, 1]
+        parameters[[var]]$min <- global(x[[var]], "min", na.rm = TRUE)[1, 1]
+        parameters[[var]]$max <- global(x[[var]], "max", na.rm = TRUE)[1, 1]
       }
       if(!is.null(rescale.each.response)){
         if(rescale.each.response) {
@@ -190,6 +190,20 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = NULL,
     } else if (is.null(approach))
     {
       stop("Please choose the approach: 'response' or 'pca'.")
+    }
+    if(!is.null(rescale.each.response)){
+      if(rescale.each.response) {
+        rescale <- TRUE
+      } else if (!rescale.each.response) {
+        rescale <- FALSE
+      } else {
+        stop("rescale.each.response must be TRUE or FALSE")
+      }
+    } else {
+      message("No default value was defined for rescale.each.response, ",
+              "setting rescale.each.response = TRUE")
+      rescale <- TRUE # We use rescale for the rest of the code 
+      # but it corresponds to rescale.each.response here
     }
   } else if (inherits(x, "virtualspecies"))
   {
@@ -434,8 +448,13 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = NULL,
     means          <- details$means
     sds            <- details$sds
     lengths        <- details$stack.lengths
+    if(!length(rescale)) {
+      rescale        <- details$rescale
+    }
+
     
-    probabilities <- apply(bca.object$ls, 1, .prob.gaussian, means = means, sds = sds)
+    probabilities <- apply(bca.object$ls, 1, .prob.gaussian, means = means, 
+                           sds = sds)
     if(rescale) {
       probabilities <- (probabilities - details$min_prob_rescale) /
         (details$max_prob_rescale - details$min_prob_rescale)
@@ -446,7 +465,7 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = NULL,
     ymin <- min(bca.object$ls[, 2]) - 0.3 * diff(range(bca.object$ls[, 2]))
     ymax <- max(bca.object$ls[, 2])
     
-    par(mar = c(4.1, 4.1, 4.1, 4.6))
+    par(mar = c(4.1, 4.1, 4.1, 6.1))
     
     defaults <- list(x = bca.object$ls,
                      #                    col = c(grey(.8), rev(heat.colors(150))[51:200]) [match(round(probabilities * 100, 0), 0:100)] ,
@@ -536,15 +555,24 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = NULL,
                  label = rownames(bca.object$c1), clabel = 1,
                  origin = c(x0, y0))
     
-    legend("topright", inset = c(-.02, -.02),
+    
+    legend("topright", inset = c(-.4,
+                                 0),
            legend = c("Current\nconditions\n","Future\nconditions"),
-           pch = c(15, 17), col = grey(.8), bty = "n")
+           pch = c(15, 17), col = grey(.8), bty = "n",
+           cex = .7,
+           xpd = TRUE)
     
     
-    legend(title = "Pixel\nsuitability", "topright", inset = c(-0.09, 0),
+    legend("topright",
+           inset = c(-.4,
+                     .5),
            legend = c(1, 0.8, 0.6, 0.4, 0.2, 0),
            pch = 16, col = c(viridis::inferno(150)[c(1, 38, 75, 113, 150)],
-                             grey(.8)), bty = "n")
+                             grey(.8)), bty = "n",
+           cex = .7,
+           title = "Pixel\nsuitability",
+           xpd = TRUE)
     
 
     

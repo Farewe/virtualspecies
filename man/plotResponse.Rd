@@ -79,10 +79,10 @@ the PCA.}}
 # Create an example stack with four environmental variables
 a <- matrix(rep(dnorm(1:100, 50, sd = 25)), 
             nrow = 100, ncol = 100, byrow = TRUE)
-env <- stack(raster(a * dnorm(1:100, 50, sd = 25)),
-             raster(a * 1:100),
-             raster(a * logisticFun(1:100, alpha = 10, beta = 70)),
-             raster(t(a)))
+env <- c(rast(a * dnorm(1:100, 50, sd = 25)),
+         rast(a * 1:100),
+         rast(a * logisticFun(1:100, alpha = 10, beta = 70)),
+         rast(t(a)))
 names(env) <- c("var1", "var2", "var3", "var4")
 
 # Per-variable response approach:

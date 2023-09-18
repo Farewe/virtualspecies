@@ -2,7 +2,8 @@
 % Please edit documentation in R/generateSpFromFun.R
 \name{generateSpFromFun}
 \alias{generateSpFromFun}
-\title{Generate a virtual species distributions with responses to environmental variables}
+\title{Generate a virtual species distributions with responses to environmental
+ variables}
 \usage{
 generateSpFromFun(
   raster.stack,
@@ -15,47 +16,61 @@ generateSpFromFun(
 )
 }
 \arguments{
-\item{raster.stack}{a RasterStack object, in which each layer represent an environmental 
+\item{raster.stack}{a SpatRaster object, in which each layer represent an 
+environmental 
 variable.}
 
-\item{parameters}{a list containing the functions of response of the species to 
-environmental variables with their parameters. See details.}
+\item{parameters}{a list containing the functions of response of the species
+to environmental variables with their parameters. See details.}
 
-\item{rescale}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, the final probability of presence is rescaled between 0 and 1.}
+\item{rescale}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, the final 
+probability of presence is rescaled between 0 and 1.}
 
-\item{formula}{a character string or \code{NULL}. The formula used to combine partial responses into the final
+\item{formula}{a character string or \code{NULL}. The formula used to combine
+ partial responses into the final
 environmental suitability value (e.g., \code{"layername1 + 2 * layername2 +
-layername3 * layername4 etc."}). If \code{NULL} then partial responses will be added or multiplied according to
+layername3 * layername4 etc."}). If \code{NULL} then partial responses will 
+be added or multiplied according to
 \code{species.type}}
 
-\item{species.type}{\code{"additive"} or \code{"multiplicative"}. Only used if \code{formula = NULL}. 
-Defines how the final environmental suitability is calculated: if \code{"additive"}, responses to each
+\item{species.type}{\code{"additive"} or \code{"multiplicative"}. Only used 
+if \code{formula = NULL}. 
+Defines how the final environmental suitability is calculated: if 
+\code{"additive"}, responses to each
 variable are summed; if \code{"multiplicative"}, responses are multiplied.}
 
-\item{rescale.each.response}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, the individual responses to
+\item{rescale.each.response}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, 
+the individual responses to
 each environmental variable are rescaled between 0 and 1 (see details).}
 
-\item{plot}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, the generated virtual species will be plotted.}
+\item{plot}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, the generated 
+virtual species will be plotted.}
 }
 \value{
 a \code{list} with 3 elements:
 \itemize{
-\item{\code{approach}: the approach used to generate the species, \emph{i.e.}, \code{"response"}}
-\item{\code{details}: the details and parameters used to generate the species}
-\item{\code{suitab.raster}: the raster containing the environmental suitability of the virtual species}
+\item{\code{approach}: the approach used to generate the species, 
+\emph{i.e.}, \code{"response"}}
+\item{\code{details}: the details and parameters used to generate the 
+species}
+\item{\code{suitab.raster}: the raster containing the environmental 
+suitability of the virtual species}
 }
 The structure of the virtualspecies object can be seen using \code{str()}
 }
 \description{
-This function generates a virtual species distribution from a RasterStack of environmental
+This function generates a virtual species distribution from a stack of
+ environmental
 variables and a defined set of responses to each environmental parameter.
 }
 \details{
-\href{http://borisleroy.com/virtualspecies_tutorial/02-response.html}{Online tutorial for this function}
+\href{http://borisleroy.com/virtualspecies_tutorial/02-response.html}{Online 
+tutorial for this function}
 
 This function proceeds in two steps:
 \enumerate{
-\item{The response to each environmental variable is calculated with the functions provided
+\item{The response to each environmental variable is calculated with the 
+functions provided
 in \code{parameters}. This results in a suitability  of each variable.
 
 \bold{By default, each response is rescaled between 0 and 1.} Disable with 
@@ -63,38 +78,52 @@ in \code{parameters}. This results in a suitability  of each variable.
 \item{The final environmental suitability is calculated according to the 
 chosen \code{species.type}.
 
-\bold{By default, the final suitability is rescaled between 0 and 1.} Disable with 
+\bold{By default, the final suitability is rescaled between 0 and 1.} 
+Disable with 
 \code{rescale = FALSE}}
 }
-The RasterStack containing environmental variables must have consistent names, 
-because they will be checked with the \code{parameters}. For example, they can be named
+The SpatRaster stack containing environmental variables must have consistent 
+names, 
+because they will be checked with the \code{parameters}. For example, they 
+can be named
 var1, var2, etc. Names can be checked and set with \code{names(my.stack)}.
 
-The \code{parameters} have to be carefully created, otherwise the function will not work:
+The \code{parameters} have to be carefully created, otherwise the function 
+will not work:
 \itemize{
-\item{Either see \code{\link{formatFunctions}} to easily create your list of parameters}
-\item{Or create a \code{list} defined according to the following template: \cr
+\item{Either see \code{\link{formatFunctions}} to easily create your list of 
+parameters}
+\item{Or create a \code{list} defined according to the following template:\cr
 \code{list(
-           var1 = list(fun = 'fun1', args = list(arg1 = ..., arg2 = ..., etc.)),
-           var2 = list(fun = 'fun2', args = list(arg1 = ..., arg2 = ..., etc.)))}\cr
-It is important to keep the same names in the parameters as in the stack of environmental
-variables. Similarly, argument names must be identical to argument names in the associated 
-function (e.g., if you use \code{fun = 'dnorm'}, then args should look like \code{list(mean = 0, sd = 1)}).
+           var1 = list(fun = 'fun1', args = list(arg1 = ..., arg2 = ..., 
+           etc.)),
+           var2 = list(fun = 'fun2', args = list(arg1 = ..., arg2 = ..., 
+           etc.)))}\cr
+It is important to keep the same names in the parameters as in the stack of 
+environmental
+variables. Similarly, argument names must be identical to argument names in 
+the associated 
+function (e.g., if you use \code{fun = 'dnorm'}, then args should look like 
+\code{list(mean = 0, sd = 1)}).
 
 See the example section below for more examples.}}
            
 
 Any response function that can be applied to the environmental variables can
 be chosen here. Several functions are proposed in this package:
-\code{\link{linearFun}}, \code{\link{logisticFun}} and \code{\link{quadraticFun}}.
-Another classical example is the normal distribution: \code{\link[stats:Normal]{stats::dnorm()}}.
+\code{\link{linearFun}}, \code{\link{logisticFun}} and 
+\code{\link{quadraticFun}}.
+Another classical example is the normal distribution: 
+\code{\link[stats:Normal]{stats::dnorm()}}.
 Users can also create and use their own functions very easily.
 
   
 If \code{rescale.each.response = TRUE}, then the probability response to each
-variable will be normalised between 0 and 1 according to the following formula:
+variable will be normalised between 0 and 1 according to the following 
+formula:
 P.rescaled = (P - min(P)) / (max(P) - min (P))
-This rescaling has a strong impact on response functions, so users may prefer to
+This rescaling has a strong impact on response functions, so users may 
+prefer to
 use \code{rescale.each.response = FALSE} and apply their own rescaling within
 their response functions.
 }
@@ -139,7 +168,8 @@ sp1
 plot(sp1)
 }
 \seealso{
-\code{\link{generateSpFromPCA}} to generate a virtual species with a PCA approach
+\code{\link{generateSpFromPCA}} to generate a virtual species with 
+a PCA approach
 }
 \author{
 Boris Leroy \email{leroy.boris@gmail.com}
