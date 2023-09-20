@@ -21,8 +21,8 @@
 #' # Create an example stack with two environmental variables
 #' a <- matrix(rep(dnorm(1:100, 50, sd = 25)), 
 #'             nrow = 100, ncol = 100, byrow = TRUE)
-#' env <- stack(raster(a * dnorm(1:100, 50, sd = 25)),
-#'              raster(a * 1:100))
+#' env <- c(rast(a * dnorm(1:100, 50, sd = 25)),
+#'          rast(a * 1:100))
 #' names(env) <- c("variable1", "variable2")
 #'
 #' parameters <- formatFunctions(variable1 = c(fun = 'dnorm', mean = 1e-04, 
@@ -64,16 +64,28 @@ plotSuitabilityToProba <- function(sp, add = FALSE, ...)
   {
     if(!("PA.conversion" %in% names(sp)))
     {
-      stop("sp does not seem to be a valid object: provide the output from convertToPA()")
+      stop("sp does not seem to be a valid object: provide the output from", 
+           " convertToPA()")
     }
   } else
   {
-    stop("sp does not seem to be a valid object: provide the output from convertToPA()")
+    stop("sp does not seem to be a valid object: provide the output from", 
+         " convertToPA()")
   }
   method <- sp$PA.conversion[1]
   
-  x <- seq(minValue(sp$suitab.raster),
-           maxValue(sp$suitab.raster), length = 1000)
+  if(sp$approach == "bca") {
+    x <- seq(min(global(c(sp$suitab.raster.current,
+                          sp$suitab.raster.future),
+                        "min", na.rm = TRUE)[, 1]),
+             max(global(c(sp$suitab.raster.current,
+                          sp$suitab.raster.future),
+                        "max", na.rm = TRUE)[, 1]), length = 1000)
+  } else {
+    x <- seq(global(sp$suitab.raster, min, na.rm = TRUE)[1, 1],
+             global(sp$suitab.raster, max, na.rm = TRUE)[1, 1], length = 1000)
+  }
+
   
   if(method == "probability")
   {

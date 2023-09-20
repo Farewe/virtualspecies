@@ -128,33 +128,43 @@ sp4 <- generateSpFromBCA(raster.stack.current = env1, raster.stack.future = env2
 plotResponse(sp4)
 
 sp4 <- convertToPA(sp4)
+plotSuitabilityToProba(sp4)
 
 sp4 <- convertToPA(sp4,
                    PA.method = "threshold")
+plotSuitabilityToProba(sp4)
 sp4 <- convertToPA(sp4,
                    PA.method = "threshold",
                    beta = 0.5)
+plotSuitabilityToProba(sp4)
 sp4 <- convertToPA(sp4,
                    PA.method = "threshold",
                    beta = 0)
+plotSuitabilityToProba(sp4)
 sp4 <- convertToPA(sp4,
                    PA.method = "threshold",
                    beta = 1)
+plotSuitabilityToProba(sp4)
 sp4 <- convertToPA(sp4,
                    PA.method = "threshold",
                    beta = "random")
+plotSuitabilityToProba(sp4)
 sp4 <- convertToPA(sp4,
                    PA.method = "threshold",
                    species.prevalence = .2)
+plotSuitabilityToProba(sp4)
 sp4 <- convertToPA(sp4,
                    PA.method = "threshold",
                    species.prevalence = .02)
+plotSuitabilityToProba(sp4)
 sp4 <- convertToPA(sp4,
                    PA.method = "threshold",
                    species.prevalence = .9)
+plotSuitabilityToProba(sp4)
 sp4 <- convertToPA(sp4,
                    PA.method = "threshold",
                    species.prevalence = .99)
+plotSuitabilityToProba(sp4)
 sp4 <- convertToPA(sp4,
                    PA.method = "probability",
                    prob.method = "logistic",
@@ -162,6 +172,7 @@ sp4 <- convertToPA(sp4,
                    a = NULL,
                    b = NULL,
                    species.prevalence = .99)
+plotSuitabilityToProba(sp4)
 sp4 <- convertToPA(sp4,
                    PA.method = "probability",
                    prob.method = "logistic",
@@ -169,9 +180,189 @@ sp4 <- convertToPA(sp4,
                    a = NULL,
                    b = NULL,
                    species.prevalence = .5)
+plotSuitabilityToProba(sp4)
 sp4 <- convertToPA(sp4,
                    PA.method = "probability",
                    prob.method = "logistic",
                    beta = .5,
                    a = NULL,
                    b = NULL)
+plotSuitabilityToProba(sp4)
+
+
+for(i in 1:100){
+  sp5 <- generateRandomSp(env)
+}
+
+env <- c(rast(a * dnorm(1:100, 50, sd = 25)),
+         rast(a * 1:100),
+         rast(a * logisticFun(1:100, alpha = 10, beta = 70)),
+         rast(t(a)),
+         rast(exp(a)),
+         rast(log(a)))
+names(env) <- paste("Var", 1:6, sep = "")
+
+for(i in 1:100){
+  sp5 <- generateRandomSp(env)
+}
+
+env <- c(rast(a * dnorm(1:100, 50, sd = 25)),
+         rast(a * 1:100),
+         rast(a * logisticFun(1:100, alpha = 10, beta = 70)),
+         rast(t(a)),
+         rast(exp(a)),
+         rast(log(a)))
+names(env) <- paste("Var", 1:6, sep = "")
+
+sp5 <- generateRandomSp(env)
+
+samp1 <- sampleOccurrences(sp5,
+                           n = 50)
+samp1 <- sampleOccurrences(sp5,
+                           n = 50,
+                           type = "presence-absence")
+samp1 <- sampleOccurrences(sp5,
+                           n = 50,
+                           type = "presence-absence",
+                           extract.probability = TRUE)
+samp1 <- sampleOccurrences(sp5,
+                           n = 50,
+                           type = "presence-absence",
+                           sample.prevalence = .9,
+                           extract.probability = TRUE)
+samp1 <- sampleOccurrences(sp5,
+                           n = 50,
+                           type = "presence-absence",
+                           sample.prevalence = .1,
+                           extract.probability = TRUE)
+
+
+
+worldclim <- geodata::worldclim_global(var = "bio", res = 10, path = tempdir())
+names(worldclim) <- paste0("bio", 1:19)
+
+my.stack <- worldclim[[c("bio2", "bio5", "bio6", "bio12", "bio13", "bio14")]]
+random.sp <- generateSpFromPCA(my.stack,
+                               axes = 1:3,
+                               niche.breadth = "narrow")
+
+random.sp <- convertToPA(random.sp)
+
+worldmap <- rnaturalearth::ne_countries(returnclass = "sf")
+
+samp1 <- sampleOccurrences(random.sp,
+                           n = 50)
+samp1 <- sampleOccurrences(random.sp,
+                           n = 50,
+                           sampling.area = "Morocco",
+                           error.probability = 0.1,
+                           detection.probability = .9)
+
+samp1 <- sampleOccurrences(random.sp,
+                           n = 50,
+                           sampling.area = worldmap[worldmap$sovereignt == 
+                                                      "France", ],
+                           error.probability = 0.1,
+                           detection.probability = .9)
+
+
+
+samp1 <- sampleOccurrences(random.sp,
+                           n = 50,
+                           sampling.area = ext(0, 180, 0, 90),
+                           error.probability = 0.1,
+                           detection.probability = .9)
+
+
+samp1 <- sampleOccurrences(random.sp,
+                           n = 50,
+                           sampling.area = ext(0, 180, 0, 90),
+                           bias = "extent",
+                           bias.strength = 50,
+                           error.probability = 0.1,
+                           detection.probability = .9)
+
+
+samp1 <- sampleOccurrences(random.sp,
+                           n = 50,
+                           sampling.area = ext(0, 180, 0, 90),
+                           bias = "country",
+                           bias.area = "Egypt",
+                           bias.strength = 50,
+                           error.probability = 0.1,
+                           detection.probability = .9)
+samp1 <- sampleOccurrences(random.sp,
+                           n = 50,
+                           sampling.area = ext(0, 180, 0, 90),
+                           bias = "region",
+                           bias.area = "Africa",
+                           bias.strength = 50,
+                           error.probability = 0.1,
+                           detection.probability = .9)
+
+samp1 <- sampleOccurrences(random.sp,
+                           n = 50,
+                           sampling.area = ext(0, 180, 0, 90),
+                           bias = "continent",
+                           bias.area = "Africa",
+                           bias.strength = 50,
+                           error.probability = 0.1,
+                           detection.probability = .9)
+
+samp1 <- sampleOccurrences(random.sp,
+                           n = 50,
+                           sampling.area = ext(0, 180, 0, 90),
+                           bias = "polygon",
+                           bias.area = worldmap[worldmap$sovereignt == 
+                                                  "Egypt", ],
+                           bias.strength = 200,
+                           error.probability = 0.1,
+                           detection.probability = .9)
+
+
+samp1 <- sampleOccurrences(random.sp,
+                           n = 50,
+                           sampling.area = ext(0, 180, 0, 90),
+                           bias = "polygon",
+                           bias.area = NULL,
+                           bias.strength = 200,
+                           error.probability = 0.1,
+                           detection.probability = .9)
+
+
+samp1 <- sampleOccurrences(random.sp,
+                           n = 50,
+                           sampling.area = ext(0, 180, 0, 90),
+                           bias = "extent",
+                           bias.area = NULL,
+                           bias.strength = 200,
+                           error.probability = 0.1,
+                           detection.probability = .9)
+
+
+samp1 <- sampleOccurrences(random.sp,
+                           type = "presence-absence",
+                           n = 50,
+                           sampling.area = ext(0, 180, 0, 90),
+                           bias = "extent",
+                           bias.area = NULL,
+                           bias.strength = 200,
+                           error.probability = 0.1,
+                           detection.probability = .9)
+
+samp1 <- sampleOccurrences(random.sp,
+                           type = "presence-absence",
+                           n = 50,
+                           error.probability = 0.1,
+                           detection.probability = .9,
+                           correct.by.suitability = TRUE)
+
+
+samp1 <- sampleOccurrences(random.sp,
+                           type = "presence-absence",
+                           n = 50,
+                           error.probability = 0.1,
+                           detection.probability = .9,
+                           correct.by.suitability = TRUE,
+                           bias = "manual",
+                           weights = exp(random.sp$suitab.raster))

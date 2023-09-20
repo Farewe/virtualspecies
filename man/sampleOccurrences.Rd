@@ -23,7 +23,7 @@ sampleOccurrences(
 )
 }
 \arguments{
-\item{x}{a \code{rasterLayer} object or the output list from 
+\item{x}{a \code{SpatRaster} object or the output list from 
 \code{generateSpFromFun}, \code{generateSpFromPCA}, \code{generateRandomSp},
 \code{convertToPA}
 or  \code{limitDistribution}
@@ -117,7 +117,9 @@ The sampling bias can be defined manually or with a set of predefined
 biases.
 }
 \details{
-\href{http://borisleroy.com/virtualspecies_tutorial/07-sampleoccurrences.html}{Online tutorial for this function}
+\href{
+http://borisleroy.com/virtualspecies_tutorial/07-sampleoccurrences.html}{
+Online tutorial for this function}
 
 
 
@@ -230,12 +232,12 @@ bias.
 # Create an example stack with six environmental variables
 a <- matrix(rep(dnorm(1:100, 50, sd = 25)), 
             nrow = 100, ncol = 100, byrow = TRUE)
-env <- stack(raster(a * dnorm(1:100, 50, sd = 25)),
-             raster(a * 1:100),
-             raster(a * logisticFun(1:100, alpha = 10, beta = 70)),
-             raster(t(a)),
-             raster(exp(a)),
-             raster(log(a)))
+env <- c(rast(a * dnorm(1:100, 50, sd = 25)),
+         rast(a * 1:100),
+         rast(a * logisticFun(1:100, alpha = 10, beta = 70)),
+         rast(t(a)),
+         rast(exp(a)),
+         rast(log(a)))
 names(env) <- paste("Var", 1:6, sep = "")   
 
 # More than 6 variables: by default a PCA approach will be used

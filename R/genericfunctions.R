@@ -1,4 +1,35 @@
 #' @export
+#' @method `$` VSSampledPoints
+`$.VSSampledPoints` <- function(x, name)
+{
+  if(inherits(as.list(x)[[name]], "PackedSpatRaster")) {
+    return(unwrap(`[[`(as.list(x), name)))
+  } else {
+    return(`[[`(as.list(x), name))
+  }
+}
+
+#' @export
+#' @method `[[` VSSampledPoints
+`[[.VSSampledPoints` <- function(x, name)
+{
+  if(inherits(as.list(x)[[name]], "PackedSpatRaster")) {
+    return(unwrap(`[[`(as.list(x), name)))
+  } else {
+    return(`[[`(as.list(x), name))
+  }
+}
+
+#' @export
+#' @method `as.list` VSSampledPoints
+as.list.VSSampledPoints <- function(x)
+{
+  class(x) <- "list"
+  return(x)
+}
+
+
+#' @export
 #' @method `$` virtualspecies
 `$.virtualspecies` <- function(x, name)
 {
@@ -158,10 +189,10 @@ print.virtualspecies <- function(x, ...)
       } else if(x$geographical.limit$method == "extent")
       {
         cat("\n   .extent      : [Xmin; Xmax] = [", 
-            x$geographical.limit$extent@xmin, "; ",
-            x$geographical.limit$extent@xmax, "] - [Ymin; Ymax] = [",
-            x$geographical.limit$extent@ymin, "; ",
-            x$geographical.limit$extent@ymax, "]", "\n", sep = "")
+            ext(x$geographical.limit$extent)[1], "; ",
+            ext(x$geographical.limit$extent)[2], "] - [Ymin; Ymax] = [",
+            ext(x$geographical.limit$extent)[3], "; ",
+            ext(x$geographical.limit$extent)[4], "]", "\n", sep = "")
       } else if(x$geographical.limit$method == "polygon")
       {
         cat("\n   .polygon    : Object of class ", class(x$geographical.limit$area), "\n", sep = "")
@@ -186,28 +217,32 @@ str.virtualspecies <- function(object, ...)
 #' @method plot virtualspecies
 plot.virtualspecies <- function(x, ...)
 {
-  y <- raster::stack(x$suitab.raster)
+  y <- x$suitab.raster
   names(y) <- "Suitability.raster"
   if(!is.null(x$probability.of.occurrence))
   {
-    y <- stack(y,
-               x$probability.of.occurrence)
-    names(y)[[nlayers(y)]] <- "Probability.of.occurrence.raster"
+    y <- c(y,
+           x$probability.of.occurrence)
+    names(y)[[nlyr(y)]] <- "Probability.of.occurrence.raster"
   }
   if(!is.null(x$pa.raster))
   {
-    y <- stack(y,
+    y <- c(y,
                x$pa.raster)
-    names(y)[[nlayers(y)]] <- "Presence.absence.raster"
+    names(y)[[nlyr(y)]] <- "Presence.absence.raster"
   }
   if(!is.null(x$occupied.area))
   {
-    y <- stack(y,
+    y <- c(y,
                x$occupied.area)
-    names(y)[[nlayers(y)]] <- "Occupied.area.raster"
+    names(y)[[nlyr(y)]] <- "Occupied.area.raster"
   }
   x <- y
-  plot(x, ...)
+  
+  defaults <- list(x = x,
+                   col = rev(viridis::magma(10)))
+  args <- modifyList(defaults, list(...))
+  do.call("plot", defaults)
 }
 
 #' @export

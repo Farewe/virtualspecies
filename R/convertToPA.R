@@ -809,12 +809,12 @@ convertToPA <- function(x,
     }
     if(approach == "bca") {
       x$probability.of.occurrence.current <- wrap(proba.of.occurrence)
-      x$pa.raster.current <- wrap(PA.raster)
+      x$pa.raster.current <- wrap(as.numeric(PA.raster))
       x$probability.of.occurrence.future <- wrap(proba.of.occurrence.future)
-      x$pa.raster.future <- wrap(PA.raster.future)
+      x$pa.raster.future <- wrap(as.numeric(PA.raster.future))
     } else {
       x$probability.of.occurrence <- wrap(proba.of.occurrence)
-      x$pa.raster <- wrap(PA.raster)
+      x$pa.raster <- wrap(as.numeric(PA.raster))
     }
 
     
@@ -885,7 +885,7 @@ convertToPA <- function(x,
     results <- list(suitab.raster = wrap(x),
                     probability.of.occurrence = wrap(proba.of.occurrence),
                     PA.conversion = PA.conversion,
-                    pa.raster = wrap(PA.raster))
+                    pa.raster = wrap(as.numeric(PA.raster)))
     
     if(plot) plot(c(results$suitab.raster,
                         results$probability.of.occurrence,

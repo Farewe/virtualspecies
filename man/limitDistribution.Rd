@@ -7,20 +7,25 @@
 limitDistribution(x, geographical.limit = "extent", area = NULL, plot = TRUE)
 }
 \arguments{
-\item{x}{a \code{rasterLayer} object composed of 0, 1 and NA, or the output list from 
+\item{x}{a \code{SpatRaster} object composed of 0, 1 and NA, or the output 
+list from 
 \code{\link{generateSpFromFun}}, \code{\link{generateSpFromPCA}} 
 or \code{\link{generateRandomSp}}}
 
 \item{geographical.limit}{\code{"country"}, \code{"region"}, 
-\code{"continent"}, \code{"polygon"}, \code{"raster"} or \code{"extent"}. The method used
+\code{"continent"}, \code{"polygon"}, \code{"raster"} or \code{"extent"}.
+ The method used
 to limit the distribution range: see details.}
 
-\item{area}{\code{NULL}, a character string, a \code{polygon}, a \code{raster} or an \code{extent} object.
-The area in which the distribution range will be limited: see details. If \code{NULL}
+\item{area}{\code{NULL}, a character string, a \code{polygon}, a 
+\code{raster} or an \code{extent} object.
+The area in which the distribution range will be limited: see details. 
+If \code{NULL}
 and \code{geographical.limit = "extent"}, then you will be asked to draw an
 extent on the map.}
 
-\item{plot}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, the resulting limited
+\item{plot}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, the resulting 
+limited
 distribution will be plotted.}
 }
 \value{
@@ -49,7 +54,9 @@ This function basically takes any type of raster and will limit values above
 0 to areas where the species is allowed to disperse.
 }
 \details{
-\href{http://borisleroy.com/virtualspecies_tutorial/08-dispersallimitation.html}{Online tutorial for this function}
+\href{
+http://borisleroy.com/virtualspecies_tutorial/08-dispersallimitation.html}{
+Online tutorial for this function}
 
 
 \bold{How the function works:}
@@ -105,12 +112,12 @@ the map.}
 # Create an example stack with six environmental variables
 a <- matrix(rep(dnorm(1:100, 50, sd = 25)), 
             nrow = 100, ncol = 100, byrow = TRUE)
-env <- stack(raster(a * dnorm(1:100, 50, sd = 25)),
-             raster(a * 1:100),
-             raster(a * logisticFun(1:100, alpha = 10, beta = 70)),
-             raster(t(a)),
-             raster(exp(a)),
-             raster(log(a)))
+env <- c(rast(a * dnorm(1:100, 50, sd = 25)),
+         rast(a * 1:100),
+         rast(a * logisticFun(1:100, alpha = 10, beta = 70)),
+         rast(t(a)),
+         rast(exp(a)),
+         rast(log(a)))
 names(env) <- paste("Var", 1:6, sep = "")   
 
 # More than 6 variables: by default a PCA approach will be used
@@ -124,7 +131,8 @@ limitDistribution(sp, area = limit)
 
 # Example of a raster of habitat patches
 habitat.raster <- setValues(sp$pa.raster, 
-                          sample(c(0, 1), size = ncell(sp$pa.raster), replace = TRUE))
+                            sample(c(0, 1), size = ncell(sp$pa.raster), 
+                            replace = TRUE))
 
 plot(habitat.raster) # 1 = suitable habitat; 0 = unsuitable habitat
 sp <- limitDistribution(sp, geographical.limit = "raster", area = habitat.raster)

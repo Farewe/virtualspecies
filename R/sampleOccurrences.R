@@ -6,7 +6,7 @@
 #' The sampling bias can be defined manually or with a set of predefined 
 #' biases.
 #' 
-#' @param x a \code{rasterLayer} object or the output list from 
+#' @param x a \code{SpatRaster} object or the output list from 
 #' \code{generateSpFromFun}, \code{generateSpFromPCA}, \code{generateRandomSp},
 #' \code{convertToPA}
 #' or  \code{limitDistribution}
@@ -57,7 +57,9 @@
 #' @param plot \code{TRUE} or \code{FALSE}. If \code{TRUE}, the sampled 
 #' occurrence points will be plotted.
 #' @details
-#' \href{http://borisleroy.com/virtualspecies_tutorial/07-sampleoccurrences.html}{Online tutorial for this function}
+#' \href{
+#' http://borisleroy.com/virtualspecies_tutorial/07-sampleoccurrences.html}{
+#' Online tutorial for this function}
 #' 
 #' 
 #' 
@@ -198,12 +200,12 @@
 #' # Create an example stack with six environmental variables
 #' a <- matrix(rep(dnorm(1:100, 50, sd = 25)), 
 #'             nrow = 100, ncol = 100, byrow = TRUE)
-#' env <- stack(raster(a * dnorm(1:100, 50, sd = 25)),
-#'              raster(a * 1:100),
-#'              raster(a * logisticFun(1:100, alpha = 10, beta = 70)),
-#'              raster(t(a)),
-#'              raster(exp(a)),
-#'              raster(log(a)))
+#' env <- c(rast(a * dnorm(1:100, 50, sd = 25)),
+#'          rast(a * 1:100),
+#'          rast(a * logisticFun(1:100, alpha = 10, beta = 70)),
+#'          rast(t(a)),
+#'          rast(exp(a)),
+#'          rast(log(a)))
 #' names(env) <- paste("Var", 1:6, sep = "")   
 #' 
 #' # More than 6 variables: by default a PCA approach will be used
@@ -301,41 +303,53 @@ sampleOccurrences <- function(x, n,
                   replacement = replacement,
                   original.distribution.raster = NULL,
                   sample.plot = NULL)
-  if(is.null(.Random.seed)) {stats::runif(1)} # initialize random seed if there is none
+  if(is.null(.Random.seed)) {stats::runif(1)} # initialize random seed if there
+  # is none
   attr(results, "RNGkind") <- RNGkind()
   attr(results, "seed") <- .Random.seed
   
   
   if(inherits(x, "virtualspecies"))
   {
-    if(inherits(x$occupied.area, "RasterLayer"))
+    if(inherits(x$occupied.area, "SpatRaster"))
     {
       sp.raster <- x$occupied.area
-    } else if(inherits(x$pa.raster, "RasterLayer"))
+    } else if(inherits(x$pa.raster, "SpatRaster"))
     {
       sp.raster <- x$pa.raster
-    } else stop("x must be:\n- a raster layer object\nor\n- the output list from
-                functions generateRandomSp(), convertToPA() or 
-                limitDistribution()")
+    } else stop("x must be:\n- a SpatRaster object\nor\n- the output list", 
+                " from functions generateRandomSp(), convertToPA() or ", 
+                "limitDistribution()")
   } else if (inherits(x, "RasterLayer"))
+  {
+    sp.raster <- rast(x)
+    if(extract.probability)
+    {
+      stop("Cannot extract probability when x is not a virtualspecies object.", 
+           " Set extract.probability = FALSE")
+    }
+  } else  if (inherits(x, "SpatRaster"))
   {
     sp.raster <- x
     if(extract.probability)
     {
-      stop("Cannot extract probability when x is not a virtualspecies object. Set
-           extract.probability = FALSE")
+      stop("Cannot extract probability when x is not a virtualspecies object.", 
+           " Set extract.probability = FALSE")
     }
-  } else stop("x must be:\n- a raster layer object\nor\n- the output list from 
-              functions generateRandomSp(), convertToPA() or 
-              limitDistribution()")
+  } else stop("x must be:\n- a SpatRaster object\nor\n- the output list", 
+              " from functions generateRandomSp(), convertToPA() or ", 
+              "limitDistribution()")
   
-  if(sp.raster@data@max > 1 | sp.raster@data@min < 0)
+  if(global(sp.raster, max, na.rm = TRUE)[1, 1] > 1 | 
+     global(sp.raster, min, na.rm = TRUE)[1, 1] < 0)
   {
-    stop("There are values above 1 or below 0 in your presence/absence raster. 
-         Please make sure that the provided raster is a correct P/A raster and not a suitability raster.")
+    stop("There are values above 1 or below 0 in your presence/absence raster.", 
+         "Please make sure that the provided raster is a correct P/A raster", 
+         " and not a suitability raster.")
   }
   
-  results$original.distribution.raster <- original.raster <- sp.raster
+  original.raster <- sp.raster
+  results$original.distribution.raster <- wrap(original.raster)
   
   
   if(!is.null(sample.prevalence))
@@ -350,45 +364,64 @@ sampleOccurrences <- function(x, n,
   {
     if(is.character(sampling.area))
     {
-      worldmap <- rworldmap::getMap()
-      if (any(!(sampling.area %in% c(levels(worldmap@data$SOVEREIGNT),
-                                     levels(worldmap@data$REGION),
-                                     levels(worldmap@data$continent)))))
+      if(!("rnaturalearth" %in% rownames(installed.packages())))
       {
-        stop("The choosen sampling.area is incorrectly spelled.\n Type 'levels(getMap()@data$SOVEREIGNT)', 'levels(worldmap@data$REGION)' and levels(worldmap@data$continent) to obtain valid names.")
+        stop('You need to install the package "rnaturalearth".')
+      }
+      worldmap <- rnaturalearth::ne_countries(returnclass = "sf")
+      if (any(!(sampling.area %in% c(unique(worldmap$sovereignt),
+                                     unique(worldmap$region_un),
+                                     unique(worldmap$continent)))))
+      {
+        stop("The choosen sampling.area is incorrectly spelled.\n Type",
+             " 'unique(rnaturalearth::ne_countries(returnclass =",
+             "'sf')$sovereignt)', ",
+             "'unique(rnaturalearth::ne_countries(returnclass =",
+             "'sf')$region_un)'",
+             " & unique(rnaturalearth::ne_countries(returnclass =",
+             "'sf')$continent) to obtain valid names.")
       }
       sampling.area <- worldmap[which(
-        worldmap@data$SOVEREIGNT %in% sampling.area | 
-          worldmap@data$REGION %in% sampling.area |
-          worldmap@data$continent %in% sampling.area), ]
-    } else if(!(inherits(sampling.area, c("SpatialPolygons",
-                                          "SpatialPolygonsDataFrame", 
-                                          "Extent"))))
+        worldmap$sovereignt %in% sampling.area | 
+          worldmap$region_un %in% sampling.area |
+          worldmap$continent %in% sampling.area), ]
+    } else if(!(inherits(sampling.area, c("SpatVector",
+                                          "sf", 
+                                          "SpatExtent"))))
     {
-      stop("Please provide to sampling.area either \n
-           - the names of countries, region and/or continents in which to sample\n
-           - a SpatialPolygons or SpatialPolygonsDataFrame\n
-           - an extent\n
-           in which the sampling will take place")
+      stop("Please provide to sampling.area either \n", 
+           "- the names of countries, region and/or continents in which", 
+           " to sample\n",
+           "- a SpatialPolygons or SpatialPolygonsDataFrame\n", 
+           "- an extent\n ",
+           "in which the sampling will take place")
     }
     
-    sample.area.raster1 <- rasterize(sampling.area,
-                                     sp.raster, 
-                                     field = 1,
-                                     background = NA,
-                                     silent = TRUE)
-    sp.raster <- sp.raster * sample.area.raster1
+    # if(inherits(sampling.area, "sf")) { 
+    #   sampling.area <- vect(sampling.area)
+    # }
+    if(inherits(sampling.area, "SpatExtent")) {
+      sampling.area <- vect(sampling.area)
     }
+    sample.area.raster1 <- terra::rasterize(sampling.area,
+                                            sp.raster, 
+                                            field = 1,
+                                            background = NA,
+                                            silent = TRUE)
+    sp.raster <- sp.raster * sample.area.raster1
+  }
   
   
   if(correct.by.suitability)
   {
     if(!(inherits(x, "virtualspecies")) | !("suitab.raster" %in% names(x)))
     {
-      stop("If you choose to weight the probability of detection by the suitability of the species (i.e., correct.by.suitability = TRUE),
-           then you need to provide an appropriate virtual species containing a suitability raster to x.")
+      stop("If you choose to weight the probability of detection by the", 
+           " suitability of the species (i.e., correct.by.suitability = TRUE),", 
+           " then you need to provide an appropriate virtual species ", 
+           "containing a suitability raster to x.")
     }
-    }
+  }
   
   if(!is.numeric(detection.probability) | detection.probability > 1 | 
      detection.probability < 0)
@@ -421,30 +454,31 @@ sampleOccurrences <- function(x, n,
   
   if (bias %in% c("country", "region", "continent"))
   {
-    if(!("rworldmap" %in% rownames(installed.packages())))
+    if(!("rnaturalearth" %in% rownames(installed.packages())))
     {
       stop('You need to install the package "rworldmap" in order to use bias = 
            "region" or bias = "country"')
     }
-    worldmap <- rworldmap::getMap()
+    worldmap <- rnaturalearth::ne_countries(returnclass = "sf")
     
     if(bias == "country")
     {
-      if (any(!(bias.area %in% levels(worldmap@data$SOVEREIGNT))))
+      if (any(!(bias.area %in% worldmap$sovereignt)))
       {
-        stop("country name(s) must be correctly spelled. Type 
-             'levels(getMap()@data$SOVEREIGNT)' to obtain valid names.")
+        stop("country name(s) must be correctly spelled.", 
+             "Type unique(rnaturalearth::ne_countries(returnclass =",
+             "'sf')$sovereignt) to obtain valid names.")
       }    
       results$bias <- list(bias = bias,
                            bias.strength = bias.strength,
                            bias.area = bias.area)
     } else if (bias == "region")
     {
-      if (any(!(bias.area %in% levels(worldmap@data$REGION))))
+      if (any(!(bias.area %in% worldmap$region_un)))
       {
-        stop(paste("region name(s) must be correctly spelled, according to one 
-                   of the following : ", 
-                   paste(levels(worldmap@data$REGION), collapse = ", "), 
+        stop(paste("region name(s) must be correctly spelled, according to", 
+                   " one of the following : ", 
+                   paste(unique(worldmap$region_un), collapse = ", "), 
                    sep = "\n"))
       } 
       results$bias <- list(bias = bias,
@@ -452,11 +486,11 @@ sampleOccurrences <- function(x, n,
                            bias.area = bias.area)
     } else if (bias == "continent")
     {
-      if (any(!(bias.area %in% levels(worldmap@data$continent))))
+      if (any(!(bias.area %in% worldmap$continent)))
       {
-        stop(paste("region name(s) must be correctly spelled, 
-                   according to one of the following : ", 
-                   paste(levels(worldmap@data$continent), collapse = ", "), 
+        stop(paste("region name(s) must be correctly spelled,",
+                   "according to one of the following : ", 
+                   paste(unique(worldmap$continent), collapse = ", "), 
                    sep = "\n"))
       } 
       results$bias <- list(bias = bias,
@@ -464,21 +498,31 @@ sampleOccurrences <- function(x, n,
                            bias.area = bias.area)
     }
   }
-  if (bias == "polygon") # Projections are not checked here. Perhaps we should
-    # add projection check between raster & polygon in the future?
-    # This is especially important given that randomPoints weights samplings by 
-    # the cell area (because cells closer to the equator are larger)
+  if (bias == "polygon") 
   {
-    if(!(inherits(bias.area, c("SpatialPolygons", 
-                               "SpatialPolygonsDataFrame"))))
+    if(is.null(bias.area)) {
+      
+      message("No object of class SpatVector provided. A window with a map ",
+              "will open, click on the map to draw the polygon of the area", 
+              " sampled with a bias.\n Once finished, press ",
+              "escape to close the polygon.")
+      if("RStudioGD" %in% names(dev.list())) {
+        dev.new(noRStudioGD = TRUE)
+      }
+      plot(sp.raster)
+      bias.area <- draw(x = "polygon")
+
+    } else if(!(inherits(bias.area, c("sf", 
+                               "SpatVector"))))
     {
-      stop("If you choose bias = 'polygon', please provide a polygon of class 
-           SpatialPolygons or SpatialPolygonsDataFrame to argument bias.area")
+      stop("If you choose bias = 'polygon', please provide a polygon of class",
+           "sf or SpatVector to argument bias.area. You can also set", 
+           " bias.area = NULL to draw the polygon manually.")
     }
     
-    warning("Polygon projection is not checked. Please make sure you have the 
-            same projections between your polygon and your presence-absence
-            raster")
+    # warning("Polygon projection is not checked. Please make sure you have the 
+    #         same projections between your polygon and your presence-absence
+    #         raster")
     results$bias <- list(bias = bias,
                          bias.strength = bias.strength,
                          bias.area = bias.area)
@@ -486,6 +530,26 @@ sampleOccurrences <- function(x, n,
   
   if (bias == "extent")
   {
+    if(is.null(bias.area)) {
+      
+      message("No object of class SpatExtent provided. A window with a map ",
+              "will open, click on the map to draw the extent of the area", 
+              " sampled with a bias.\n Once finished, press ",
+              "escape to close the polygon.")
+      if("RStudioGD" %in% names(dev.list())) {
+        dev.new(noRStudioGD = TRUE)
+      }
+      plot(sp.raster)
+      bias.area <- vect(draw())
+      
+    } else if(!(inherits(bias.area, c("sf", 
+                                      "SpatVector"))))
+    {
+      stop("If you choose bias = 'extent', please provide an extent of class",
+           "SpatExtent to argument bias.area. You can also set", 
+           " bias.area = NULL to draw the extent manually.")
+    }
+    
     results$bias <- list(bias = bias,
                          bias.strength = bias.strength,
                          bias.area = bias.area)
@@ -503,7 +567,7 @@ sampleOccurrences <- function(x, n,
   
   if (bias == "manual")
   {
-    if(!(inherits(weights, "RasterLayer")))
+    if(!(inherits(weights, "SpatRaster")))
     {
       stop("You must provide a raster layer of weights (to argument weights) 
            if you choose bias == 'manual'")
@@ -511,47 +575,40 @@ sampleOccurrences <- function(x, n,
     bias.raster <- weights
     results$bias <- list(bias = bias,
                          bias.strength = "Defined by raster weights",
-                         weights = weights)
+                         weights = wrap(weights))
   } else
   {
-    bias.raster <- sample.raster    
+    bias.raster <- sample.raster 
+    bias.raster[bias.raster == 0] <- 1
   }
   
   if(bias == "country")
   {
     bias.raster1 <- rasterize(
-      worldmap[which(worldmap@data$SOVEREIGNT %in% bias.area), ],
+      worldmap[which(worldmap$sovereignt %in% bias.area), ],
       bias.raster, 
       field = bias.strength,
-      background = 1,
-      silent = TRUE)
+      background = 1)
     bias.raster <- bias.raster * bias.raster1
   } else if(bias == "region")
   {
     bias.raster1 <- rasterize(
-      worldmap[which(worldmap@data$REGION %in% bias.area), ],
+      worldmap[which(worldmap$region_un %in% bias.area), ],
       bias.raster, 
       field = bias.strength,
-      background = 1,
-      silent = TRUE)
+      background = 1)
     bias.raster <- bias.raster * bias.raster1
   } else if(bias == "continent")
   {
     bias.raster1 <- rasterize(
-      worldmap[which(levels(worldmap@data$continent) %in% bias.area), ],
+      worldmap[which(worldmap$continent %in% bias.area), ],
       bias.raster, 
       field = bias.strength,
-      background = 1,
-      silent = TRUE)
+      background = 1)
     bias.raster <- bias.raster * bias.raster1
   } else if(bias == "extent")
   {
-    if(!(inherits(bias.area, "Extent")))
-    {
-      message("No object of class extent provided: click twice on the map to draw the extent in which presence points will be sampled")
-      plot(sp.raster)
-      bias.area <- drawExtent(show = TRUE)      
-    }
+
     bias.raster <- bias.raster * rasterize(bias.area, sp.raster, 
                                            field = bias.strength,
                                            background = 1)
@@ -569,150 +626,143 @@ sampleOccurrences <- function(x, n,
   }
   
   
-  if(bias != "no.bias")
+  if(type == "presence only")
   {
-    if(type == "presence only")
-    {
-
-      number.errors <- stats::rbinom(n = 1, size = 50, prob = error.probability)
-      sample.points <- .randomPoints(sample.raster * bias.raster,
-                                     n = number.errors, 
-                                     prob = TRUE, tryf = 1,
-                                     replaceCells = replacement)
-      sample.points <- rbind(sample.points,
-                             .randomPoints(sample.raster * bias.raster,
-                                           n = n - number.errors, 
-                                           prob = TRUE, tryf = 1,
-                                           replaceCells = replacement))
-    } else
-    {
-      if(is.null(sample.prevalence))
-      {
-        sample.points <- .randomPoints(sample.raster * bias.raster, n = n, 
-                                       prob = TRUE, tryf = 1,
-                                       replaceCells = replacement)
-      } else
-      { 
-        if(replacement)
-        {
-          message("Argument replacement = TRUE implies that sample prevalence
-                  may not necessarily be respected in geographical space. Sample
-                  prevalence will be respected, but multiple samples can occur 
-                  in the same cell so that spatial prevalence will be different.
-                  ")
-        }
-        tmp1 <- sample.raster
-        tmp1[sp.raster != 1] <- NA
-        sample.points <- .randomPoints(tmp1 * bias.raster, 
-                                       n = sample.prevalence * n, 
-                                       prob = TRUE, tryf = 1,
-                                       replaceCells = replacement)
-        tmp1 <- sample.raster
-        tmp1[sp.raster != 0] <- NA
-        sample.points <- rbind(sample.points,
-                               .randomPoints(tmp1 * bias.raster, 
-                                             n = (1 - sample.prevalence) * n, 
-                                             prob = TRUE, tryf = 1,
-                                             replaceCells = replacement))
-        rm(tmp1)
-      }
+    
+    number.errors <- stats::rbinom(n = 1, size = n, prob = error.probability)
+    
+    error.raster <- sample.raster
+    error.raster[error.raster == 0] <- 1
+    
+    if (number.errors > 0) {
+      sample.points <- spatSample(error.raster * bias.raster, 
+                                  size = number.errors,
+                                  method = "weights",
+                                  xy = TRUE,
+                                  values = FALSE,
+                                  replace = replacement)
+    } else {
+      sample.points <- data.frame()
     }
+    
+    
+    
+    sample.points <- rbind(sample.points,
+                           spatSample(sample.raster * bias.raster, 
+                                      size = n - number.errors,
+                                      method = "weights",
+                                      xy = TRUE,
+                                      values = FALSE,
+                                      replace = replacement))
+    
   } else
   {
-    if(type == "presence only")
+    if(is.null(sample.prevalence))
     {
-      
-      number.errors <- stats::rbinom(n = 1, size = n, prob = error.probability)
-      sample.points <- .randomPoints(sample.raster, n = number.errors, 
-                                     prob = TRUE, tryf = 1,
-                                     replaceCells = replacement)
-      sample.points <- rbind(sample.points,
-                             .randomPoints(sample.raster, n = n - number.errors, 
-                                           prob = TRUE, tryf = 1,
-                                           replaceCells = replacement))
-      
+      sample.points <- spatSample(sample.raster * bias.raster, 
+                                  size = n,
+                                  method = "weights",
+                                  xy = TRUE,
+                                  values = FALSE,
+                                  replace = replacement)
+
     } else
     {
-      if(is.null(sample.prevalence))
-      {
-        sample.points <- .randomPoints(sample.raster, n = n,
-                                       prob = TRUE, tryf = 1,
-                                       replaceCells = replacement)
-      } else
-      {
-        tmp1 <- sample.raster
-        tmp1[sp.raster != 1] <- NA
-        sample.points <- .randomPoints(tmp1, n = sample.prevalence * n,
-                                       prob = TRUE, tryf = 1,
-                                       replaceCells = replacement)
-        tmp1 <- sample.raster
-        tmp1[sp.raster != 0] <- NA
-        sample.points <- rbind(sample.points,
-                               .randomPoints(tmp1,
-                                             n = (1 - sample.prevalence) * n, 
-                                             prob = TRUE, tryf = 1,
-                                             replaceCells = replacement))
-        rm(tmp1)
-      }
+      tmp1 <- sample.raster
+      tmp1[sp.raster != 1] <- NA
+      sample.points <- spatSample(tmp1 * bias.raster, 
+                                  size = sample.prevalence * n,
+                                  method = "weights",
+                                  xy = TRUE,
+                                  values = FALSE,
+                                  replace = replacement)
+      
+      
+      tmp1 <- sample.raster
+      tmp1[sp.raster != 0] <- NA
+      tmp1[tmp1 == 0] <- 1
+      sample.points <- rbind(sample.points,
+                             spatSample(tmp1 * bias.raster, 
+                                        size = (1 - sample.prevalence) * n,
+                                        method = "weights",
+                                        xy = TRUE,
+                                        values = FALSE,
+                                        replace = replacement))
+      rm(tmp1)
     }
   }
+  
+  sample.points <- sample.points[, c(1, 2)]
   
   if(type == "presence only")
   {
     sample.points <- data.frame(sample.points,
-                                Real = extract(sp.raster, sample.points),
+                                Real = extract(sp.raster, 
+                                               sample.points,
+                                               ID = FALSE),
                                 Observed = sample(
                                   c(NA, 1),
                                   size = nrow(sample.points),
                                   prob = c(1 - detection.probability,
                                            detection.probability),
                                   replace = TRUE))
-    } else if(type == "presence-absence")
+    colnames(sample.points)[3] <- "Real"
+  } else if(type == "presence-absence")
+  {
+    sample.points <- data.frame(sample.points,
+                                extract(sp.raster, 
+                                        sample.points,
+                                        ID = FALSE))
+    colnames(sample.points)[3] <- "Real"
+    
+    
+    if(correct.by.suitability)
     {
-      sample.points <- data.frame(sample.points,
-                                  Real = extract(sp.raster, sample.points))
-      
-      if(correct.by.suitability)
-      {
-        suitabs <- extract(x$suitab.raster, sample.points[, c("x", "y")])
-      } else { suitabs <- rep(1, nrow(sample.points)) }
-      
-      sample.points$Observed <- NA
-      if(correct.by.suitability)
-      {
-        sample.points$Observed[which(sample.points$Real == 1)] <-
-          sapply(detection.probability * suitabs[
-            which(sample.points$Real == 1)
-            ],
-            function(y)
-            {
-              sample(c(0, 1),
-                     size = 1,
-                     prob = c(1 - y, y))
-            })
-      } else
-      {
-        sample.points$Observed[which(sample.points$Real == 1)] <-
-          sample(c(0, 1), size = length(which(sample.points$Real == 1)),
-                 prob = c(1 - detection.probability, detection.probability),
-                 replace = TRUE)
-      }
-      sample.points$Observed[which(sample.points$Real == 0 |
-                                     sample.points$Observed == 0)] <-
-        sample(c(0, 1), size = length(which(sample.points$Real == 0 |
-                                              sample.points$Observed == 0)),
-               prob = c(1 - error.probability, error.probability),
-               replace = TRUE)
-      
+      suitabs <- extract(x$suitab.raster, 
+                         sample.points[, c("x", "y")],
+                         ID = FALSE)[, 1]
+    } else { 
+      suitabs <- rep(1, nrow(sample.points)) 
     }
+    
+    sample.points$Observed <- NA
+    if(correct.by.suitability)
+    {
+      sample.points$Observed[which(sample.points$Real == 1)] <-
+        sapply(detection.probability * suitabs[
+          which(sample.points$Real == 1)
+        ],
+        function(y)
+        {
+          sample(c(0, 1),
+                 size = 1,
+                 prob = c(1 - y, y))
+        })
+    } else
+    {
+      sample.points$Observed[which(sample.points$Real == 1)] <-
+        sample(c(0, 1), size = length(which(sample.points$Real == 1)),
+               prob = c(1 - detection.probability, detection.probability),
+               replace = TRUE)
+    }
+    sample.points$Observed[which(sample.points$Real == 0 |
+                                   sample.points$Observed == 0)] <-
+      sample(c(0, 1), size = length(which(sample.points$Real == 0 |
+                                            sample.points$Observed == 0)),
+             prob = c(1 - error.probability, error.probability),
+             replace = TRUE)
+    
+  }
   
   if(plot)
   {
-    plot(original.raster)
+    plot(original.raster,
+         col = rev(viridis::viridis(3)[2:3]))
     # par(new = TRUE)
     if(type == "presence only")
     {
-      points(sample.points[, c("x", "y")], pch = 16, cex = .5)
+      points(sample.points[, c("x", "y")], pch = 16, cex = .5,
+             col = viridis::viridis(3)[1])
     } else
     {
       points(sample.points[sample.points$Observed == 1, c("x", "y")],
@@ -726,9 +776,12 @@ sampleOccurrences <- function(x, n,
   
   if(extract.probability)
   {
-    sample.points <- data.frame(sample.points,
-                                true.probability = extract(x$probability.of.occurrence,
-                                                           sample.points[, c("x", "y")]))
+    sample.points <- data.frame(
+      sample.points,
+      extract(x$probability.of.occurrence,
+              sample.points[, c("x", "y")],
+              ID = FALSE))
+    colnames(sample.points)[ncol(sample.points)] <- "true.probability"
   }
   
   

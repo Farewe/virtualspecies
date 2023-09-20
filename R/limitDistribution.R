@@ -8,20 +8,27 @@
 #' 
 #' This function basically takes any type of raster and will limit values above
 #' 0 to areas where the species is allowed to disperse.
-#' @param x a \code{rasterLayer} object composed of 0, 1 and NA, or the output list from 
+#' @param x a \code{SpatRaster} object composed of 0, 1 and NA, or the output 
+#' list from 
 #' \code{\link{generateSpFromFun}}, \code{\link{generateSpFromPCA}} 
 #' or \code{\link{generateRandomSp}}
 #' @param geographical.limit \code{"country"}, \code{"region"}, 
-#' \code{"continent"}, \code{"polygon"}, \code{"raster"} or \code{"extent"}. The method used
+#' \code{"continent"}, \code{"polygon"}, \code{"raster"} or \code{"extent"}.
+#'  The method used
 #' to limit the distribution range: see details.
-#' @param area \code{NULL}, a character string, a \code{polygon}, a \code{raster} or an \code{extent} object.
-#' The area in which the distribution range will be limited: see details. If \code{NULL}
+#' @param area \code{NULL}, a character string, a \code{polygon}, a 
+#' \code{raster} or an \code{extent} object.
+#' The area in which the distribution range will be limited: see details. 
+#' If \code{NULL}
 #' and \code{geographical.limit = "extent"}, then you will be asked to draw an
 #' extent on the map.
-#' @param plot \code{TRUE} or \code{FALSE}. If \code{TRUE}, the resulting limited
+#' @param plot \code{TRUE} or \code{FALSE}. If \code{TRUE}, the resulting 
+#' limited
 #' distribution will be plotted.
 #' @details
-#' \href{http://borisleroy.com/virtualspecies_tutorial/08-dispersallimitation.html}{Online tutorial for this function}
+#' \href{
+#' http://borisleroy.com/virtualspecies_tutorial/08-dispersallimitation.html}{
+#' Online tutorial for this function}
 #' 
 #' 
 #' \bold{How the function works:}
@@ -98,26 +105,27 @@
 #' # Create an example stack with six environmental variables
 #' a <- matrix(rep(dnorm(1:100, 50, sd = 25)), 
 #'             nrow = 100, ncol = 100, byrow = TRUE)
-#' env <- stack(raster(a * dnorm(1:100, 50, sd = 25)),
-#'              raster(a * 1:100),
-#'              raster(a * logisticFun(1:100, alpha = 10, beta = 70)),
-#'              raster(t(a)),
-#'              raster(exp(a)),
-#'              raster(log(a)))
+#' env <- c(rast(a * dnorm(1:100, 50, sd = 25)),
+#'          rast(a * 1:100),
+#'          rast(a * logisticFun(1:100, alpha = 10, beta = 70)),
+#'          rast(t(a)),
+#'          rast(exp(a)),
+#'          rast(log(a)))
 #' names(env) <- paste("Var", 1:6, sep = "")   
 #' 
 #' # More than 6 variables: by default a PCA approach will be used
 #' sp <- generateRandomSp(env)
 #' 
 #' # limiting the distribution to a specific extent
-#' limit <- extent(0.5, 0.7, 0.6, 0.8)
+#' limit <- ext(1, 50, 1, 50)
 #' 
 #' limitDistribution(sp, area = limit)
 #' 
 #' 
 #' # Example of a raster of habitat patches
 #' habitat.raster <- setValues(sp$pa.raster, 
-#'                           sample(c(0, 1), size = ncell(sp$pa.raster), replace = TRUE))
+#'                             sample(c(0, 1), size = ncell(sp$pa.raster), 
+#'                             replace = TRUE))
 #' 
 #' plot(habitat.raster) # 1 = suitable habitat; 0 = unsuitable habitat
 #' sp <- limitDistribution(sp, geographical.limit = "raster", area = habitat.raster)
@@ -137,16 +145,24 @@ limitDistribution <- function(x,
   
   if(inherits(x, "virtualspecies"))
   {
-    if(inherits(x$pa.raster, "RasterLayer"))
+    if(inherits(x$pa.raster, "SpatRaster"))
     {
       sp.raster <- x$pa.raster
       results <- x
-    } else stop("x must be:\n- a raster layer object\nor\n- the output list from function convertToPA(), generateSpFromFun(), generateSpFromPCA() or generateRandomSp()")
+    } else stop("x must be:\n- a raster layer object\nor\n- the output list", 
+                " from function convertToPA(), generateSpFromFun(), ", 
+                "generateSpFromPCA() or generateRandomSp()")
   } else if (inherits(x, "RasterLayer"))
   {
+    sp.raster <- rast(x)
+    results <- list(wrap(sp.raster))
+  } else if (inherits(x, "SpatRaster"))
+  {
     sp.raster <- x
-    results <- list(sp.raster)
-  } else stop("x must be:\n- a raster layer object\nor\n- the output list from function convertToPA(), generateSpFromFun(), generateSpFromPCA() or generateRandomSp()")
+    results <- list(wrap(sp.raster))
+  } else stop("x must be:\n- a raster layer object\nor\n- the output list", 
+              " from function convertToPA(), generateSpFromFun(),", 
+              " generateSpFromPCA() or generateRandomSp()")
   
   
   if(length(geographical.limit) > 1)
@@ -154,34 +170,40 @@ limitDistribution <- function(x,
     stop('Only one dispersal limit method can be applied at a time')
   }
   
-  if (!(geographical.limit %in% c("country", "region", "extent", "polygon", "continent", "raster")))
+  if (!(geographical.limit %in% c("country", "region", "extent", "polygon", 
+                                  "continent", "raster")))
   {
-    stop('Argument geographical.limit must be one of : country, region, continent, polygon, extent, raster')
+    stop('Argument geographical.limit must be one of : country, region,', 
+         ' continent, polygon, extent, raster')
   }
 
   
   if (geographical.limit %in% c("country", "region", "continent"))
   {
-    if(!("rworldmap" %in% rownames(installed.packages())))
+    if(!("rnaturalearth" %in% rownames(installed.packages())))
     {
-      stop('You need to install the package "rworldmap" in order to use geographical.limit = "region" or "country" or "continent"')
+      stop('You need to install the package "rnaturalearth".')
     }
-    worldmap <- rworldmap::getMap()
+    worldmap <- rnaturalearth::ne_countries(returnclass = "sf")
     
     if(geographical.limit == "country")
     {
-      if (any(!(area %in% levels(worldmap@data$SOVEREIGNT))))
+      if (any(!(area %in% worldmap$sovereignt)))
       {
-        stop("area name(s) must be correctly spelled. Type 'levels(getMap()@data$SOVEREIGNT)' to obtain valid names.")
+        stop("area name(s) must be correctly spelled. Type ", 
+             "unique(rnaturalearth::ne_countries(returnclass =",
+             "'sf')$sovereignt) to obtain valid names.")
       }    
       results$geographical.limit <- list(method = geographical.limit,
                                          area = area)
     } else if (geographical.limit == "region")
     {
-      if (any(!(area %in% levels(worldmap@data$REGION))))
+      if (any(!(area %in% worldmap$region_un)))
       {
-        stop(paste("region name(s) must be correctly spelled, according to one of the following : ", 
-                   paste(levels(worldmap@data$REGION), collapse = ", "), sep = "\n"))
+        stop(paste("region name(s) must be correctly spelled, according to", 
+                   " one of the following : ", 
+                   paste(unique(worldmap$region_un), collapse = ", "), 
+                   sep = "\n"))
       } 
       results$geographical.limit <- list(method = geographical.limit,
                                          area = area)
@@ -189,48 +211,77 @@ limitDistribution <- function(x,
     {
       if (any(!(area %in% levels(worldmap@data$continent))))
       {
-        stop(paste("region name(s) must be correctly spelled, according to one of the following : ", 
-                   paste(levels(worldmap@data$continent), collapse = ", "), sep = "\n"))
+        stop(paste("region name(s) must be correctly spelled,",
+                   "according to one of the following : ", 
+                   paste(unique(worldmap$continent), collapse = ", "), 
+                   sep = "\n"))
       } 
       results$geographical.limit <- list(method = geographical.limit,
                                          area = area)
     }
-  } else if (geographical.limit == "polygon") # Projections are not checked here. Perhaps we should add projection check between raster & polygon in the future?
-    # This is especially important given that randomPoints weights samplings by the cell area (because cells closer to
-    # the equator are larger)
+  } else if (geographical.limit == "polygon") 
   {
-    if(!(inherits(area, c("SpatialPolygons", "SpatialPolygonsDataFrame"))))
+    if(is.null(area)) {
+      message("No object of class SpatVector or sf provided to area (or wrong",
+              "  object class). A window with a map ",
+              "will open, click on the map to draw the polygon of the area", 
+              ".\n Once finished, press ",
+              "escape to close the polygon.")
+      if("RStudioGD" %in% names(dev.list())) {
+        dev.new(noRStudioGD = TRUE)
+      }
+      plot(sp.raster)
+      area <- draw(x = "polygon")
+    } else if(!(inherits(area, c("SpatVector", "sf"))))
     {
-      stop("If you choose geographical.limit = 'polygon', please provide a polygon of class SpatialPolygons or SpatialPolygonsDataFrame to argument area")
+      stop("If you choose geographical.limit = 'polygon', please provide a",
+           " polygon of class ",
+           "sf or SpatVector to argument area. You can also set",
+           " area = NULL to draw the polygon manually.")
     }
-    warning("Polygon projection is not checked. Please make sure you have the same projections between your polygon and your presence-absence raster")
     results$geographical.limit <- list(method = geographical.limit,
                                        area = area)
   } else if(geographical.limit == "extent")
   {
-    if(!(inherits(area, "Extent")))
-    {
-      message("No object of class extent (or wrong object) provided: click twice on the map to draw the extent in which presence points will be sampled")
+    if(!(inherits(area, "SpatExtent"))) {
+      
+      message("No object of class SpatExtent provided (or wrong object class).", 
+              " A window with a map ",
+              "will open, click on the map to draw the extent of the area", 
+              ".\n Once finished, press ",
+              "escape to close the polygon.")
+      if("RStudioGD" %in% names(dev.list())) {
+        dev.new(noRStudioGD = TRUE)
+      }
       plot(sp.raster)
-      area <- drawExtent(show = TRUE)      
+      area <- vect(draw())
+    } else {
+      area <- vect(area)
     }
+
   } else if(geographical.limit == "raster")
   {
-    if (!(inherits(area, "RasterLayer")))
-    {
-      stop("If you choose to limit the distribution with a raster, please provide the raster to argument 'area'")    
+    if(inherits(area, "RasterLayer")) {
+      message("area was a raster object, converting to terra...")
+      area <- rast(area)
     }
-    if (!area@data@haveminmax)
+    if (!(inherits(area, "SpatRaster")))
     {
-      area <- setMinMax(area)
+      stop("If you choose to limit the distribution with a raster, please", 
+           " provide the raster to argument 'area'")    
     }
-    if(area@data@max > 1)
+
+    if(global(area, "max", na.rm = TRUE)[1, 1] > 1)
     {
-      warning("The raster used to limit species distribution has values greater than 1. This will likely result in something very different to a distribution raster.")
+      warning("The raster used to limit species distribution has values", 
+              " greater than 1. This will likely result in something very", 
+              " different to a distribution raster.")
     }
-    if(area@data@min < 0)
+    if(global(area, "min", na.rm = TRUE)[1, 1] < 0)
     {
-      warning("The raster used to limit species distribution has values lower than 0. This will likely result in something very different to a distribution raster.")
+      warning("The raster used to limit species distribution has values lower", 
+              " than 0. This will likely result in something very different to", 
+              " a distribution raster.")
     }
     results$geographical.limit <- list(method = geographical.limit,
                                        area = area)
@@ -240,34 +291,41 @@ limitDistribution <- function(x,
   
   if(geographical.limit == "country")
   {
-    geographical.limit.raster1 <- rasterize(worldmap[which(worldmap@data$SOVEREIGNT %in% area), ],
-                                            geographical.limit.raster, 
-                                            field = 1,
-                                            background = 0,
-                                            silent = TRUE)
-    geographical.limit.raster <- geographical.limit.raster * geographical.limit.raster1
+    geographical.limit.raster1 <- rasterize(
+      worldmap[which(worldmap$sovereignt %in% area), ],
+      geographical.limit.raster, 
+      field = 1,
+      background = 0,
+      silent = TRUE)
+    geographical.limit.raster <- 
+      geographical.limit.raster * geographical.limit.raster1
   } else if(geographical.limit == "region")
   {
-    geographical.limit.raster1 <- rasterize(worldmap[which(worldmap@data$REGION %in% area), ],
-                              geographical.limit.raster, 
-                              field = 1,
-                              background = 0,
-                              silent = TRUE)
-    geographical.limit.raster <- geographical.limit.raster * geographical.limit.raster1
+    geographical.limit.raster1 <- 
+      rasterize(worldmap[which(worldmap$region_un %in% area), ],
+                geographical.limit.raster, 
+                field = 1,
+                background = 0,
+                silent = TRUE)
+    geographical.limit.raster <-
+      geographical.limit.raster * geographical.limit.raster1
   } else if(geographical.limit == "continent")
   {
-    geographical.limit.raster1 <- rasterize(worldmap[which(worldmap@data$continent %in% area), ],
-                                            geographical.limit.raster,
-                                            field = 1,
-                                            background = 0,
-                                            silent = TRUE)
-    geographical.limit.raster <- geographical.limit.raster * geographical.limit.raster1
+    geographical.limit.raster1 <- rasterize(
+      worldmap[which(worldmap$continent %in% area), ],
+      geographical.limit.raster,
+      field = 1,
+      background = 0,
+      silent = TRUE)
+    geographical.limit.raster <- 
+      geographical.limit.raster * geographical.limit.raster1
   } else if(geographical.limit == "extent")
   {
-    geographical.limit.raster <- geographical.limit.raster * rasterize(area, 
-                                                                       sp.raster, 
-                                                                       field = 1, 
-                                                                       background = 0)
+    geographical.limit.raster <-
+      geographical.limit.raster * rasterize(area, 
+                                            sp.raster, 
+                                            field = 1, 
+                                            background = 0)
     results$geographical.limit <- list(method = geographical.limit,
                                        extent = area)
   } else if(geographical.limit == "polygon")
@@ -277,7 +335,8 @@ limitDistribution <- function(x,
                                             field = 1,
                                             background = 0,
                                             silent = TRUE)
-    geographical.limit.raster <- geographical.limit.raster * geographical.limit.raster1
+    geographical.limit.raster <- 
+      geographical.limit.raster * geographical.limit.raster1
   } else if(geographical.limit == "raster")
   {
     geographical.limit.raster <- geographical.limit.raster * area
