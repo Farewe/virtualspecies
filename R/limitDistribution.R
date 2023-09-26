@@ -55,11 +55,13 @@
 #' 
 #' List of possible \code{area} names:
 #' \itemize{
-#' \item{Countries: type \code{levels(getMap()@@data$SOVEREIGNT)} in the console}
-#' \item{Regions: "Africa", "Antarctica", "Asia", "Australia", "Europe", 
-#' "North America", "South America"}
-#' \item{Continents: "Africa", "Antarctica", "Australia", "Eurasia", 
-#' "North America", "South America"}}
+#' \item{Countries: type 
+#' \code{unique(rnaturalearth::ne_countries(returnclass ='sf')$sovereignt)} 
+#' in the console}
+#' \item{Regions: "Africa", "Antarctica", "Asia", "Oceania", "Europe", 
+#' "Americas"}
+#' \item{Continents: "Africa", "Antarctica", "Asia", "Europe", 
+#' "North America", "Oceania", "South America"}}
 #' }
 #' \item{a polygon:
 #' 
@@ -208,7 +210,7 @@ limitDistribution <- function(x,
                                          area = area)
     } else if (geographical.limit == "continent")
     {
-      if (any(!(area %in% levels(worldmap@data$continent))))
+      if (any(!(area %in% worldmap$continent)))
       {
         stop(paste("region name(s) must be correctly spelled,",
                    "according to one of the following : ", 

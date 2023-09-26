@@ -83,11 +83,13 @@ regions or continents to \code{area} (see examples).
 
 List of possible \code{area} names:
 \itemize{
-\item{Countries: type \code{levels(getMap()@data$SOVEREIGNT)} in the console}
-\item{Regions: "Africa", "Antarctica", "Asia", "Australia", "Europe", 
-"North America", "South America"}
-\item{Continents: "Africa", "Antarctica", "Australia", "Eurasia", 
-"North America", "South America"}}
+\item{Countries: type 
+\code{unique(rnaturalearth::ne_countries(returnclass ='sf')$sovereignt)} 
+in the console}
+\item{Regions: "Africa", "Antarctica", "Asia", "Oceania", "Europe", 
+"Americas"}
+\item{Continents: "Africa", "Antarctica", "Asia", "Europe", 
+"North America", "Oceania", "South America"}}
 }
 \item{a polygon:
 

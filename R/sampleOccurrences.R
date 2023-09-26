@@ -122,12 +122,13 @@
 #' 
 #' List of possible \code{bias.area} names:
 #' \itemize{
-#' \item{Countries: type \code{levels(getMap()@@data$SOVEREIGNT)} in the 
-#' console}
-#' \item{Regions: "Africa", "Antarctica", "Asia", "Australia", "Europe", 
-#' "North America", "South America"}
-#' \item{Continents: "Africa", "Antarctica", "Australia", "Eurasia", 
-#' "North America", "South America"}}
+#' \item{Countries: type 
+#' \code{unique(rnaturalearth::ne_countries(returnclass ='sf')$sovereignt)} 
+#' in the console}
+#' \item{Regions: "Africa", "Antarctica", "Asia", "Oceania", "Europe", 
+#' "Americas"}
+#' \item{Continents: "Africa", "Antarctica", "Asia", "Europe", 
+#' "North America", "Oceania", "South America"}}
 #' }
 #' \item{a polygon:
 #' 
@@ -453,8 +454,8 @@ sampleOccurrences <- function(x, n,
   {
     if(!("rnaturalearth" %in% rownames(utils::installed.packages())))
     {
-      stop('You need to install the package "rworldmap" in order to use bias = 
-           "region" or bias = "country"')
+      stop('You need to install the package "rnaturalearth" in order to use', 
+           'bias = "region" or bias = "country"')
     }
     worldmap <- rnaturalearth::ne_countries(returnclass = "sf")
     
@@ -512,7 +513,7 @@ sampleOccurrences <- function(x, n,
     } else if(!(inherits(bias.area, c("sf", 
                                "SpatVector"))))
     {
-      stop("If you choose bias = 'polygon', please provide a polygon of class",
+      stop("If you choose bias = 'polygon', please provide a polygon of class ",
            "sf or SpatVector to argument bias.area. You can also set", 
            " bias.area = NULL to draw the polygon manually.")
     }

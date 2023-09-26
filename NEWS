@@ -1,3 +1,11 @@
+virtualspecies v1.6 (Release date: 2023-09-26)
+==============
+
+Changes:
+* MAJOR CHANGE: virtualspecies was ported to terra and sf, and no longer makes 
+use of raster, sp, and rworldmap
+
+
 virtualspecies v1.5.1 (Release date: 2019-12-12)
 ==============
 
