@@ -9,7 +9,6 @@
 #' used; otherwise a slower but memory-safe way will be used.
 #' @param x a raster stack object which needs to be synchronised.
 #' @export
-#' @import raster
 #' @author
 #' Boris Leroy \email{leroy.boris@@gmail.com}
 #' 
@@ -56,17 +55,17 @@ synchroniseNA <- function(x)
   } else if(inherits(x, "RasterStack")){
     if(canProcessInMemory(x, n = 2))
     {
-      val <- getValues(x)
+      val <- raster::getValues(x)
       if(any(is.na(val)))
       {
         NA.pos <- unique(which(is.na(val), arr.ind = T)[, 1])
       }
       val[NA.pos, ] <- NA
-      x <- setValues(x, val)
+      x <- raster::setValues(x, val)
       return(x)
     } else
     {
-      x <- mask(x, calc(x, fun = sum))
+      x <- raster::mask(x, raster::calc(x, fun = sum))
       return(x)
     }
   }

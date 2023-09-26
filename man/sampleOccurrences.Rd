@@ -117,8 +117,7 @@ The sampling bias can be defined manually or with a set of predefined
 biases.
 }
 \details{
-\href{
-http://borisleroy.com/virtualspecies_tutorial/07-sampleoccurrences.html}{
+\href{http://borisleroy.com/virtualspecies_tutorial/07-sampleoccurrences.html}{
 Online tutorial for this function}
 
 
@@ -265,7 +264,7 @@ sampleOccurrences(sp, n = 30, type = "presence-absence",
                   error.probability = 0.5)
                   
 # Introducing a sampling bias (oversampling)
-biased.area <- extent(0.5, 0.7, 0.6, 0.8)
+biased.area <- ext(1, 50, 1, 50)
 sampleOccurrences(sp, n = 50, type = "presence-absence", 
                   bias = "extent",
                   bias.area = biased.area)
@@ -273,7 +272,7 @@ sampleOccurrences(sp, n = 50, type = "presence-absence",
 plot(biased.area, add = TRUE)     
 
 # Introducing a sampling bias (no sampling at all in the chosen area)
-biased.area <- extent(0.5, 0.7, 0.6, 0.8)
+biased.area <- ext(1, 50, 1, 50)
 sampleOccurrences(sp, n = 50, type = "presence-absence", 
                   bias = "extent",
                   bias.strength = 0,

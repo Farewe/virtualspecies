@@ -15,6 +15,7 @@ parameters <- formatFunctions(variable1 = c(fun = 'dnorm', mean = 1e-04,
 plotResponse(x = env, parameters = parameters, 
              approach = "response")
 
+sp1 <- generateSpFromFun(env, parameters, plot = TRUE)
 
 # If you provide env, then you can see the shape of response functions:
 parameters <- formatFunctions(x = env,
@@ -236,133 +237,133 @@ samp1 <- sampleOccurrences(sp5,
                            sample.prevalence = .1,
                            extract.probability = TRUE)
 
-
-
-worldclim <- geodata::worldclim_global(var = "bio", res = 10, path = tempdir())
-names(worldclim) <- paste0("bio", 1:19)
-
-my.stack <- worldclim[[c("bio2", "bio5", "bio6", "bio12", "bio13", "bio14")]]
-random.sp <- generateSpFromPCA(my.stack,
-                               axes = 1:3,
-                               niche.breadth = "narrow")
-
-random.sp <- convertToPA(random.sp)
-
-worldmap <- rnaturalearth::ne_countries(returnclass = "sf")
-
-samp1 <- sampleOccurrences(random.sp,
-                           n = 50)
-samp1 <- sampleOccurrences(random.sp,
-                           n = 50,
-                           sampling.area = "Morocco",
-                           error.probability = 0.1,
-                           detection.probability = .9)
-
-samp1 <- sampleOccurrences(random.sp,
-                           n = 50,
-                           sampling.area = worldmap[worldmap$sovereignt == 
-                                                      "France", ],
-                           error.probability = 0.1,
-                           detection.probability = .9)
-
-
-
-samp1 <- sampleOccurrences(random.sp,
-                           n = 50,
-                           sampling.area = ext(0, 180, 0, 90),
-                           error.probability = 0.1,
-                           detection.probability = .9)
-
-
-samp1 <- sampleOccurrences(random.sp,
-                           n = 50,
-                           sampling.area = ext(0, 180, 0, 90),
-                           bias = "extent",
-                           bias.strength = 50,
-                           error.probability = 0.1,
-                           detection.probability = .9)
-
-
-samp1 <- sampleOccurrences(random.sp,
-                           n = 50,
-                           sampling.area = ext(0, 180, 0, 90),
-                           bias = "country",
-                           bias.area = "Egypt",
-                           bias.strength = 50,
-                           error.probability = 0.1,
-                           detection.probability = .9)
-samp1 <- sampleOccurrences(random.sp,
-                           n = 50,
-                           sampling.area = ext(0, 180, 0, 90),
-                           bias = "region",
-                           bias.area = "Africa",
-                           bias.strength = 50,
-                           error.probability = 0.1,
-                           detection.probability = .9)
-
-samp1 <- sampleOccurrences(random.sp,
-                           n = 50,
-                           sampling.area = ext(0, 180, 0, 90),
-                           bias = "continent",
-                           bias.area = "Africa",
-                           bias.strength = 50,
-                           error.probability = 0.1,
-                           detection.probability = .9)
-
-samp1 <- sampleOccurrences(random.sp,
-                           n = 50,
-                           sampling.area = ext(0, 180, 0, 90),
-                           bias = "polygon",
-                           bias.area = worldmap[worldmap$sovereignt == 
-                                                  "Egypt", ],
-                           bias.strength = 200,
-                           error.probability = 0.1,
-                           detection.probability = .9)
-
-
-samp1 <- sampleOccurrences(random.sp,
-                           n = 50,
-                           sampling.area = ext(0, 180, 0, 90),
-                           bias = "polygon",
-                           bias.area = NULL,
-                           bias.strength = 200,
-                           error.probability = 0.1,
-                           detection.probability = .9)
-
-
-samp1 <- sampleOccurrences(random.sp,
-                           n = 50,
-                           sampling.area = ext(0, 180, 0, 90),
-                           bias = "extent",
-                           bias.area = NULL,
-                           bias.strength = 200,
-                           error.probability = 0.1,
-                           detection.probability = .9)
-
-
-samp1 <- sampleOccurrences(random.sp,
-                           type = "presence-absence",
-                           n = 50,
-                           sampling.area = ext(0, 180, 0, 90),
-                           bias = "extent",
-                           bias.area = NULL,
-                           bias.strength = 200,
-                           error.probability = 0.1,
-                           detection.probability = .9)
-
-samp1 <- sampleOccurrences(random.sp,
-                           type = "presence-absence",
-                           n = 50,
-                           error.probability = 0.1,
-                           detection.probability = .9,
-                           correct.by.suitability = TRUE)
-
-
-samp1 <- sampleOccurrences(random.sp,
-                           type = "presence-absence",
-                           n = 50,
-                           error.probability = 0.1,
-                           detection.probability = .9,
-                           correct.by.suitability = TRUE,
-                           bias = "manual",
-                           weights = exp(random.sp$suitab.raster))
+# 
+# 
+# worldclim <- geodata::worldclim_global(var = "bio", res = 10, path = tempdir())
+# names(worldclim) <- paste0("bio", 1:19)
+# 
+# my.stack <- worldclim[[c("bio2", "bio5", "bio6", "bio12", "bio13", "bio14")]]
+# random.sp <- generateSpFromPCA(my.stack,
+#                                axes = 1:3,
+#                                niche.breadth = "narrow")
+# 
+# random.sp <- convertToPA(random.sp)
+# 
+# worldmap <- rnaturalearth::ne_countries(returnclass = "sf")
+# 
+# samp1 <- sampleOccurrences(random.sp,
+#                            n = 50)
+# samp1 <- sampleOccurrences(random.sp,
+#                            n = 50,
+#                            sampling.area = "Morocco",
+#                            error.probability = 0.1,
+#                            detection.probability = .9)
+# 
+# samp1 <- sampleOccurrences(random.sp,
+#                            n = 50,
+#                            sampling.area = worldmap[worldmap$sovereignt == 
+#                                                       "France", ],
+#                            error.probability = 0.1,
+#                            detection.probability = .9)
+# 
+# 
+# 
+# samp1 <- sampleOccurrences(random.sp,
+#                            n = 50,
+#                            sampling.area = ext(0, 180, 0, 90),
+#                            error.probability = 0.1,
+#                            detection.probability = .9)
+# 
+# 
+# samp1 <- sampleOccurrences(random.sp,
+#                            n = 50,
+#                            sampling.area = ext(0, 180, 0, 90),
+#                            bias = "extent",
+#                            bias.strength = 50,
+#                            error.probability = 0.1,
+#                            detection.probability = .9)
+# 
+# 
+# samp1 <- sampleOccurrences(random.sp,
+#                            n = 50,
+#                            sampling.area = ext(0, 180, 0, 90),
+#                            bias = "country",
+#                            bias.area = "Egypt",
+#                            bias.strength = 50,
+#                            error.probability = 0.1,
+#                            detection.probability = .9)
+# samp1 <- sampleOccurrences(random.sp,
+#                            n = 50,
+#                            sampling.area = ext(0, 180, 0, 90),
+#                            bias = "region",
+#                            bias.area = "Africa",
+#                            bias.strength = 50,
+#                            error.probability = 0.1,
+#                            detection.probability = .9)
+# 
+# samp1 <- sampleOccurrences(random.sp,
+#                            n = 50,
+#                            sampling.area = ext(0, 180, 0, 90),
+#                            bias = "continent",
+#                            bias.area = "Africa",
+#                            bias.strength = 50,
+#                            error.probability = 0.1,
+#                            detection.probability = .9)
+# 
+# samp1 <- sampleOccurrences(random.sp,
+#                            n = 50,
+#                            sampling.area = ext(0, 180, 0, 90),
+#                            bias = "polygon",
+#                            bias.area = worldmap[worldmap$sovereignt == 
+#                                                   "Egypt", ],
+#                            bias.strength = 200,
+#                            error.probability = 0.1,
+#                            detection.probability = .9)
+# 
+# 
+# samp1 <- sampleOccurrences(random.sp,
+#                            n = 50,
+#                            sampling.area = ext(0, 180, 0, 90),
+#                            bias = "polygon",
+#                            bias.area = NULL,
+#                            bias.strength = 200,
+#                            error.probability = 0.1,
+#                            detection.probability = .9)
+# 
+# 
+# samp1 <- sampleOccurrences(random.sp,
+#                            n = 50,
+#                            sampling.area = ext(0, 180, 0, 90),
+#                            bias = "extent",
+#                            bias.area = NULL,
+#                            bias.strength = 200,
+#                            error.probability = 0.1,
+#                            detection.probability = .9)
+# 
+# 
+# samp1 <- sampleOccurrences(random.sp,
+#                            type = "presence-absence",
+#                            n = 50,
+#                            sampling.area = ext(0, 180, 0, 90),
+#                            bias = "extent",
+#                            bias.area = NULL,
+#                            bias.strength = 200,
+#                            error.probability = 0.1,
+#                            detection.probability = .9)
+# 
+# samp1 <- sampleOccurrences(random.sp,
+#                            type = "presence-absence",
+#                            n = 50,
+#                            error.probability = 0.1,
+#                            detection.probability = .9,
+#                            correct.by.suitability = TRUE)
+# 
+# 
+# samp1 <- sampleOccurrences(random.sp,
+#                            type = "presence-absence",
+#                            n = 50,
+#                            error.probability = 0.1,
+#                            detection.probability = .9,
+#                            correct.by.suitability = TRUE,
+#                            bias = "manual",
+#                            weights = exp(random.sp$suitab.raster))

@@ -9,20 +9,20 @@ Author: Boris Leroy [cre, aut], Christine N. Meynard [ctb],
 Maintainer: Boris Leroy <leroy.boris@gmail.com>
 Description: Provides a framework for generating virtual species distributions,
     a procedure increasingly used in ecology to improve species distribution
-    models. This package integrates the existing methodological approaches with the
-    objective of generating virtual species distributions with increased ecological
-    realism.
+    models. This package integrates the existing methodological approaches 
+    with the objective of generating virtual species distributions with 
+    increased ecological realism.
 Encoding: UTF-8
 License: GPL (>=2.0)
 Depends:
+    R (>= 3.5),
     terra
 Imports:
     ade4,
     graphics,
     grDevices,
-    methods,
     rnaturalearth,
-    sf,
+    raster,
     stats,
     utils,
     viridis

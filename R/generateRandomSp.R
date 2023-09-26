@@ -123,8 +123,8 @@
 #' \code{species.prevalence}, it may not be possible to reach this particular 
 #' value because of the availability of environmental conditions. Several
 #' runs may be necessary to reach the desired \code{species.prevalence}.
+#' @import terra
 #' @export
-#' @import raster
 #' @author
 #' Boris Leroy \email{leroy.boris@@gmail.com}
 #' 

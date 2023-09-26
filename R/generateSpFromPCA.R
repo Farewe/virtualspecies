@@ -83,10 +83,8 @@
 #' then sd values along this axis can range from 1 to 5.
 #' }
 #' }
-#' @import raster
-#' @importFrom grDevices terrain.colors
-#' @importFrom graphics layout title
 #' @export
+#' @import terra
 #' @author
 #' Boris Leroy \email{leroy.boris@@gmail.com}
 #' 
@@ -317,16 +315,18 @@ generateSpFromPCA <- function(raster.stack,
   
   if(plot)
   {
-    op <- par(no.readonly = TRUE)
-    par(mar = c(5.1, 4.1, 4.1, 2.1))
-    layout(matrix(nrow = 2, ncol = 1, c(1, 2)))
+    op <- graphics::par(no.readonly = TRUE)
+    graphics::par(mar = c(5.1, 4.1, 4.1, 2.1))
+    graphics::layout(matrix(nrow = 2, ncol = 1, c(1, 2)))
     
     plotResponse(x = raster.stack, approach = "pca",
                  parameters = list(pca = pca.object,
                                    axes = axes,
                                    means = means,
                                    sds = sds,
-                                   rescale = rescale), no.plot.reset = T)
+                                   rescale = rescale,
+                                   max_prob_rescale = max_,
+                                   min_prob_rescale = min_), no.plot.reset = T)
     
     plot(suitab.raster, axes = T, ann = F, asp = 1,
           main = "Environmental suitability of the virtual species",
@@ -339,7 +339,7 @@ generateSpFromPCA <- function(raster.stack,
     # title("Environmental suitability of the virtual species")
 
 
-    par(op)
+    graphics::par(op)
   }
   
   results <- list(approach = "pca",
@@ -375,7 +375,7 @@ generateSpFromPCA <- function(raster.stack,
 
 .prob.gaussian <- function(x, means, sds)
 {
-  prod(dnorm(x, mean = means, sd = sds))
+  prod(stats::dnorm(x, mean = means, sd = sds))
 }
 
 .range.function <- function(axis, pca)

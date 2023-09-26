@@ -1,4 +1,5 @@
 #' @export
+#' @import terra
 #' @method `$` VSSampledPoints
 `$.VSSampledPoints` <- function(x, name)
 {
@@ -10,6 +11,7 @@
 }
 
 #' @export
+#' @import terra
 #' @method `[[` VSSampledPoints
 `[[.VSSampledPoints` <- function(x, name)
 {
@@ -22,7 +24,7 @@
 
 #' @export
 #' @method `as.list` VSSampledPoints
-as.list.VSSampledPoints <- function(x)
+as.list.VSSampledPoints <- function(x, ...)
 {
   class(x) <- "list"
   return(x)
@@ -30,6 +32,7 @@ as.list.VSSampledPoints <- function(x)
 
 
 #' @export
+#' @import terra
 #' @method `$` virtualspecies
 `$.virtualspecies` <- function(x, name)
 {
@@ -41,6 +44,7 @@ as.list.VSSampledPoints <- function(x)
 }
 
 #' @export
+#' @import terra
 #' @method `[[` virtualspecies
 `[[.virtualspecies` <- function(x, name)
 {
@@ -53,7 +57,7 @@ as.list.VSSampledPoints <- function(x)
 
 #' @export
 #' @method `as.list` virtualspecies
-as.list.virtualspecies <- function(x)
+as.list.virtualspecies <- function(x, ...)
 {
   class(x) <- "list"
   return(x)
@@ -241,7 +245,7 @@ plot.virtualspecies <- function(x, ...)
   
   defaults <- list(x = x,
                    col = rev(viridis::magma(10)))
-  args <- modifyList(defaults, list(...))
+  args <- utils::modifyList(defaults, list(...))
   do.call("plot", defaults)
 }
 

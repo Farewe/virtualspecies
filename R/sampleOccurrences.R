@@ -57,8 +57,7 @@
 #' @param plot \code{TRUE} or \code{FALSE}. If \code{TRUE}, the sampled 
 #' occurrence points will be plotted.
 #' @details
-#' \href{
-#' http://borisleroy.com/virtualspecies_tutorial/07-sampleoccurrences.html}{
+#' \href{http://borisleroy.com/virtualspecies_tutorial/07-sampleoccurrences.html}{
 #' Online tutorial for this function}
 #' 
 #' 
@@ -188,9 +187,7 @@
 #' after which the sampling of absences will proceed according to the specified
 #' bias.  
 #' @export
-#' @import raster
-#' @importFrom graphics points
-#' @importFrom utils installed.packages
+#' @import terra
 #' @author
 #' Boris Leroy \email{leroy.boris@@gmail.com}
 #' Willson Gaul \email{wgaul@@hotmail.com}
@@ -233,7 +230,7 @@
 #'                   error.probability = 0.5)
 #'                   
 #' # Introducing a sampling bias (oversampling)
-#' biased.area <- extent(0.5, 0.7, 0.6, 0.8)
+#' biased.area <- ext(1, 50, 1, 50)
 #' sampleOccurrences(sp, n = 50, type = "presence-absence", 
 #'                   bias = "extent",
 #'                   bias.area = biased.area)
@@ -241,7 +238,7 @@
 #' plot(biased.area, add = TRUE)     
 #' 
 #' # Introducing a sampling bias (no sampling at all in the chosen area)
-#' biased.area <- extent(0.5, 0.7, 0.6, 0.8)
+#' biased.area <- ext(1, 50, 1, 50)
 #' sampleOccurrences(sp, n = 50, type = "presence-absence", 
 #'                   bias = "extent",
 #'                   bias.strength = 0,
@@ -364,7 +361,7 @@ sampleOccurrences <- function(x, n,
   {
     if(is.character(sampling.area))
     {
-      if(!("rnaturalearth" %in% rownames(installed.packages())))
+      if(!("rnaturalearth" %in% rownames(utils::installed.packages())))
       {
         stop('You need to install the package "rnaturalearth".')
       }
@@ -454,7 +451,7 @@ sampleOccurrences <- function(x, n,
   
   if (bias %in% c("country", "region", "continent"))
   {
-    if(!("rnaturalearth" %in% rownames(installed.packages())))
+    if(!("rnaturalearth" %in% rownames(utils::installed.packages())))
     {
       stop('You need to install the package "rworldmap" in order to use bias = 
            "region" or bias = "country"')
@@ -506,8 +503,8 @@ sampleOccurrences <- function(x, n,
               "will open, click on the map to draw the polygon of the area", 
               " sampled with a bias.\n Once finished, press ",
               "escape to close the polygon.")
-      if("RStudioGD" %in% names(dev.list())) {
-        dev.new(noRStudioGD = TRUE)
+      if("RStudioGD" %in% names(grDevices::dev.list())) {
+        grDevices::dev.new(noRStudioGD = TRUE)
       }
       plot(sp.raster)
       bias.area <- draw(x = "polygon")
@@ -536,18 +533,19 @@ sampleOccurrences <- function(x, n,
               "will open, click on the map to draw the extent of the area", 
               " sampled with a bias.\n Once finished, press ",
               "escape to close the polygon.")
-      if("RStudioGD" %in% names(dev.list())) {
-        dev.new(noRStudioGD = TRUE)
+      if("RStudioGD" %in% names(grDevices::dev.list())) {
+        grDevices::dev.new(noRStudioGD = TRUE)
       }
       plot(sp.raster)
       bias.area <- vect(draw())
       
-    } else if(!(inherits(bias.area, c("sf", 
-                                      "SpatVector"))))
+    } else if(!(inherits(bias.area, c("SpatExtent"))))
     {
       stop("If you choose bias = 'extent', please provide an extent of class",
            "SpatExtent to argument bias.area. You can also set", 
            " bias.area = NULL to draw the extent manually.")
+    } else {
+      bias.area <- vect(bias.area)
     }
     
     results$bias <- list(bias = bias,
@@ -761,14 +759,14 @@ sampleOccurrences <- function(x, n,
     # par(new = TRUE)
     if(type == "presence only")
     {
-      points(sample.points[, c("x", "y")], pch = 16, cex = .5,
+      graphics::points(sample.points[, c("x", "y")], pch = 16, cex = .5,
              col = viridis::viridis(3)[1])
     } else
     {
-      points(sample.points[sample.points$Observed == 1, c("x", "y")],
+      graphics::points(sample.points[sample.points$Observed == 1, c("x", "y")],
              pch = 16, cex = .8)
       # par(new = TRUE)
-      points(sample.points[sample.points$Observed == 0, c("x", "y")], 
+      graphics::points(sample.points[sample.points$Observed == 0, c("x", "y")], 
              pch = 1, cex = .8)
     }
     results$sample.plot <- grDevices::recordPlot()

@@ -217,7 +217,7 @@
 #' The structure of the virtualspecies object can be seen using \code{str()}
 #' 
 #' 
-#' @importFrom stats median rbinom runif
+#' @import terra
 #' @examples
 #' # Create an example stack with two environmental variables
 #' a <- matrix(rep(dnorm(1:100, 50, sd = 25)), 
@@ -756,13 +756,13 @@ convertToPA <- function(x,
       classify(sp.raster,
                matrix(data = c(-Inf, beta, 0,
                                beta, +Inf, 1), 
-                      nc = 3, nr = 2, byrow = TRUE))
+                      ncol = 3, nrow = 2, byrow = TRUE))
     if(approach == "bca") {
       PA.raster.future <- proba.of.occurrence.future <-
         classify(x$suitab.raster.future,
                  matrix(data = c(-Inf, beta, 0,
                                  beta, +Inf, 1), 
-                        nc = 3, nr = 2, byrow = TRUE))
+                        ncol = 3, nrow = 2, byrow = TRUE))
         
     }
     
@@ -903,7 +903,8 @@ convertToPA <- function(x,
   # Raster of same dimentions than the  probability raster
   random.numbers <- rast(x = prob.raster)
   # Generate random numbers between 0 and 1 from uniform distribution
-  random.numbers <- setValues (random.numbers, runif(ncell(prob.raster), 0, 1)) 
+  random.numbers <- setValues (random.numbers, 
+                               stats::runif(ncell(prob.raster), 0, 1)) 
   # Attribute presence or absence on the basis of whether the random number
   # is above or below the probability of occurrence
   pa.raster <- prob.raster > random.numbers
@@ -1092,7 +1093,7 @@ so these were truncated to 1\n")
     if(abs(prev1 - target.prevalence) > 0.01)
     {
       if(m)  cat("Finding a better b...\n")
-      b0.5 <- median(c(b0, b1))
+      b0.5 <- stats::median(c(b0, b1))
       raster0.5 = .transf(suit.raster, coefs = c(slop, b0.5))
       distr0.5 = .quickBernoulliTrial(raster0.5)
       prev0.5 <- global(distr0.5, stat = "mean", na.rm = TRUE)[1, 1]

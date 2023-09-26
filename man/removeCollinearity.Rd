@@ -2,7 +2,7 @@
 % Please edit documentation in R/removeCollinearity.R
 \name{removeCollinearity}
 \alias{removeCollinearity}
-\title{Remove collinearity among variables of a a raster stack}
+\title{Remove collinearity among variables of a raster stack}
 \usage{
 removeCollinearity(
   raster.stack,
@@ -15,7 +15,8 @@ removeCollinearity(
 )
 }
 \arguments{
-\item{raster.stack}{a RasterStack object, in which each layer represent an environmental 
+\item{raster.stack}{a SpatRaster object, in which each layer represent an
+ environmental 
 variable.}
 
 \item{multicollinearity.cutoff}{a numeric value corresponding to the cutoff
@@ -23,7 +24,8 @@ of correlation above which to group variables.}
 
 \item{select.variables}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, then the
 function will choose one variable among each group to return a vector of
-non correlated variables (see details). If \code{FALSE}, the function will return a list
+non correlated variables (see details). If \code{FALSE}, the function will 
+return a list
 containing the groups of correlated variables.}
 
 \item{sample.points}{\code{TRUE} or \code{FALSE}. If you have a large
@@ -32,7 +34,8 @@ raster file then use this parameter to sample a number of points equal to
 
 \item{nb.points}{a numeric value. Only useful if \code{sample.points = TRUE}.
 The number of sampled points from the raster, to perform the PCA. A too small
-value may not be representative of the environmental conditions in your raster.}
+value may not be representative of the environmental conditions in your 
+raster.}
 
 \item{plot}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, the hierarchical
 ascendant classification used to group variables will be plotted.}
@@ -63,7 +66,8 @@ according to their degree of correlation.
 
 If \code{select.variables = TRUE}, then the function will return a vector
 containing variables that are not colinear.
-The variables not correlated to any other variables are automatically included
+The variables not correlated to any other variables are automatically 
+included
 in this vector. For each group of colinear variables, one variable will
 be randomly chosen and included in this vector.
 }
@@ -71,12 +75,12 @@ be randomly chosen and included in this vector.
 # Create an example stack with six environmental variables
 a <- matrix(rep(dnorm(1:100, 50, sd = 25)), 
             nrow = 100, ncol = 100, byrow = TRUE)
-env <- stack(raster(a * dnorm(1:100, 50, sd = 25)),
-             raster(a * 1:100),
-             raster(a * logisticFun(1:100, alpha = 10, beta = 70)),
-             raster(t(a)),
-             raster(exp(a)),
-             raster(log(a)))
+env <- c(rast(a * dnorm(1:100, 50, sd = 25)),
+         rast(a * 1:100),
+         rast(a * logisticFun(1:100, alpha = 10, beta = 70)),
+         rast(t(a)),
+         rast(exp(a)),
+         rast(log(a)))
 names(env) <- paste("Var", 1:6, sep = "")   
    
 # Defaults settings: cutoff at 0.7

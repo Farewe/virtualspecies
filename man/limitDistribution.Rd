@@ -54,8 +54,7 @@ This function basically takes any type of raster and will limit values above
 0 to areas where the species is allowed to disperse.
 }
 \details{
-\href{
-http://borisleroy.com/virtualspecies_tutorial/08-dispersallimitation.html}{
+\href{http://borisleroy.com/virtualspecies_tutorial/08-dispersallimitation.html}{
 Online tutorial for this function}
 
 
@@ -124,7 +123,7 @@ names(env) <- paste("Var", 1:6, sep = "")
 sp <- generateRandomSp(env)
 
 # limiting the distribution to a specific extent
-limit <- extent(0.5, 0.7, 0.6, 0.8)
+limit <- ext(1, 50, 1, 50)
 
 limitDistribution(sp, area = limit)
 

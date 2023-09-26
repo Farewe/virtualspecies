@@ -19,6 +19,9 @@
 #' Only useful for a PCA species.
 #' @param no.plot.reset \code{TRUE} or \code{FALSE}. If \code{FALSE}, the plot window
 #' will be reset to its initial state after the response has been plotted. 
+#' @param rescale.each.response \code{TRUE} or \code{FALSE}. If \code{TRUE}, 
+#' the individual responses to
+#' each environmental variable are rescaled between 0 and 1.
 #' @param ... further arguments to be passed to \code{plot}. See 
 #' \code{\link[graphics]{plot}} and \code{\link[graphics]{par}}.
 #' @details
@@ -51,12 +54,7 @@
 #' }
 #' }
 #' @export
-#' @import raster
-#' @importFrom grDevices grey heat.colors
-#' @importFrom graphics par mtext polygon segments legend strwidth strheight rect arrows
-#' @importFrom methods is 
-#' @importFrom stats dnorm
-#' @importFrom utils modifyList
+#' @import terra
 #' @author
 #' Boris Leroy \email{leroy.boris@@gmail.com}
 #' 
@@ -157,7 +155,7 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = NULL,
       }
       if(is.null(rescale)) {
         rescale <- TRUE
-        warning("Argument rescale was not specified, so it was automatically ",
+        message("Argument rescale was not specified, so it was automatically ",
                 "defined to TRUE. Verify that this is what you want.")
       } 
       details <- parameters
@@ -243,10 +241,10 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = NULL,
     if (prod(mfrow) < length(parameters)) {mfrow[1] <- mfrow[1] + 1}
     if(!no.plot.reset)
     {
-      op <- par(no.readonly = TRUE)
+      op <- graphics::par(no.readonly = TRUE)
     }
-    par(mfrow = mfrow,
-        mar = c(4.1, 4.1, 0.1, 0.1))
+    graphics::par(mfrow = mfrow,
+                  mar = c(4.1, 4.1, 0.1, 0.1))
     for(i in names(parameters))
     {
       cur.seq <- seq(parameters[[i]]$min,
@@ -256,14 +254,16 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = NULL,
       {
         values <- do.call(match.fun(parameters[[i]]$fun), 
                           args = c(list(cur.seq), parameters[[i]]$args))
+
         values <- (values - min(values)) / (max(values) - min(values))
+         
         # Formating plotting arguments
         defaults <- list(x = cur.seq, y = values, type = "l", bty = "l",
                          cex.axis = .7, ylab = "Suitability", xlab = "",
                          las = 1, cex = .5, cex.lab = 1)
-        args <- modifyList(defaults, list( ...))
+        args <- utils::modifyList(defaults, list( ...))
         do.call("plot", args)
-        mtext(side = 1, text = i, line = 2, cex = args$cex.lab)
+        graphics::mtext(side = 1, text = i, line = 2, cex = args$cex.lab)
       } else
       {
         values <- do.call(match.fun(parameters[[i]]$fun), 
@@ -274,14 +274,14 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = NULL,
                          type = "l", bty = "l",
                          cex.axis = .7, ylab = "Suitability", xlab = "",
                          las = 1, cex = .5, cex.lab = 1)
-        args <- modifyList(defaults, list( ...))
+        args <- utils::modifyList(defaults, list( ...))
         do.call("plot", args)
-        mtext(side = 1, text = i, line = 2, cex = args$cex.lab)
+        graphics::mtext(side = 1, text = i, line = 2, cex = args$cex.lab)
       }
     }    
     if(!no.plot.reset)
     {
-      par(op)
+      graphics::par(op)
     }
   } else if (approach == "pca")
   {
@@ -313,49 +313,55 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = NULL,
     
     if(!no.plot.reset)
     {
-      op <- par(no.readonly = TRUE)
+      op <- graphics::par(no.readonly = TRUE)
     }
-    par(mar = c(4.1, 4.1, 4.1, 4.6))
+    graphics::par(mar = c(4.1, 4.1, 4.1, 4.6))
     defaults <- list(x = pca.object$li[, axes.to.plot],
-                     col = c(grey(.8), rev(viridis::inferno(150)))[
+                     col = c(grDevices::grey(.8), rev(viridis::inferno(150)))[
                        match(round(probabilities * 100, 0), 0:100)],
                      xlim = c(xmin, xmax),
                      ylim = c(ymin, ymax),
                      main = paste0("PCA of environmental conditions\nAxes ", 
                                    paste0(axes.to.plot, collapse = " & "), 
-                                   " (", length(axes), " axes included in total)"),
+                                   " (", length(axes),
+                                   " axes included in total)"),
                      bty = "n",
                      las = 1, cex.axis = .7, pch = 16)
-    args <- modifyList(defaults, list(...))
+    args <- utils::modifyList(defaults, list(...))
     do.call("plot", defaults)
     
     i1 <- which(axes == axes.to.plot[1])
     i2 <- which(axes == axes.to.plot[2])
     
-    polygon(sqrt((sds[i1] * cos(seq(0, 2 * pi, length = 100)))^2 + (sds[i2] * sin(seq(0, 2 * pi, length = 100)))^2) * 
-              cos(atan2(sds[i2] * sin(seq(0, 2 * pi, length = 100)), 
-                        sds[i1] * cos(seq(0, 2 * pi, length = 100)))) + means[i1],
-            sqrt((sds[i1] * cos(seq(0, 2 * pi, length = 100)))^2 + (sds[i2] * sin(seq(0, 2 * pi, length = 100)))^2) * 
-              sin(atan2(sds[i2] * sin(seq(0, 2 * pi, length = 100)), 
-                        sds[i1] * cos(seq(0, 2 * pi, length = 100)))) + means[i2],
-            col = NA, lty = 1, lwd = 1, border = NULL)
+    graphics::polygon(
+      sqrt((sds[i1] * cos(seq(0, 2 * pi, length = 100)))^2 +
+             (sds[i2] * sin(seq(0, 2 * pi, length = 100)))^2) * 
+        cos(atan2(sds[i2] * sin(seq(0, 2 * pi, length = 100)), 
+                  sds[i1] * cos(seq(0, 2 * pi, length = 100)))) + means[i1],
+      sqrt((sds[i1] * cos(seq(0, 2 * pi, length = 100)))^2 +
+             (sds[i2] * sin(seq(0, 2 * pi, length = 100)))^2) * 
+        sin(atan2(sds[i2] * sin(seq(0, 2 * pi, length = 100)), 
+                  sds[i1] * cos(seq(0, 2 * pi, length = 100)))) + means[i2],
+      col = NA, lty = 1, lwd = 1, border = NULL)
     
-    par(xpd = F)
-    segments(x0 = means[i1] - sds[i1], x1 = means[i1] - sds[i1],
-             y0 = ymin - 2 * diff(c(ymin, ymax)), 
-             y1 = means[i2], lty = 3)
+    graphics::par(xpd = F)
+    graphics::segments(x0 = means[i1] - sds[i1], x1 = means[i1] - sds[i1],
+                       y0 = ymin - 2 * diff(c(ymin, ymax)), 
+                       y1 = means[i2], lty = 3)
     
-    segments(x0 = means[i1] + sds[i1], x1 = means[i1] + sds[i1],
-             y0 = ymin - 2 * diff(c(ymin, ymax)),
-             y1 = means[i2], lty = 3)
+    graphics::segments(x0 = means[i1] + sds[i1], x1 = means[i1] + sds[i1],
+                       y0 = ymin - 2 * diff(c(ymin, ymax)),
+                       y1 = means[i2], lty = 3)
     
-    segments(x0 = xmin - 2 * diff(c(xmin, xmax)), 
-             x1 = means[i1],
-             y0 = means[i2] - sds[i2], y1 = means[i2] - sds[i2], lty = 3)
+    graphics::segments(x0 = xmin - 2 * diff(c(xmin, xmax)), 
+                       x1 = means[i1],
+                       y0 = means[i2] - sds[i2], y1 = means[i2] - sds[i2],
+                       lty = 3)
     
-    segments(x0 = xmin - 2 * diff(c(xmin, xmax)), 
-             x1 = means[i1],
-             y0 = means[i2] + sds[i2], y1 = means[i2] + sds[i2], lty = 3)
+    graphics::segments(x0 = xmin - 2 * diff(c(xmin, xmax)), 
+                        x1 = means[i1],
+                        y0 = means[i2] + sds[i2], y1 = means[i2] + sds[i2],
+                        lty = 3)
     cutX <- diff(c(xmin, xmax)) * 2/3 + xmin
     cutY <- diff(c(ymin, ymax)) * 2/3 + ymin
     if(means[i1] <= cutX & means[i2] <= cutY)
@@ -384,7 +390,7 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = NULL,
       y1 <- pca.object$co[, i2] + y0
     }
     
-    par(xpd = T)
+    graphics::par(xpd = T)
     x1y1 <- cbind(x1, y1)
     apply(x1y1, 1, FUN = function(x, a = x0, b = y0)
       {
@@ -395,45 +401,47 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = NULL,
                  label = rownames(pca.object$co), clabel = 1,
                  origin = c(x0, y0))
 
-    legend(title = "Pixel\nsuitability", "topright", inset = c(-0.1, 0),
-           legend = c(1, 0.8, 0.6, 0.4, 0.2, 0),
-           pch = 16, col = c(viridis::inferno(150)[c(1, 38, 75, 113, 150)],
-                             grey(.8)), bty = "n")
+    graphics::legend(title = "Pixel\nsuitability", "topright", 
+                     inset = c(-0.1, 0),
+                     legend = c(1, 0.8, 0.6, 0.4, 0.2, 0),
+                     pch = 16, col = c(viridis::inferno(150)[c(1, 38, 75, 
+                                                               113, 150)],
+                                       grDevices::grey(.8)), bty = "n")
     
     
-    par(new = T)
+    graphics::par(new = T)
     
-    valY <- dnorm(seq(xmin,
-                      xmax, 
-                      length = 1000), 
-                  mean = means[i1], 
-                  sd = sds[i1])
+    valY <- stats::dnorm(seq(xmin,
+                             xmax, 
+                             length = 1000), 
+                         mean = means[i1], 
+                         sd = sds[i1])
     valY <- 0.15 * (valY - min(valY))/(max(valY) - min(valY))
     valX <- seq(xmin, 
                 xmax, 
                 length = 1000)
     
     plot(valY ~ valX,
-         col = grey(.7),
+         col = grDevices::grey(.7),
          type = "l", bty = "n", 
          ylim = c(0, 1), 
          lty = 1,
          xlab = "", ylab = "", xaxt = "n", yaxt = "n")
-    par(new = T)
+    graphics::par(new = T)
     
     
     valY <- seq(ymin, 
                 ymax,
                 length = 1000)
-    valX <- dnorm(seq(ymin, 
-                      ymax, 
-                      length = 1000),
-                  mean = means[2],
-                  sd = sds[2])
+    valX <- stats::dnorm(seq(ymin, 
+                             ymax, 
+                             length = 1000),
+                         mean = means[2],
+                         sd = sds[2])
     valX <- 0.15 * (valX - min(valX))/(max(valX) - min(valX))
     plot(valX,
          valY,
-         col = grey(.7),
+         col = grDevices::grey(.7),
          type = "l", bty = "n",
          xlim = c(0, 1), 
          lty = 1,
@@ -441,7 +449,7 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = NULL,
     
     if(!no.plot.reset)
     {
-      par(op)
+      graphics::par(op)
     }
   }  else if (approach == "bca") {
     bca.object     <- details$bca
@@ -465,12 +473,12 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = NULL,
     ymin <- min(bca.object$ls[, 2]) - 0.3 * diff(range(bca.object$ls[, 2]))
     ymax <- max(bca.object$ls[, 2])
     
-    par(mar = c(4.1, 4.1, 4.1, 6.1))
+    graphics::par(mar = c(4.1, 4.1, 4.1, 6.1))
     
     defaults <- list(x = bca.object$ls,
                      #                    col = c(grey(.8), rev(heat.colors(150))[51:200]) [match(round(probabilities * 100, 0), 0:100)] ,
                      
-                     col = c(grey(.8), rev(viridis::inferno(150)))[
+                     col = c(grDevices::grey(.8), rev(viridis::inferno(150)))[
                        match(round(probabilities * 100, 0), 0:100)],
                      cex = .35,
                      pch = c(rep(15, lengths[1]),
@@ -487,35 +495,38 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = NULL,
                      las = 1, cex.axis = .7)
 
     
-    args <- modifyList(defaults, list(...))
+    args <- utils::modifyList(defaults, list(...))
     do.call("plot", defaults)
 
     
     #points(means[2] ~ means[1], pch = 16)
-    polygon(sqrt((sds[1] * cos(seq(0, 2 * pi, length = 100)))^2 + (sds[2] * sin(seq(0, 2 * pi, length = 100)))^2) * 
-              cos(atan2(sds[2] * sin(seq(0, 2 * pi, length = 100)), 
-                        sds[1] * cos(seq(0, 2 * pi, length = 100)))) + means[1],
-            sqrt((sds[1] * cos(seq(0, 2 * pi, length = 100)))^2 + (sds[2] * sin(seq(0, 2 * pi, length = 100)))^2) * 
-              sin(atan2(sds[2] * sin(seq(0, 2 * pi, length = 100)), 
-                        sds[1] * cos(seq(0, 2 * pi, length = 100)))) + means[2],
-            col = NA, lty = 1, lwd = 1, border = NULL)
+    graphics::polygon(
+      sqrt((sds[1] * cos(seq(0, 2 * pi, length = 100)))^2 + 
+             (sds[2] * sin(seq(0, 2 * pi, length = 100)))^2) * 
+        cos(atan2(sds[2] * sin(seq(0, 2 * pi, length = 100)), 
+                  sds[1] * cos(seq(0, 2 * pi, length = 100)))) + means[1],
+      sqrt((sds[1] * cos(seq(0, 2 * pi, length = 100)))^2 + 
+             (sds[2] * sin(seq(0, 2 * pi, length = 100)))^2) * 
+        sin(atan2(sds[2] * sin(seq(0, 2 * pi, length = 100)), 
+                  sds[1] * cos(seq(0, 2 * pi, length = 100)))) + means[2],
+      col = NA, lty = 1, lwd = 1, border = NULL)
     
-    par(xpd = F)
-    segments(x0 = means[1] - sds[1], x1 = means[1] - sds[1],
-             y0 = ymin - 2 * diff(c(ymin, ymax)), 
-             y1 = means[2], lty = 3)
+    graphics::par(xpd = F)
+    graphics::segments(x0 = means[1] - sds[1], x1 = means[1] - sds[1],
+                       y0 = ymin - 2 * diff(c(ymin, ymax)), 
+                       y1 = means[2], lty = 3)
     
-    segments(x0 = means[1] + sds[1], x1 = means[1] + sds[1],
-             y0 = ymin - 2 * diff(c(ymin, ymax)),
-             y1 = means[2], lty = 3)
+    graphics::segments(x0 = means[1] + sds[1], x1 = means[1] + sds[1],
+                       y0 = ymin - 2 * diff(c(ymin, ymax)),
+                       y1 = means[2], lty = 3)
     
-    segments(x0 = xmin - 2 * diff(c(xmin, xmax)), 
-             x1 = means[1],
-             y0 = means[2] - sds[2], y1 = means[2] - sds[2], lty = 3)
+    graphics::segments(x0 = xmin - 2 * diff(c(xmin, xmax)), 
+                       x1 = means[1],
+                       y0 = means[2] - sds[2], y1 = means[2] - sds[2], lty = 3)
     
-    segments(x0 = xmin - 2 * diff(c(xmin, xmax)), 
-             x1 = means[1],
-             y0 = means[2] + sds[2], y1 = means[2] + sds[2], lty = 3)
+    graphics::segments(x0 = xmin - 2 * diff(c(xmin, xmax)), 
+                       x1 = means[1],
+                       y0 = means[2] + sds[2], y1 = means[2] + sds[2], lty = 3)
     cutX <- diff(c(xmin, xmax)) * 2/3 + xmin
     cutY <- diff(c(ymin, ymax)) * 2/3 + ymin
     
@@ -545,7 +556,7 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = NULL,
       y1 <- bca.object$c1[, 2] + y0
     }
     
-    par(xpd = T)
+    graphics::par(xpd = T)
     x1y1 <- cbind(x1, y1)
     apply(x1y1, 1, FUN = function(x, a = x0, b = y0){
       .arrows(x0 = a, y0 = b, x1 = x[1], y1 = x[2])
@@ -556,32 +567,33 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = NULL,
                  origin = c(x0, y0))
     
     
-    legend("topright", inset = c(-.4,
-                                 0),
-           legend = c("Current\nconditions\n","Future\nconditions"),
-           pch = c(15, 17), col = grey(.8), bty = "n",
-           cex = .7,
-           xpd = TRUE)
+    graphics::legend("topright", inset = c(-.4,
+                                           0),
+                     legend = c("Current\nconditions\n","Future\nconditions"),
+                     pch = c(15, 17), col = grDevices::grey(.8), bty = "n",
+                     cex = .7,
+                     xpd = TRUE)
     
     
-    legend("topright",
-           inset = c(-.4,
-                     .5),
-           legend = c(1, 0.8, 0.6, 0.4, 0.2, 0),
-           pch = 16, col = c(viridis::inferno(150)[c(1, 38, 75, 113, 150)],
-                             grey(.8)), bty = "n",
-           cex = .7,
-           title = "Pixel\nsuitability",
-           xpd = TRUE)
+    graphics::legend("topright",
+                     inset = c(-.4,
+                               .5),
+                     legend = c(1, 0.8, 0.6, 0.4, 0.2, 0),
+                     pch = 16, col = c(viridis::inferno(150)[c(1, 38, 75, 
+                                                               113, 150)],
+                                       grDevices::grey(.8)), bty = "n",
+                     cex = .7,
+                     title = "Pixel\nsuitability",
+                     xpd = TRUE)
     
-
     
     
-    par(new = T)
     
-    valY <- dnorm(seq(xmin, xmax,length = 1000), 
-                  mean = means[1], 
-                  sd = sds[1])
+    graphics::par(new = T)
+    
+    valY <- stats::dnorm(seq(xmin, xmax,length = 1000), 
+                         mean = means[1], 
+                         sd = sds[1])
     valY <- 0.15 * (valY - min(valY))/(max(valY) - min(valY))
     valX <- seq(xmin, xmax, length = 1000)
     
@@ -590,12 +602,12 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = NULL,
          ylim = c(0, 1), 
          lty = 1,
          xlab = "", ylab = "", xaxt = "n", yaxt = "n")
-    par(new = T)
+    graphics::par(new = T)
     
     valY <- seq(ymin, ymax, length = 1000)
-    valX <- dnorm(seq(ymin, ymax,length = 1000),
-                  mean = means[2],
-                  sd = sds[2])
+    valX <- stats::dnorm(seq(ymin, ymax,length = 1000),
+                         mean = means[2],
+                         sd = sds[2])
     valX <- 0.15 * (valX - min(valX))/(max(valX) - min(valX))
     plot(valX,
          valY,
@@ -619,14 +631,14 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = NULL,
   d0 <- sqrt((x0 - x1)^2 + (y0 - y1)^2)
   if (d0 < 1e-07) 
     return(invisible())
-  segments(x0, y0, x1, y1, lty = lty)
-  h <- strheight("A", cex = par("cex"))
+  graphics::segments(x0, y0, x1, y1, lty = lty)
+  h <- graphics::strheight("A", cex = graphics::par("cex"))
   if (d0 > 2 * h) {
     x0 <- x1 - h * (x1 - x0)/d0
     y0 <- y1 - h * (y1 - y0)/d0
     if (edge) 
-      arrows(x0, y0, x1, y1, angle = ang, length = len, 
-             lty = 1)
+      graphics::arrows(x0, y0, x1, y1, angle = ang, length = len, 
+                       lty = 1)
   }
 }
 
@@ -638,9 +650,9 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = NULL,
   for (i in 1:(length(x))) {
     cha <- as.character(label[i])
     cha <- paste(" ", cha, " ", sep = "")
-    cex0 <- par("cex") * clabel
-    xh <- strwidth(cha, cex = cex0)
-    yh <- strheight(cha, cex = cex0) * 5/6
+    cex0 <- graphics::par("cex") * clabel
+    xh <- graphics::strwidth(cha, cex = cex0)
+    yh <- graphics::strheight(cha, cex = cex0) * 5/6
     if ((xref[i] > yref[i]) & (xref[i] > -yref[i])) {
       x1 <- x[i] + xh/2
       y1 <- y[i]
@@ -658,8 +670,8 @@ plotResponse <- function(x, parameters = NULL, approach = NULL, rescale = NULL,
       y1 <- y[i] + yh
     }
     if (boxes) {
-      rect(x1 - xh/2, y1 - yh, x1 + xh/2, y1 + yh, col = "white", 
-           border = 1)
+      graphics::rect(x1 - xh/2, y1 - yh, x1 + xh/2, y1 + yh, col = "white", 
+                     border = 1)
     }
     text(x1, y1, cha, cex = cex0)
   }

@@ -121,14 +121,7 @@
 #' The structure of the virtualspecies object can be seen using \code{str()}
 #' 
 #' 
-#' 
-#' 
-#' 
-#' 
-#' 
-#' @import raster
-#' @importFrom graphics layout title
-#' @importFrom grDevices terrain.colors
+#' @import terra
 #' @export
 #' 
 #' 
@@ -443,7 +436,7 @@ generateSpFromBCA <- function(raster.stack.current,
   if(plot){
     message(" - Ploting response and suitability\n")
     
-    op <- par(no.readonly = TRUE)
+    op <- graphics::par(no.readonly = TRUE)
     # par(mar = c(5.1, 4.1, 4.1, 2.1))
     # layout(matrix(nrow = 2, ncol = 2, c(1, 1, 2, 3 )))
     
@@ -471,7 +464,7 @@ generateSpFromBCA <- function(raster.stack.current,
     #        fill = terrain.colors(6), bty = "n")
     # title("Future environmental suitability of the virtual species")
     
-    par(op)
+    graphics::par(op)
   }
   
 

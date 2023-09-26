@@ -99,7 +99,6 @@ quadraticFun <- function(x, a, b, c) {a * x^2 + b * x + c}
 #' @param prob a numeric value or vector. The percentage of the area under the curve between the 
 #' chosen extreme values
 #' @return a numeric value or vector resulting from the function
-#' @importFrom stats qnorm
 #' @export
 #' @author
 #' Boris Leroy \email{leroy.boris@@gmail.com}, Florian David
@@ -123,8 +122,8 @@ quadraticFun <- function(x, a, b, c) {a * x^2 + b * x + c}
 custnorm <- function(x, mean, diff, prob)
 {
   prob <- prob + (1 - prob)/2
-  sd <- - diff / qnorm(p = 1 - prob)
-  dnorm(x, mean = mean, sd = sd)
+  sd <- - diff / stats::qnorm(p = 1 - prob)
+  stats::dnorm(x, mean = mean, sd = sd)
 }
 
 #' Beta response function

@@ -36,6 +36,10 @@ Only useful for a PCA species.}
 \item{no.plot.reset}{\code{TRUE} or \code{FALSE}. If \code{FALSE}, the plot window
 will be reset to its initial state after the response has been plotted.}
 
+\item{rescale.each.response}{\code{TRUE} or \code{FALSE}. If \code{TRUE}, 
+the individual responses to
+each environmental variable are rescaled between 0 and 1.}
+
 \item{...}{further arguments to be passed to \code{plot}. See 
 \code{\link[graphics]{plot}} and \code{\link[graphics]{par}}.}
 }

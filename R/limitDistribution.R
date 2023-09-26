@@ -26,8 +26,7 @@
 #' limited
 #' distribution will be plotted.
 #' @details
-#' \href{
-#' http://borisleroy.com/virtualspecies_tutorial/08-dispersallimitation.html}{
+#' \href{http://borisleroy.com/virtualspecies_tutorial/08-dispersallimitation.html}{
 #' Online tutorial for this function}
 #' 
 #' 
@@ -95,8 +94,7 @@
 #' }
 #' The structure of the virtualspecies object can be seen using \code{str()}
 #' @export
-#' @import raster
-#' @importFrom utils installed.packages
+#' @import terra
 #' @author
 #' Boris Leroy \email{leroy.boris@@gmail.com}
 #' 
@@ -180,7 +178,8 @@ limitDistribution <- function(x,
   
   if (geographical.limit %in% c("country", "region", "continent"))
   {
-    if(!("rnaturalearth" %in% rownames(installed.packages())))
+    if(!("rnaturalearth" %in% 
+         rownames(utils::installed.packages())))
     {
       stop('You need to install the package "rnaturalearth".')
     }
@@ -227,8 +226,8 @@ limitDistribution <- function(x,
               "will open, click on the map to draw the polygon of the area", 
               ".\n Once finished, press ",
               "escape to close the polygon.")
-      if("RStudioGD" %in% names(dev.list())) {
-        dev.new(noRStudioGD = TRUE)
+      if("RStudioGD" %in% names(grDevices::dev.list())) {
+        grDevices::dev.new(noRStudioGD = TRUE)
       }
       plot(sp.raster)
       area <- draw(x = "polygon")
@@ -250,8 +249,8 @@ limitDistribution <- function(x,
               "will open, click on the map to draw the extent of the area", 
               ".\n Once finished, press ",
               "escape to close the polygon.")
-      if("RStudioGD" %in% names(dev.list())) {
-        dev.new(noRStudioGD = TRUE)
+      if("RStudioGD" %in% names(grDevices::dev.list())) {
+        grDevices::dev.new(noRStudioGD = TRUE)
       }
       plot(sp.raster)
       area <- vect(draw())

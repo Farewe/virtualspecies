@@ -105,9 +105,8 @@
 #' their response functions.
 #' 
 #' 
+#' @import terra
 #' @export
-#' @importFrom stats reformulate
-#' @import raster
 #' @author
 #' Boris Leroy \email{leroy.boris@@gmail.com}
 #' 
@@ -218,8 +217,7 @@ generateSpFromFun <- function(raster.stack, parameters,
   
     
     
-  suitab.raster <- rast(lapply(names(raster.stack), FUN = function(y)
-  {
+  suitab.raster <- rast(lapply(names(raster.stack), FUN = function(y) {
     app(raster.stack[[y]], fun = function(x)
     {
       do.call(match.fun(parameters[[y]]$fun), args = c(list(x), 
@@ -231,9 +229,9 @@ generateSpFromFun <- function(raster.stack, parameters,
   
   for (var in names(raster.stack))
   {
-    parameters[[var]]$min <- global(suitab.raster[[var]], "min", 
+    parameters[[var]]$min <- global(raster.stack[[var]], "min", 
                                     na.rm = TRUE)[1, 1]
-    parameters[[var]]$max <- global(suitab.raster[[var]], "max",
+    parameters[[var]]$max <- global(raster.stack[[var]], "max",
                                     na.rm = TRUE)[1, 1]
   }
   
@@ -263,11 +261,12 @@ generateSpFromFun <- function(raster.stack, parameters,
                 "species.type = 'additive' or 'multiplicative'")
   } else
   {
-    if(any(!(all.vars(reformulate(formula)) %in% names(suitab.raster))))
+    if(any(!(all.vars(stats::reformulate(formula)) %in% names(suitab.raster))))
     {
       stop("Please verify that the variable names in your formula are ", 
            "correctly spelled") 
-    } else if(any(!(names(suitab.raster) %in% all.vars(reformulate(formula)))))
+    } else if(any(!(names(suitab.raster) %in% 
+                    all.vars(stats::reformulate(formula)))))
     {
       stop("Please verify that your formula contains all the variables of ", 
            "your input raster stack")

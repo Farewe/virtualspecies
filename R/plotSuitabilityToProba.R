@@ -13,7 +13,7 @@
 #' \code{\link[graphics]{plot}} and \code{\link[graphics]{par}}.
 #' 
 #' @export
-#' @import raster
+#' @import terra
 #' @author
 #' Boris Leroy \email{leroy.boris@@gmail.com}
 #' 
