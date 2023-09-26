@@ -25,5 +25,5 @@ Imports:
     stats,
     utils,
     viridis
-URL: http://borisleroy.com/virtualspecies
+URL: https://borisleroy.com/virtualspecies/
 RoxygenNote: 7.2.3
