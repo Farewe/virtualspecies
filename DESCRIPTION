@@ -26,4 +26,5 @@ Imports:
     utils,
     viridis
 URL: https://borisleroy.com/virtualspecies/
+BugReports: https://github.com/Farewe/virtualspecies/issues
 RoxygenNote: 7.2.3
