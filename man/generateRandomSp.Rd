@@ -135,7 +135,7 @@ The structure of the virtualspecies can object be seen using \code{str()}
 This function generates randomly a virtual species distribution.
 }
 \details{
-\href{http://borisleroy.com/virtualspecies_tutorial/05-randomspecies.html}{
+\href{https://borisleroy.com/virtualspecies_tutorial/05-randomspecies.html}{
 Online tutorial for this function}
 
 

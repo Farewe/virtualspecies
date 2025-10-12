@@ -75,7 +75,7 @@
 #' @param plot \code{TRUE} or \code{FALSE}. If \code{TRUE}, the generated 
 #' virtual species will be plotted.
 #' @details
-#' \href{http://borisleroy.com/virtualspecies_tutorial/05-randomspecies.html}{
+#' \href{https://borisleroy.com/virtualspecies_tutorial/05-randomspecies.html}{
 #' Online tutorial for this function}
 #' 
 #' 

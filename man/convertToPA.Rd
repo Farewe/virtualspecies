@@ -91,7 +91,7 @@ a presence-absence raster. The conversion can be threshold-based, or based
 on a probability of conversion (see details).
 }
 \details{
-\href{http://borisleroy.com/virtualspecies_tutorial/04-presenceabsence.html}{
+\href{https://borisleroy.com/virtualspecies_tutorial/04-presenceabsence.html}{
 Online tutorial for this function}
 
 

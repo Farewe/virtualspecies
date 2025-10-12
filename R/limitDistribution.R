@@ -26,7 +26,7 @@
 #' limited
 #' distribution will be plotted.
 #' @details
-#' \href{http://borisleroy.com/virtualspecies_tutorial/08-dispersallimitation.html}{
+#' \href{https://borisleroy.com/virtualspecies_tutorial/08-dispersallimitation.html}{
 #' Online tutorial for this function}
 #' 
 #' 

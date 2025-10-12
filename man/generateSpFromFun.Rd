@@ -64,7 +64,7 @@ This function generates a virtual species distribution from a stack of
 variables and a defined set of responses to each environmental parameter.
 }
 \details{
-\href{http://borisleroy.com/virtualspecies_tutorial/02-response.html}{Online 
+\href{https://borisleroy.com/virtualspecies_tutorial/02-response.html}{Online 
 tutorial for this function}
 
 This function proceeds in two steps:

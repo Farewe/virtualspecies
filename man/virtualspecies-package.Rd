@@ -2,6 +2,7 @@
 % Please edit documentation in R/virtualspecies-package.R
 \docType{package}
 \name{virtualspecies-package}
+\alias{virtualspecies}
 \alias{virtualspecies-package}
 \title{Generation of virtual species}
 \description{
@@ -55,12 +56,12 @@ NA values among layers of a stack}
 
 This packages makes use of different other packages:
 \itemize{
-\item{This package makes extensive use of the package \code{\link{terra}} 
+\item{This package makes extensive use of the package \code{\link[terra]{terra}} 
 to obtain spatialised
 environmental variables, and produce spatialised virtual 
 species distributions.}
-\item{\code{\link{ade4}} is used to generate species with a PCA approach.}
-\item{\code{\link{rnaturalearth}} is used to obtain free world shapefiles, 
+\item{\code{\link[ade4]{ade4}} is used to generate species with a PCA approach.}
+\item{\code{\link[rnaturalearth]{rnaturalearth}} is used to obtain free world shapefiles, 
 in order to create
 dispersal limitations and sampling biases.}
 }
@@ -69,6 +70,14 @@ dispersal limitations and sampling biases.}
 Leroy, B. et al. 2016. virtualspecies, an R package to generate virtual 
 species distributions. Ecography. 39(6):599-607
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://borisleroy.com/virtualspecies/}
+  \item Report bugs at \url{https://github.com/Farewe/virtualspecies/issues}
+}
+
+}
 \author{
 Boris Leroy \email{leroy.boris@gmail.com}
 
@@ -76,3 +85,4 @@ with help from C. N. Meynard, C. Bellard & F. Courchamp
 
 Maintainer: Boris Leroy \email{leroy.boris@gmail.com}
 }
+\keyword{internal}

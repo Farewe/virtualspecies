@@ -117,7 +117,7 @@ The sampling bias can be defined manually or with a set of predefined
 biases.
 }
 \details{
-\href{http://borisleroy.com/virtualspecies_tutorial/07-sampleoccurrences.html}{
+\href{https://borisleroy.com/virtualspecies_tutorial/07-sampleoccurrences.html}{
 Online tutorial for this function}
 
 

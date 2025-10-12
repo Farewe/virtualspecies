@@ -33,3 +33,4 @@ $RECYCLE.BIN/
 *.msp
 .Rproj.user
 virtualspecies.Rproj
+*vscode/

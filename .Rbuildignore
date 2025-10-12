@@ -3,3 +3,4 @@
 README.md
 evaluateRasters.R
 TODO.Rmd
+^\.vscode$

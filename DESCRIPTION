@@ -1,11 +1,26 @@
 Package: virtualspecies
 Type: Package
 Title: Generation of Virtual Species Distributions
-Version: 1.6
-Author: Boris Leroy [cre, aut], Christine N. Meynard [ctb], 
-    Celine Bellard [ctb], Franck Courchamp [ctb], Robin Delsol [ctb], 
-    Willson Gaul [ctb]
-Maintainer: Boris Leroy <leroy.boris@gmail.com>
+Version: 1.6.1
+Authors@R: c(person(given = "Boris",
+                    family = "Leroy",
+                    role = c("cre", "aut"),
+                    email = "leroy.boris@gmail.com"),
+             person(given = c("Christine", "N."),
+                    family = "Meynard",
+                    role = "ctb"),
+             person(given = "Celine",
+                    family = "Bellard",
+                    role = "ctb"),
+             person(given = "Franck",
+                    family = "Courchamp",
+                    role = "ctb"),
+             person(given = "Robin",
+                    family = "Delsol",
+                    role = "ctb"),
+             person(given = "Willson",
+                    family = "Gaul",
+                    role = "ctb"))
 Description: Provides a framework for generating virtual species distributions,
     a procedure increasingly used in ecology to improve species distribution
     models. This package integrates the existing methodological approaches 
@@ -27,4 +42,4 @@ Imports:
     viridis
 URL: https://borisleroy.com/virtualspecies/
 BugReports: https://github.com/Farewe/virtualspecies/issues
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2

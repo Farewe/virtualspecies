@@ -45,7 +45,7 @@
 #' with
 #' \code{nb.points}. 
 #' @details
-#' \href{http://borisleroy.com/virtualspecies_tutorial/03-PCA.html}{Online 
+#' \href{https://borisleroy.com/virtualspecies_tutorial/03-PCA.html}{Online 
 #' tutorial for this function}
 #' 
 #' 

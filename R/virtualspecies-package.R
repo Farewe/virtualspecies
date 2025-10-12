@@ -51,12 +51,12 @@
 #' 
 #' This packages makes use of different other packages:
 #' \itemize{
-#' \item{This package makes extensive use of the package \code{\link{terra}} 
+#' \item{This package makes extensive use of the package \code{\link[terra]{terra}} 
 #' to obtain spatialised
 #' environmental variables, and produce spatialised virtual 
 #' species distributions.}
-#' \item{\code{\link{ade4}} is used to generate species with a PCA approach.}
-#' \item{\code{\link{rnaturalearth}} is used to obtain free world shapefiles, 
+#' \item{\code{\link[ade4]{ade4}} is used to generate species with a PCA approach.}
+#' \item{\code{\link[rnaturalearth]{rnaturalearth}} is used to obtain free world shapefiles, 
 #' in order to create
 #' dispersal limitations and sampling biases.}
 #' }
@@ -70,6 +70,7 @@
 #' 
 #' Maintainer: Boris Leroy \email{leroy.boris@@gmail.com}
 #' @name virtualspecies-package
-#' @docType package
+#' @keywords internal 
+"_PACKAGE"
 #' @import raster
 NULL

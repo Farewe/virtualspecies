@@ -41,7 +41,7 @@
 #' @seealso \code{\link{generateSpFromPCA}} to generate a virtual species with 
 #' a PCA approach
 #' @details
-#' \href{http://borisleroy.com/virtualspecies_tutorial/02-response.html}{Online 
+#' \href{https://borisleroy.com/virtualspecies_tutorial/02-response.html}{Online 
 #' tutorial for this function}
 #' 
 #' This function proceeds in two steps:
