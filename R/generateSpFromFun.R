@@ -225,7 +225,7 @@ generateSpFromFun <- function(raster.stack, parameters,
     }
     )
   }))
-  names(suitab.raster) <- names(parameters)
+  names(suitab.raster) <- names(raster.stack)
   
   for (var in names(raster.stack))
   {
